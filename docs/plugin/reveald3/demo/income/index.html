@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>d3 Updating Bar Chart With Dropdown</title>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <style>
+        body {
+            font: 10px sans-serif;
+        }
+        select {
+            display: block;
+        }
+        .bar {
+            fill: darkblue;
+            opacity: 0.8;
+        }
+
+        .bar:hover {
+            fill:lightblue;
+        }
+
+        .button {
+            border: blue;
+            background: lightblue;
+            font-family: helvetica-neue;
+            font-size: 31px;
+            border-radius: 40%;
+        }
+        .button:hover {
+        background-color: darkblue; /* Green */
+        color: white;
+        }
+        .axis text {
+            font-family: helvetica-neue;
+            /*font-family: sans-serif;*/
+            font-size: 31px;
+        }
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        </style>
+    </head>
+    <body>
+        <div id='vis-container'></div>
+        <script type="text/javascript">
+            // Load and munge data, then make the visualization.
+            // var newRace = "white"
+            var fileName = "data/2016/white.csv";
+            var percentiles = ["Q1", "Q2", "Q3", "Q4", "Q5"];
+
+            d3.csv(fileName, function(error, data) {
+                var locationMap = {};
+                data.forEach(function(d) {
+                    var location = d.location;
+                    locationMap[location] = [];
+
+                    // { locationName: [ bar1Val, bar2Val, ... ] }
+                    percentiles.forEach(function(field) {
+                        locationMap[location].push( +d[field] );
+                    });
+                });
+                makeVis(locationMap);
+            });
+
+            var makeVis = function(locationMap) {
+                // Define dimensions of vis
+                var margin = { top: 60, right: 50, bottom: 110, left: 100 },
+                    width  = 950 - margin.left - margin.right,
+                    height = 550 - margin.top  - margin.bottom;
+
+                // Make x scale
+                var xScale = d3.scale.ordinal()
+                    .domain(percentiles)
+                    .rangeRoundBands([0, width], 0.1);
+
+                // Make y scale, the domain will be defined on bar update
+                var yScale = d3.scale.linear()
+                    .range([height, 0]);
+
+                // Create canvas
+                var canvas = d3.select("#vis-container")
+                  .append("svg")
+                    .attr("width",  width  + margin.left + margin.right)
+                    .attr("height", height + margin.top  + margin.bottom)
+                  .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                // Make x-axis and add to canvas
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom");
+
+                canvas.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+                // Make y-axis and add to canvas
+                var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left");
+
+                var yAxisHandleForUpdate = canvas.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis.ticks(10,"$"));
+
+                yAxisHandleForUpdate.append("text")
+                    // .attr("y", 300)
+                    .attr("transform", "rotate(-90)")
+                    // .attr("y", 300)
+                    // .attr("transform", "translate(0," + height + ")")
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Annual income");
+
+                // X AXIS LABEL
+                canvas.append("text")             
+                  .attr("transform",
+                        "translate(" + (width/2) + " ," + 
+                                       (height + margin.top + 40) + ")")
+                  .style("text-anchor", "middle")
+                  // .attr("class", "x axis")
+                  .attr("font-size", "31px")
+                  .attr("font-family", "helvetica-neue")
+                  .text("Income quintile");
+
+                  // TITLE
+                  canvas.append("text")
+                    .attr("x", (width / 2))             
+                    .attr("y", 0 - (margin.top / 2))
+                    .attr("text-anchor", "middle")  
+                    .style("font-size", "40px") 
+                    .attr("font-family", "helvetica-neue")
+                    .style("text-decoration", "underline")  
+                    .text("Income distributions");
+
+                var updateBars = function(data) {
+                    // First update the y-axis domain to match data
+                    yScale.domain( d3.extent(data) );
+                    yAxisHandleForUpdate.call(yAxis);
+
+                    var bars = canvas.selectAll(".bar").data(data);
+
+                    // Add bars for new data
+                    bars.enter()
+                      .append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function(d,i) { return xScale( percentiles[i] ); })
+                        .attr("width", xScale.rangeBand())
+                        .attr("y", function(d,i) { return yScale(d); })
+                        .attr("height", function(d,i) { return height - yScale(d); })
+                        .append("title")
+                        .text(function(d){
+                            return "Income: $"+d;
+                          });
+
+                    // Update old ones, already have x / width from before
+                    bars
+                        .transition().duration(1000)
+                        .attr("y", function(d,i) { return yScale(d); })
+                        .attr("height", function(d,i) { return height - yScale(d); });
+
+                    // Remove old ones
+                    bars.exit().remove();
+                };
+
+                // Handler for dropdown value change
+                var dropdownChange = function() {
+                    var newlocation = d3.select("select#dropdown").property('value');
+                    var newRace = d3.select("select#another").property('value');
+                    var newYear =  d3.select("select#dd3").property('value');
+                    // newData   = locationMap[newlocation];
+                    console.log(newlocation);
+                    console.log(newRace);
+                    console.log(newYear)
+
+                    var fileName = "data/" + newYear+"/"+newRace+".csv";
+                    d3.csv(fileName, function(error, data) {
+                    var locationMap = {};
+                    data.forEach(function(d) {
+                        var location = d.location;
+                        locationMap[location] = [];
+                        percentiles.forEach(function(field) {
+                            locationMap[location].push( +d[field] );
+                    });
+                    });
+                    newData = locationMap[newlocation];
+                    updateBars(newData);
+                    // d3.select(this).style("background-color", "#ccc");
+                });
+
+                }
+
+                // Get names of locations, for dropdown
+                var locations = Object.keys(locationMap).sort(function(a, b){return b-a});
+
+                console.log(locations);
+
+                var dropdown = d3.select("#vis-container")
+                    .insert("select", "svg")
+                    .attr("id", "dropdown")
+                    .attr("class", "button")
+                    .on("change", dropdownChange);
+
+                dropdown.selectAll("option")
+                    .data(locations)
+                  .enter().append("option")
+                    .attr("value", function (d) { return d; })
+                    .text(function (d) {
+                        return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
+                    });
+
+                // Add another dropdown and set newRace variable?
+                var dropdown2 = d3.select("#vis-container")
+                    .insert("select", "svg")
+                    .attr("id", "another")
+                    .attr("class", "button")
+                    .on("change", dropdownChange);
+
+                var races = ['white', 'black']
+                dropdown2.selectAll("option")
+                    .data(races)
+                  .enter().append("option")
+                    .attr("value", function (d) { return d; })
+                    .text(function (d) {
+                        return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
+                    });
+
+
+                // Add another dropdown and set newRace variable?
+                var dropdown3 = d3.select("#vis-container")
+                    .insert("select", "svg")
+                    .attr("id", "dd3")
+                    .attr("class", "button")
+                    .on("change", dropdownChange);
+
+                var years = ['2016', '2015']
+                dropdown3.selectAll("option")
+                    .data(years)
+                  .enter().append("option")
+                    .attr("value", function (d) { return d; })
+                    .text(function (d) {
+                        return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
+                    });
+
+
+
+                // Set up initial plot
+                var initialData = locationMap[ locations[0] ];
+                updateBars(initialData);
+            };
+        </script>
+    </body>
+</html>
