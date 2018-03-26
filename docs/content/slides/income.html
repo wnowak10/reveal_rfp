@@ -51,7 +51,7 @@
         <script type="text/javascript">
             // Load and munge data, then make the visualization.
             // var newRace = "white"
-            var fileName = "../data/2016/white.csv";
+            var fileName = "../data/income_dist_data/2016/white.csv";
             var percentiles = ["Q1", "Q2", "Q3", "Q4", "Q5"];
 
             d3.csv(fileName, function(error, data) {
@@ -180,7 +180,7 @@
                     console.log(newRace);
                     console.log(newYear)
 
-                    var fileName = "../data/" + newYear+"/"+newRace+".csv";
+                    var fileName = "../data/income_dist_data/" + newYear+"/"+newRace+".csv";
                     d3.csv(fileName, function(error, data) {
                     var locationMap = {};
                     data.forEach(function(d) {
