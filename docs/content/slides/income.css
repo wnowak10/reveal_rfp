@@ -1,0 +1,45 @@
+body {
+    font: 10px sans-serif;
+}
+select {
+    display: block;
+}
+
+text {
+    color: white;
+}
+
+.bar {
+    fill: lightblue;
+    opacity: 0.8;
+}
+
+.bar:hover {
+    fill:white;
+}
+
+.button {
+    border: blue;
+    background: lightblue;
+    font-family: helvetica-neue;
+    font-size: 31px;
+    border-radius: 40%;
+}
+
+.button:hover {
+background-color: darkblue; /* Green */
+color: white;
+}
+
+.axis text {
+    font-family: helvetica-neue;
+    font-size: 31px;
+    color: lightblue;
+}
+.axis path,
+.axis text,
+.axis line {
+    fill: white;
+    stroke: white;
+    shape-rendering: crispEdges;
+}
