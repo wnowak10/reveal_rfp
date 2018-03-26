@@ -6,45 +6,10 @@
         <script src="../../plugin/reveald3/demo/d3-fig/js/d3.v3.min.js"></script>
 
         <!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> -->
-        <style>
-        body {
-            font: 10px sans-serif;
-        }
-        select {
-            display: block;
-        }
-        .bar {
-            fill: darkblue;
-            opacity: 0.8;
-        }
+        <link rel = "stylesheet"
+        type = "text/css"
+        href = "income.css" />
 
-        .bar:hover {
-            fill:lightblue;
-        }
-
-        .button {
-            border: blue;
-            background: lightblue;
-            font-family: helvetica-neue;
-            font-size: 31px;
-            border-radius: 40%;
-        }
-        .button:hover {
-        background-color: darkblue; /* Green */
-        color: white;
-        }
-        .axis text {
-            font-family: helvetica-neue;
-            /*font-family: sans-serif;*/
-            font-size: 31px;
-        }
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-        </style>
     </head>
     <body>
         <div id='vis-container'></div>
@@ -117,6 +82,8 @@
                     // .attr("transform", "translate(0," + height + ")")
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
+                    .attr("class", "text")
+                    // .attr('color', 'white')
                     .text("Annual income");
 
                 // X AXIS LABEL
@@ -125,9 +92,10 @@
                         "translate(" + (width/2) + " ," + 
                                        (height + margin.top + 40) + ")")
                   .style("text-anchor", "middle")
-                  // .attr("class", "x axis")
+                  .attr("class", "text")
                   .attr("font-size", "31px")
                   .attr("font-family", "helvetica-neue")
+                  .attr('fill', 'white')
                   .text("Income quintile");
 
                   // TITLE
@@ -137,7 +105,8 @@
                     .attr("text-anchor", "middle")  
                     .style("font-size", "40px") 
                     .attr("font-family", "helvetica-neue")
-                    .style("text-decoration", "underline")  
+                    .style("text-decoration", "underline") 
+                    .attr('fill', 'white') 
                     .text("Income distributions");
 
                 var updateBars = function(data) {
