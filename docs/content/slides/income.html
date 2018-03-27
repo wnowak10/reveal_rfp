@@ -70,7 +70,7 @@
                     .scale(xScale)
                     .orient("bottom");
 
-                canvas.append("g")
+                var xAxisHandleForUpdate = canvas.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
                     .call(xAxis);
@@ -85,24 +85,17 @@
                     .call(yAxis.ticks(10,"$"));
 
                 yAxisHandleForUpdate.append("text")
-                    // .attr("y", 300)
                     .attr("transform", "rotate(-90)")
-                    // .attr("y", 300)
-                    // .attr("transform", "translate(0," + height + ")")
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .attr("class", "text")
                     .text("Annual income");
 
                 // X AXIS LABEL
-                canvas.append("text")             
-                  .attr("transform",
-                        "translate(" + (width/2) + " ," + 
-                                       (height + margin.top + 40) + ")")
+                xAxisHandleForUpdate.append("text") 
+                  .attr("transform", "translate(" + (width/2) + ","+
+                                                    (100)+")")            
                   .style("text-anchor", "middle")
-                  .attr("class", "text")
-                  .attr("font-size", "31px")
-                  .attr("font-family", "helvetica-neue")
+                  .attr("class", "axis")
                   .text("Income quintile");
 
                   // TITLE
@@ -110,10 +103,8 @@
                     .attr("x", (width / 2))             
                     .attr("y", 0 - (margin.top / 2))
                     .attr("text-anchor", "middle")  
-                    .style("font-size", "40px") 
-                    .attr("font-family", "helvetica-neue")
-                    .style("text-decoration", "underline") 
-                    .text("Income distributions");
+                    .attr("class", "title")
+                    .text("INCOME DISTRIBUTIONS");
 
                 var updateBars = function(data) {
                     // First update the y-axis domain to match data

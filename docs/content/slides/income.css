@@ -5,8 +5,18 @@ select {
     display: block;
 }
 
-text {
-    color: black;
+.title {
+  margin: 0 0 20px 0;
+  fill: #990000;
+  stroke: #990000;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+  font-size: 2.5em;
 }
 
 .bar {
@@ -15,35 +25,50 @@ text {
 }
 
 .bar:hover {
-    fill:lightblue;
+    fill: lightblue;
 }
 
 .button {
     border: blue;
     background: lightblue;
-    font-family: helvetica-neue;
-    font-size: 31px;
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-transform: uppercase;
     border-radius: 40%;
-    /*width:100px;*/
-     /*height:100px;*/
-  float: left;
-    margin-left:5px;
+    width:200px;
+    height:75px;
+    float: left;
+    margin-left:50px;
+    font-size: 2.5em;
 }
 
 .button:hover {
-background-color: darkblue; /* Green */
+background-color: #000080; /* Green */
 color: white;
 }
 
 .axis text {
-    font-family: helvetica-neue;
-    font-size: 31px;
-    color: black;
+  margin: 0 0 20px 0;
+  /*Why not red text?*/
+  /*fill: #990000;*/
+  /*stroke: #990000;*/
+  color: #990000;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+  font-size: 2.5em;
 }
+
 .axis path,
 .axis text,
 .axis line {
-    fill: black;
-    stroke: black;
+    fill: #000080;
+    stroke: #000080;
     shape-rendering: crispEdges;
 }
