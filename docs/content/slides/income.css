@@ -6,16 +6,16 @@ select {
 }
 
 text {
-    color: white;
+    color: black;
 }
 
 .bar {
-    fill: lightblue;
+    fill: darkblue;
     opacity: 0.8;
 }
 
 .bar:hover {
-    fill:white;
+    fill:lightblue;
 }
 
 .button {
@@ -24,6 +24,10 @@ text {
     font-family: helvetica-neue;
     font-size: 31px;
     border-radius: 40%;
+    /*width:100px;*/
+     /*height:100px;*/
+  float: left;
+    margin-left:5px;
 }
 
 .button:hover {
@@ -34,12 +38,12 @@ color: white;
 .axis text {
     font-family: helvetica-neue;
     font-size: 31px;
-    color: lightblue;
+    color: black;
 }
 .axis path,
 .axis text,
 .axis line {
-    fill: white;
-    stroke: white;
+    fill: black;
+    stroke: black;
     shape-rendering: crispEdges;
 }
