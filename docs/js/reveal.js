@@ -2421,6 +2421,8 @@
 				'currentSlide': currentSlide,
 				'origin': o
 			} );
+			console.log('slidechange?');
+			layout();
 		}
 		else {
 			// Ensure that the previous slide is never the same as the current
