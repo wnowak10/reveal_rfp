@@ -7,6 +7,8 @@
 		<title>reveal.js</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
+
+		<!-- Edit styles for presentation here -->
 		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
@@ -20,48 +22,65 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+
+		<!-- Add JQuery so we can import other HTML into this HTML -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+		<!-- Add a JQuery function to load html div as defined by classname in your
+		own HTML file -->
+		<script type="text/javascript">
+			// http://www.technomark.in/Include-Another-HTML-File-In-A-HTML-File.aspx
+			$(function() {
+				$(".title").load("content/slides/title/title.html")
+			})
+			// There is a better way to do this...TO DO. 
+			$(function() {
+				$(".income_intro").load("content/slides/income/income_intro.html")
+			})
+			$(function() {
+				$(".conclusion").load("content/slides/conclusion/conclusion.html")
+			})
+
+		</script>
+
 	</head>
+
+
 	<body>
 		<div class="reveal">
 			<div class="slides">
 
-
-
-
-
-
-				<!-- THIS IS WHERE OUR SLIDES GO -->
-				<!-- EACH SECTION TAG IS A NEW SLIDE -->
-				<!-- AS AWLWAYS, COMMENT LOTS! SAY WHO YOU ARE IF YOU ARE ADDING... -->
-				<!-- A SLIDE AND EXPLAIN WHERE AND WHAT EXTRA DATA RESOURCES ARE... -->
-				<!-- IF APPLICABLE -->
+				<!-- THIS IS WHERE OUR SLIDES GO
+					 EACH SECTION TAG IS A NEW SLIDE
+					 AS AWLWAYS, COMMENT LOTS! SAY WHO YOU ARE IF YOU ARE ADDING
+			 		 A SLIDE AND EXPLAIN WHERE AND WHAT EXTRA DATA RESOURCES ARE
+			 		 IF APPLICABLE -->
 
 				<section>
-				<video data-autoplay src="https://www.youtube.com/watch?v=Zdy69z-R2Aw"></video>
-				<h2>Real Facts</h2>
+					<div class="title"></div>
 				</section>
 
 				<!-- BELOW WE REFERENCE A HTML FILE WRITTEN AND SAVED IN SLIDES DIR-->
 				<!-- IF WE WANT TO INCLUDE D3 VISUALIZATION OR ANY CUSTOM FORMATTING... -->
 				<!-- HTML IS THE WAY TO GO -->
 				<section> 
-					<section data-markdown="content/slides/income.md"></section>
+					<!-- Adding a section within a section gives you access to vertical scrolling. -->
+					<section> 
+						<div class="income_intro"></div>
+					</section>
+					
 					<section>
+						<!-- D3 HTML files should be called with the following
+						class and data-file attributes. -->
 						<div class="fig-container"
-			         data-file="content/slides/income.html">
-				         </div> 	
+			         		data-file="content/slides/income.html">
+				        </div> 	
 					</section>
 				</section>
 
-				<!-- YOU CAN ALSO REFERENCE EXTERNAL FILES.  -->
-				<!-- BELOW WE REFERENCE A MARKDOWN FILE WRITTEN AND SAVED IN SLIDES DIR-->
-				<section data-markdown="content/slides/conclusion.md"></section>
-
-
-
-
-
-
+				<section>
+					<div class="conclusion"></div>
+				</section>
 
 			</div>
 		</div>
