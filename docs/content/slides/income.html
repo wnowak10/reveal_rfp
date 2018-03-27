@@ -12,8 +12,11 @@
 
     </head>
     <body>
-        <div>
-            Below, we see the disparities in income. 
+        
+        <div class="headmenu" >
+            <a id="button1"></a>
+            <a id="button2"></a>
+            <a id="button3"></a>
         </div>
         <div id='vis-container'></div>
         <script type="text/javascript">
@@ -86,7 +89,6 @@
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
                     .attr("class", "text")
-                    // .attr('color', 'white')
                     .text("Annual income");
 
                 // X AXIS LABEL
@@ -98,7 +100,6 @@
                   .attr("class", "text")
                   .attr("font-size", "31px")
                   .attr("font-family", "helvetica-neue")
-                  .attr('fill', 'white')
                   .text("Income quintile");
 
                   // TITLE
@@ -109,7 +110,6 @@
                     .style("font-size", "40px") 
                     .attr("font-family", "helvetica-neue")
                     .style("text-decoration", "underline") 
-                    .attr('fill', 'white') 
                     .text("Income distributions");
 
                 var updateBars = function(data) {
@@ -174,7 +174,8 @@
 
                 console.log(locations);
 
-                var dropdown = d3.select("#vis-container")
+                // var dropdown = d3.select("#vis-container")
+                var dropdown = d3.select("#button1")
                     .insert("select", "svg")
                     .attr("id", "dropdown")
                     .attr("class", "button")
@@ -189,10 +190,11 @@
                     });
 
                 // Add another dropdown and set newRace variable?
-                var dropdown2 = d3.select("#vis-container")
+                var dropdown2 = d3.select("#button2")
                     .insert("select", "svg")
                     .attr("id", "another")
-                    .attr("class", "button")
+                    .attr("class", "large alert round button dropdown")
+                    // .attr("class","large alert round button dropdown")
                     .on("change", dropdownChange);
 
                 var races = ['white', 'black']
@@ -206,7 +208,7 @@
 
 
                 // Add another dropdown and set newRace variable?
-                var dropdown3 = d3.select("#vis-container")
+                var dropdown3 = d3.select("#button3")
                     .insert("select", "svg")
                     .attr("id", "dd3")
                     .attr("class", "button")
