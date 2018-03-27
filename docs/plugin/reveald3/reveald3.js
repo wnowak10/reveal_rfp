@@ -53,6 +53,7 @@ var Reveald3 = window.Reveald3 || (function(){
 
     Reveal.addEventListener('slidechanged', function( event ) {
         handleSlideVisualizations(event)
+        layout()
     });
 
     if (options.keepIframe){
