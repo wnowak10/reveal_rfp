@@ -25,8 +25,8 @@
 
             // Load and munge data, then make the visualization.
             // var newRace = "white"
-            var fileName = "../data/income_dist_data/2016/white.csv";
-            var percentiles = ["Q1", "Q2", "Q3", "Q4", "Q5"];
+            var fileName = "../data/income_dist_data/2016/black.csv";
+            var percentiles = ["Less than $10,000","$10,000 to $14,999","$15,000 to $19,999","$20,000 to $24,999","$25,000 to $29,999","$30,000 to $34,999","$35,000 to $39,999","$40,000 to $44,999","$45,000 to $49,999","$50,000 to $59,999","$60,000 to $74,999","$75,000 to $99,999","$100,000 to $124,999","$125,000 to $149,999","$150,000 to $199,999","$200,000 or more"]
 
             d3.csv(fileName, function(error, data) {
                 var locationMap = {};
@@ -44,7 +44,7 @@
 
             var makeVis = function(locationMap) {
                 // Define dimensions of vis
-                var margin = { top: 60, right: 50, bottom: 110, left: 100 },
+                var margin = { top: 60, right: 50, bottom: 300, left: 100 },
                     width  = 950 - margin.left - margin.right,
                     height = 550 - margin.top  - margin.bottom;
 
@@ -73,6 +73,7 @@
                 var xAxisHandleForUpdate = canvas.append("g")
                     .attr("class", "x axis")
                     .attr("transform", "translate(0," + height + ")")
+                    // .attr("transform", "rotate(-90)")
                     .call(xAxis);
 
                 // Make y-axis and add to canvas
@@ -82,13 +83,13 @@
 
                 var yAxisHandleForUpdate = canvas.append("g")
                     .attr("class", "y axis")
-                    .call(yAxis.ticks(10,"$"));
+                    .call(yAxis.ticks(10,"%"));
 
                 yAxisHandleForUpdate.append("text")
                     .attr("transform", "rotate(-90)")
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("Annual income");
+                    .text("Percent of total");
 
                 // X AXIS LABEL
                 xAxisHandleForUpdate.append("text") 
@@ -98,10 +99,17 @@
                   .attr("class", "axis")
                   .text("Income quintile");
 
+                xAxisHandleForUpdate
+                  .selectAll("text")
+                 .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-90)");
+
                   // TITLE
                   canvas.append("text")
                     .attr("x", (width / 2))             
-                    .attr("y", 0 - (margin.top / 2))
+                    .attr("y", 0 - (margin.top / 2)+35)
                     .attr("text-anchor", "middle")  
                     .attr("class", "title")
                     .text("INCOME DISTRIBUTIONS");
@@ -123,7 +131,7 @@
                         .attr("height", function(d,i) { return height - yScale(d); })
                         .append("title")
                         .text(function(d){
-                            return "Income: $"+d;
+                            return d*100+"%";
                           });
 
                     // Update old ones, already have x / width from before
