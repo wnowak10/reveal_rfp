@@ -1,0 +1,300 @@
+<!-- used resources: -->
+<!-- 
+
+ -->
+<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html
+hover: http://bl.ocks.org/mattparrilla/5724610
+basic chloropleth https://bl.ocks.org/mbostock/4060606
+youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg
+click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
+<!-- https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4 bar chart v4! -->
+<!-- 
+
+ -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.background {
+  fill: #F7E2DE;
+  stroke: white;
+  stroke-linejoin: round;
+}
+
+</style>
+<!-- <svg width="960" height="600"></svg> -->
+<script src="https://d3js.org/d3.v4.min.js"></script> 
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+
+<body>
+
+</body>
+
+<script>
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+  width = w = 1000 - margin.left - margin.right,
+  height = h = 800 - margin.top - margin.bottom;
+var centered;
+
+// // ### create the SVG ###
+// text = d3.select('body').append('svg')
+//     .attr('width', width / 5)
+//     .attr('height', height/ 5)
+    
+
+
+var chart1 = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+chart1.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", reset);
+
+var g = chart1.append("g");
+
+var projection = d3.geoAlbersUsa();
+
+var path = d3.geoPath()
+  .projection(projection);
+
+
+var unemployment = d3.map();
+
+var path = d3.geoPath();
+
+var x = d3.scaleLinear()
+    .domain([1, 10])
+    .rangeRound([600, 860]);
+
+var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
+
+// Title
+chart1.append("text")
+        .attr("x", (width / 2)) // Center            
+        .attr("y", margin.top) 
+        .attr("text-anchor", "middle")  
+        .style("font-size", "26px") 
+        .style("text-decoration", "underline")  
+        .style("fill", "darkred")
+        .text("Poverty in America")
+
+        // Title
+chart1.append("text")
+        .attr("x", (width / 2)) // Center            
+        .attr("y", margin.top * 2) 
+        .attr("text-anchor", "middle")  
+        .style("text-decoration", "underline")  
+        .style("fill", "darkred")
+        .style("font-size", "16px") 
+        .text("Percent of households in county making less than $20,000. Click once/twice to zoom in/out.")
+
+
+// Make map
+d3.queue()
+    .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+    .defer(d3.csv, "income_unemployment.csv", function(d) { unemployment.set(d.id, +d.percent_poor); })
+    .await(ready);
+
+  
+function ready(error, us) {
+  if (error) throw error;
+
+  g.append("g")
+      .attr("class", "counties")
+    .selectAll("path")
+    .data(topojson.feature(us, us.objects.counties).features)
+    .enter().append("path")
+      .attr("fill", function(d) { return color(d.percent_poor = unemployment.get(d.id)); })
+      .attr("d", path)
+      .on("click", clicked) // This will allow zoomm
+
+      .on("mouseover", function(d) {
+                    var xPosition = d3.mouse(this)[0];
+                    var yPosition = d3.mouse(this)[1] - 30;
+
+                    g.append("text")
+                        .attr("id", "tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .attr("text-anchor", "middle")
+                        .attr("font-family", "sans-serif")
+                        .attr("font-size", "11px")
+                        .attr("font-weight", "bold")
+                        .style("fill", "darkred")
+                        .text(d.percent_poor * 100 + '%');
+
+                    d3.select(this)
+                    .style("fill", "darkred");
+                         })
+
+      .on("mouseout", function(d) {
+                    d3.select("#tooltip").remove();
+
+                    d3.select(this)
+                    .transition()
+                    .duration(250)
+                    .attr("fill", color(d.percent_poor))
+                    .style("fill", function(d) {
+                      return color(d.percent_poor);
+                    })
+                });
+
+  g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("class", "states")
+      .attr("d", path);
+
+  chart1.append("path")
+      .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
+      .attr("class", "counties")
+      .attr("d", path);
+
+}
+
+
+// Bar chart
+
+var chart2 = d3.select("body")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+
+// Zoom function
+function clicked(d) {
+  var x, y, k;
+  console.log(d);
+  if (d && centered !== d) {
+    var centroid = path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = 4;
+    centered = d;
+  } else {
+    x = width / 2;
+    y = height / 2;
+    k = 1;
+    centered = null;
+  }
+
+  g.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
+
+  g.transition()
+      .duration(750)
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+      .style("stroke-width", 1.5 / k + "px");
+
+  // d3.csv("sales.csv", function(error, data) {
+  // if (error) throw error;
+
+  // // format the data
+  // data.forEach(function(d) {
+  //   d.sales = +d.sales;
+  // });
+
+  // Scale the range of the data in the domains
+  console.log(d.id);
+  x.domain(d.map(function(d) { return d.id; }));
+  y.domain([0, d3.max(d, function(d) { return d.percent_poor; })]);
+
+  // append the rectangles for the bar chart
+  chart2.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.id); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.percent_poor); })
+      .attr("height", function(d) { return height - y(d.percent_poor); });
+
+  // add the x Axis
+  chart2.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // add the y Axis
+  chart2.append("g")
+      .call(d3.axisLeft(y));
+
+}
+
+// );
+// }
+
+
+function reset() {
+    g.selectAll(".active").classed("active", active = false);
+    g.transition().duration(750).attr("transform", "");
+}
+
+
+
+
+          
+// STAND ALONE BAR CHART
+// get the data
+d3.csv("sales.csv", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+    d.sales = +d.sales;
+  });
+
+  // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.salesperson; }));
+  y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+
+  // append the rectangles for the bar chart
+  chart2.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.salesperson); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.sales); })
+      .attr("height", function(d) { return height - y(d.sales); });
+
+  // add the x Axis
+  chart2.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // add the y Axis
+  chart2.append("g")
+      .call(d3.axisLeft(y));
+
+});
+
+
+
+
+</script>
