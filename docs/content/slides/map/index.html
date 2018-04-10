@@ -77,6 +77,8 @@ var path = d3.geoPath()
 
 
 var unemployment = d3.map();
+var state = d3.map();
+var county = d3.map();
 
 var path = d3.geoPath();
 
@@ -110,7 +112,10 @@ chart1.append("text")
 // Make map
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.csv, "income_unemployment.csv", function(d) { unemployment.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "income_unemployment.csv", function(d) { 
+      unemployment.set(d.id, +d.percent_poor); 
+      state.set(d.id, d.State);
+      county.set(d.id, d.County);})
     .await(ready);
 
   
@@ -196,6 +201,13 @@ var y = d3.scaleLinear()
 function clicked(d) {
   var x, y, k;
   console.log(d);
+  console.log(d.id);
+  console.log(d.percent_poor);
+  console.log(county.get(d.id))
+  console.log(state.get(d.id))
+  console.log(d.County);
+  console.log(d.State);
+
   if (d && centered !== d) {
     var centroid = path.centroid(d);
     x = centroid[0];
