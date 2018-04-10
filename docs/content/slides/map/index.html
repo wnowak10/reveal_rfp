@@ -272,33 +272,33 @@ function reset() {
     g.transition().duration(750).attr("transform", "");
 }
 
-
-
 function chartonClick(d) {
     var currentState = state.get(d.id);
     console.log(currentState)
 
-  d3.csv("sales.csv", function(error, data) {
+  d3.csv("income_unemployment.csv", function(error, data) {
   if (error) throw error;
 
   // format the data
   data.forEach(function(d) {
-    d.sales = +d.sales;
+    d.id = +d.id;
+    d.State = d.State;
+    d.percent_poor = +d.percent_poor
   });
 
   // Scale the range of the data in the domains
-  x.domain(data.map(function(d) { return d.salesperson; }));
-  y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+  x.domain(data.map(function(d) { return d.id; }));
+  y.domain([0, d3.max(data, function(d) { return d.percent_poor; })]);
 
   // append the rectangles for the bar chart
   chart2.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.salesperson); })
+      .attr("x", function(d) { return x(d.id); })
       .attr("width", x.bandwidth())
-      .attr("y", function(d) { return y(d.sales); })
-      .attr("height", function(d) { return height - y(d.sales); });
+      .attr("y", function(d) { return y(d.percent_poor); })
+      .attr("height", function(d) { return height - y(d.percent_poor); });
 
   // add the x Axis
   chart2.append("g")
@@ -312,6 +312,45 @@ function chartonClick(d) {
 });
 
 }
+
+// function chartonClick(d) {
+//     var currentState = state.get(d.id);
+//     console.log(currentState)
+
+//   d3.csv("sales.csv", function(error, data) {
+//   if (error) throw error;
+
+//   // format the data
+//   data.forEach(function(d) {
+//     d.sales = +d.sales;
+//   });
+
+//   // Scale the range of the data in the domains
+//   x.domain(data.map(function(d) { return d.salesperson; }));
+//   y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+
+//   // append the rectangles for the bar chart
+//   chart2.selectAll(".bar")
+//       .data(data)
+//     .enter().append("rect")
+//       .attr("class", "bar")
+//       .attr("x", function(d) { return x(d.salesperson); })
+//       .attr("width", x.bandwidth())
+//       .attr("y", function(d) { return y(d.sales); })
+//       .attr("height", function(d) { return height - y(d.sales); });
+
+//   // add the x Axis
+//   chart2.append("g")
+//       .attr("transform", "translate(0," + height + ")")
+//       .call(d3.axisBottom(x));
+
+//   // add the y Axis
+//   chart2.append("g")
+//       .call(d3.axisLeft(y));
+
+// });
+
+// }
           
 
 
