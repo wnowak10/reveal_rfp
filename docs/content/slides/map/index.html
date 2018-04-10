@@ -50,7 +50,7 @@ var margin = {top: 30, right: 20, bottom: 30, left: 50},
   width = w = 1000 - margin.left - margin.right,
   height = h = 800 - margin.top - margin.bottom;
 var centered;
-
+var currentState;
 // // ### create the SVG ###
 // text = d3.select('body').append('svg')
 //     .attr('width', width / 5)
@@ -204,9 +204,9 @@ function clicked(d) {
   console.log(d.id);
   console.log(d.percent_poor);
   console.log(county.get(d.id))
-  console.log(state.get(d.id))
-  console.log(d.County);
-  console.log(d.State);
+  // var currentState = state.get(d.id);
+  // console.log(d.County);
+  // console.log(d.State);
 
   if (d && centered !== d) {
     var centroid = path.centroid(d);
@@ -275,6 +275,9 @@ function reset() {
 
 
 function chartonClick(d) {
+    var currentState = state.get(d.id);
+    console.log(currentState)
+
   d3.csv("sales.csv", function(error, data) {
   if (error) throw error;
 
