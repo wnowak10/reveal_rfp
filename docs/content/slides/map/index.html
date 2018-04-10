@@ -48,7 +48,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 20, bottom: 30, left: 50},
   width = w = 1000 - margin.left - margin.right,
-  height = h = 800 - margin.top - margin.bottom;
+  height = h = 400 - margin.top - margin.bottom;
 var centered;
 var currentState;
 // // ### create the SVG ###
@@ -294,8 +294,9 @@ function chartonClick(d) {
   chart2.selectAll(".bar")
       .data(data)
     .enter().append("rect")
+      .filter(function(d) { return d.State === currentState; })
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.id); })
+      .attr("x", function(d) { return x(d.id) + 10; })
       .attr("width", x.bandwidth())
       .attr("y", function(d) { return y(d.percent_poor); })
       .attr("height", function(d) { return height - y(d.percent_poor); });
