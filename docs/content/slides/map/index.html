@@ -271,11 +271,11 @@ function reset() {
 function chartonClick(d) {
 
   // set the ranges
-var x = d3.scaleBand()
-          .range([0, width])
-          .padding(0.1);
-var y = d3.scaleLinear()
-          .range([height, 0]);
+// var x = d3.scaleBand()
+//           .range([0, width])
+//           .padding(0.1);
+// var y = d3.scaleLinear()
+//           .range([height, 0]);
 
 
     var currentState = state.get(d.id);
@@ -325,12 +325,12 @@ var y = d3.scaleLinear()
   // proportions 
   console.log(distribution_breakdowns);
 
-
-  data.forEach(function(d) {
-    d.id = +d.id;
-    d.State = d.State;
-    d.percent_poor = +d.percent_poor
-  });
+  // proportions = [ 40, 90, 30, 60 ];
+  // data.forEach(function(d) {
+  //   d.id = +d.id;
+  //   d.State = d.State;
+  //   d.percent_poor = +d.percent_poor
+  // });
 
   // this just adds another one below
   var chart2 = d3.select("body")
@@ -342,29 +342,62 @@ var y = d3.scaleLinear()
     // .transition();
 
   // Scale the range of the data in the domains
-  x.domain(data.map(function(d) { return d.id; }));
-  y.domain([0, d3.max(data, function(d) { return d.percent_poor; })]);
+  // x.domain(data.map(function(d) { return d.id; }));
+  // y.domain([0, d3.max(data, function(d) { return d.percent_poor; })]);
+
+  var arrayLength = proportions.length; // length of dataset
+  var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+  var x_axisLength = 100; // length of x-axis in our layout
+  var y_axisLength = 100;
+
+  // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
+  var yScale = d3.scaleLinear()
+  .domain([0, maxValue])
+  .range([0, y_axisLength]);
+
 
   // append the rectangles for the bar chart
-  chart2.selectAll(".bar")
-      .data(data)
-      // .data(data.filter(function(d) { return d.State === currentState; }))
-    .enter().append("rect")
-      // .filter(function(d) { return d.State === currentState; })
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.id); })
-      .attr("width", x.bandwidth())
-      .attr("y", function(d) { return y(d.percent_poor); })
-      .attr("height", function(d) { return height - y(d.percent_poor); });
+  chart2.selectAll( "rect" )
+    .data( proportions )
+    .enter()
+    .append("rect")
+    .attr( "x", function(d,i){
+      return i*25 + 30; // Set x coordinate of rectangle to index of data value (i)*25.
+      // Add 30 to account for our left margin.
+    })
+    .attr( "y", function(d){
+      return height - yScale(d); // Set y coordinate for each bar to height minus the data value
+    })
+    .attr( "width", 10 )
+    .attr( "height", function(d){
+      return yScale(d) ; // Set height of rectangle to data value
+    })
+    .attr( "fill", "steelblue");
+
+
+
+
+  // chart2.selectAll(".bar")
+  //     .data(proportions)
+  //     // .data(data.filter(function(d) { return d.State === currentState; }))
+  //   .enter().append("rect")
+  //     // .filter(function(d) { return d.State === currentState; })
+  //     .attr("class", "bar")
+  //     // .attr("x", function(d, i) { return x(d.id); })
+  //     .attr("width", function(d, i) {return i*100; })
+  //     // .attr("width", x.bandwidth())
+  //     .attr("y", 0)
+  //     // .attr("y", function(d) { return y(d.percent_poor); })
+  //     .attr("height", function(d) { return d*100; });
 
   // add the x Axis
-  chart2.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+  // chart2.append("g")
+  //     .attr("transform", "translate(0," + height + ")")
+  //     .call(d3.axisBottom(x));
 
-  // add the y Axis
-  chart2.append("g")
-      .call(d3.axisLeft(y));
+  // // add the y Axis
+  // chart2.append("g")
+  //     .call(d3.axisLeft(y));
 
 });
 
