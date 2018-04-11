@@ -347,13 +347,26 @@ function chartonClick(d) {
 
   var arrayLength = proportions.length; // length of dataset
   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
-  var x_axisLength = 100; // length of x-axis in our layout
-  var y_axisLength = 100;
+  var x_axisLength = width - margin.left; // length of x-axis in our layout
+  var y_axisLength = height / 2;
 
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   var yScale = d3.scaleLinear()
+  // .domain([0, 1])
   .domain([0, maxValue])
-  .range([0, y_axisLength]);
+  .range([y_axisLength, 0]);
+
+  // var yScale = d3.scaleLinear()
+  // .domain([0, maxValue])
+  // .range([0, y_axisLength]);
+
+  // var yAxis = d3.axis()
+  //                  .scale(yScale);
+
+                   // Add the x Axis
+  chart2.append("g")
+      .attr("transform", "translate(0,"+height/2+")")
+      .call(d3.axisLeft(yScale));
 
 
   // append the rectangles for the bar chart
@@ -372,8 +385,12 @@ function chartonClick(d) {
     .attr( "height", function(d){
       return yScale(d) ; // Set height of rectangle to data value
     })
-    .attr( "fill", "steelblue");
+    .attr( "fill", "steelblue")
+    .text(function(d){ return d;});
 
+// var gg = chart2.append("g");
+
+//     gg.call(yAxis);
 
 
 
