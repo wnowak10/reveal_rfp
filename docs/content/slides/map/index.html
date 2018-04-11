@@ -180,30 +180,15 @@ function ready(error, us) {
 }
 
 
-// Bar chart
 
-var chart2 = d3.select("body")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-// set the ranges
-var x = d3.scaleBand()
-          .range([0, width])
-          .padding(0.1);
-var y = d3.scaleLinear()
-          .range([height, 0]);
 
 // Zoom function
 function clicked(d) {
   var x, y, k;
-  console.log(d);
-  console.log(d.id);
-  console.log(d.percent_poor);
-  console.log(county.get(d.id))
+  // console.log(d);
+  // console.log(d.id);
+  // console.log(d.percent_poor);
+  // console.log(county.get(d.id))
   // var currentState = state.get(d.id);
   // console.log(d.County);
   // console.log(d.State);
@@ -266,6 +251,22 @@ function clicked(d) {
 // );
 // }
 
+// Bar chart
+
+var chart2 = d3.select("body")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
 
 function reset() {
     g.selectAll(".active").classed("active", active = false);
@@ -274,11 +275,16 @@ function reset() {
 
 function chartonClick(d) {
     var currentState = state.get(d.id);
+    var currentCounty = county.get(d.id);
+
     console.log(currentState)
+    console.log(currentCounty)
 
   d3.csv("income_unemployment.csv", function(error, data) {
   if (error) throw error;
-
+  
+  data = data.filter(function(d) { return d.State === currentState; })
+  console.log(data);
   // format the data
   data.forEach(function(d) {
     d.id = +d.id;
@@ -293,10 +299,11 @@ function chartonClick(d) {
   // append the rectangles for the bar chart
   chart2.selectAll(".bar")
       .data(data)
+      // .data(data.filter(function(d) { return d.State === currentState; }))
     .enter().append("rect")
-      .filter(function(d) { return d.State === currentState; })
+      // .filter(function(d) { return d.State === currentState; })
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.id) + 10; })
+      .attr("x", function(d) { return x(d.id) * 10; })
       .attr("width", x.bandwidth())
       .attr("y", function(d) { return y(d.percent_poor); })
       .attr("height", function(d) { return height - y(d.percent_poor); });
