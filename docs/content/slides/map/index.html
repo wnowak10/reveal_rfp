@@ -253,20 +253,15 @@ function clicked(d) {
 
 // Bar chart
 
-var chart2 = d3.select("body")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// var chart2 = d3.select("body")
+//   .append("svg")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom)
+//   .append("g")
+//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-// set the ranges
-var x = d3.scaleBand()
-          .range([0, width])
-          .padding(0.1);
-var y = d3.scaleLinear()
-          .range([height, 0]);
+
 
 function reset() {
     g.selectAll(".active").classed("active", active = false);
@@ -274,6 +269,15 @@ function reset() {
 }
 
 function chartonClick(d) {
+
+  // set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+
+
     var currentState = state.get(d.id);
     var currentCounty = county.get(d.id);
 
@@ -283,14 +287,36 @@ function chartonClick(d) {
   d3.csv("income_unemployment.csv", function(error, data) {
   if (error) throw error;
   
-  data = data.filter(function(d) { return d.State === currentState; })
+  data = data.filter(function(d) { return d.County === currentCounty & d.State === currentState; })
   console.log(data);
   // format the data
+
+  var arr1 = [], arr2 = []
+
+
+  for(var i=0; i<data.length; i++){
+
+    arr1.push(data[i]["Estimate; Total: - $10,000 to $14,999"]);
+
+    // arr2.push(data[i].column);
+  }
+  console.log(arr1);
+
+
   data.forEach(function(d) {
     d.id = +d.id;
     d.State = d.State;
     d.percent_poor = +d.percent_poor
   });
+
+  // this just adds another one below
+  var chart2 = d3.select("body")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // .transition();
 
   // Scale the range of the data in the domains
   x.domain(data.map(function(d) { return d.id; }));
