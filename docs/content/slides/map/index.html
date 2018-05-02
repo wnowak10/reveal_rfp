@@ -7,6 +7,8 @@ hover: http://bl.ocks.org/mattparrilla/5724610
 basic chloropleth https://bl.ocks.org/mbostock/4060606
 youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg
 click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
+<!-- scroll zoom https://bl.ocks.org/iamkevinv/0a24e9126cd2fa6b283c6f2d774b69a2 -->
+<!-- scale https://bl.ocks.org/andrew-reid/496078bd5e37fd22a9b43fd6be84b36b -->
 <!-- https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4 bar chart v4! -->
 <!-- 
 
@@ -27,13 +29,14 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 }
 
 .background {
-  fill: #F7E2DE;
+	fill: #ff0000 ;
+	/*fill: white;*/
   stroke: white;
   stroke-linejoin: round;
 }
 
 </style>
-<!-- <svg width="960" height="600"></svg> -->
+
 <script src="https://d3js.org/d3.v4.min.js"></script> 
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
@@ -42,27 +45,26 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 
 
 <body>
-
 </body>
 
 <script>
 
+var rawHeight = 700
 // Set the dimensions of the canvas / graph
-var margin = {top: 30, right: 20, bottom: 30, left: 50},
+var margin = {top: 40, right: 20, bottom: 30, left: 50},
   width = w = 1000 - margin.left - margin.right,
-  height = h = 800 - margin.top - margin.bottom;
+  height = h = (rawHeight - margin.top - margin.bottom);
 var centered;
 var currentState;
-// // ### create the SVG ###
-// text = d3.select('body').append('svg')
-//     .attr('width', width / 5)
-//     .attr('height', height/ 5)
     
 
+var title = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", 2*margin.top);
 
 var chart1 = d3.select("body").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height/2);
 
 chart1.append("rect")
     .attr("class", "background")
@@ -72,28 +74,38 @@ chart1.append("rect")
 
 var scale0 = 1
 var zoom = d3.zoom()
-    // .translate([width / 2, height / 2])
-    // .scale(scale0)
     .scaleExtent([scale0, 8 * scale0])
     .on("zoom", zoomed);
 
 chart1
     .call(zoom)
-    // .call(zoom.event);
 
 var g = chart1.append("g");
 
-var projection = d3.geoAlbersUsa();
 
+function scale (scaleFactor,width,height) {
+  return d3.geoTransform({
+    point: function(x, y) {
+      this.stream.point( (x - width/2) * scaleFactor + width/2+100 , (y - height/2) * scaleFactor + height/5); // + height/2);
+      // this.stream.point( (width/2)*scaleFactor , (y - height/2) * scaleFactor + height/5); // + height/2);
+    }
+  });
+}
+
+
+// var projection = d3.geoAlbersUsa();
+
+var mapScale = (rawHeight / 1400)
+var adjustment = height / 2
 var path = d3.geoPath()
-  .projection(projection);
+  .projection(scale(mapScale,width,height/2 - adjustment));
+
 
 
 var unemployment = d3.map();
 var state = d3.map();
 var county = d3.map();
 
-var path = d3.geoPath();
 
 var x = d3.scaleLinear()
     .domain([1, 10])
@@ -102,9 +114,10 @@ var x = d3.scaleLinear()
 var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
 
 // Title
-chart1.append("text")
-        .attr("x", (width / 2)) // Center            
-        .attr("y", margin.top) 
+var textWidth = (100+(width / 2))
+title.append("text")
+        .attr("x", textWidth) // Center            
+        .attr("y", margin.top*.5) 
         .attr("text-anchor", "middle")  
         .style("font-size", "26px") 
         .style("text-decoration", "underline")  
@@ -112,9 +125,9 @@ chart1.append("text")
         .text("Poverty in America")
 
         // Title
-chart1.append("text")
-        .attr("x", (width / 2)) // Center            
-        .attr("y", margin.top * 2) 
+title.append("text")
+        .attr("x", textWidth) // Center            
+        .attr("y", margin.top * 1.5) 
         .attr("text-anchor", "middle")  
         .style("text-decoration", "underline")  
         .style("fill", "darkred")
@@ -360,7 +373,7 @@ function chartonClick(d) {
   var chart2 = d3.select("body")
   .append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom + 500)
+    .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     // .transition();
@@ -437,6 +450,8 @@ function chartonClick(d) {
     })
     .attr( "fill", "steelblue")
     .text(function(d){ return d;});
+
+
 
 // var gg = chart2.append("g");
 
