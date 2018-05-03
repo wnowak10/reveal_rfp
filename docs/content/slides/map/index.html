@@ -17,6 +17,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+.container {
+  float: left;
+}
 .counties {
   fill: none;
 }
@@ -44,6 +47,10 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 
 <body>
+	<div class="container" id="chart1">
+</div>
+<div class="container" id="chart2">
+</div>
 </body>
 
 <script>
@@ -72,7 +79,7 @@ var currentState;
 // Set the title.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var title = d3.select("body").append("svg")
+var title = d3.select("#chart1").append("svg")
     .attr("width", width)
     .attr("height", 2*margin.top);
 
@@ -101,9 +108,10 @@ title.append("text")
 // Make the map.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var chart1 = d3.select("body").append("svg")
+var chart1 = d3.select("#chart1").append("svg")
     .attr("width", width)
     .attr("height", height);
+    // .attr("transform", "translate(,0)");
 
 chart1.append("rect")
     .attr("class", "background")
@@ -130,32 +138,11 @@ var x = d3.scaleLinear()
 
 var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
 
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Zoom functionality.
-//////////////////////////////////////////
-//////////////////////////////////////////
-var zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .on("zoom", zoomed);
-
-chart1
-    .call(zoom)
-// Make map
-d3.queue()
-    .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.csv, "income_unemployment.csv", function(d) { 
-      unemployment.set(d.id, +d.percent_poor); 
-      state.set(d.id, d.State);
-      county.set(d.id, d.County);})
-    .await(ready);
-
-  
-function zoomed() {
-  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-  g.attr("transform", d3.event.transform); // updated for d3 v4
-}
-
+/////
+//////
+// Interactive map.
+/////
+//////
 
 
 function ready(error, us) {
@@ -166,7 +153,7 @@ function ready(error, us) {
     .selectAll("path")
     .data(topojson.feature(us, us.objects.counties).features)
     .enter().append("path")
-      .attr("fill", function(d) { return color(d.percent_poor = unemployment.get(d.id)); })
+      .attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
@@ -220,7 +207,39 @@ function ready(error, us) {
       .attr("d", path);
 
 }
-// Zoom function
+
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Zoom functionality.
+//////////////////////////////////////////
+//////////////////////////////////////////
+var zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed);
+
+chart1
+    .call(zoom)
+// Make map
+d3.queue()
+    .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+    .defer(d3.csv, "income.csv", function(d) { 
+      poverty.set(d.id, +d.percent_poor); 
+      state.set(d.id, d.State);
+      county.set(d.id, d.County);})
+    .await(ready);
+
+  
+function zoomed() {
+  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+  g.attr("transform", d3.event.transform); // updated for d3 v4
+}
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+// Zoom on click function
+/////////////////////////////////////////////
+/////////////////////////////////////////////
 function clicked(d) {
   var x, y, k;
 
@@ -244,19 +263,27 @@ function clicked(d) {
       .duration(750)
       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
       .style("stroke-width", 1.5 / k + "px");
-
 }
-
-
-
-var unemployment = d3.map();
-var state = d3.map();
-var county = d3.map();
 
 function reset() {
     g.selectAll(".active").classed("active", active = false);
     g.transition().duration(750).attr("transform", "");
 }
+
+
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+// Add new data viz on click.
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+var poverty = d3.map();
+var state = d3.map();
+var county = d3.map();
+
+
 
 function chartonClick(d) {
     var currentState = state.get(d.id);
@@ -265,7 +292,7 @@ function chartonClick(d) {
     console.log(currentState)
     console.log(currentCounty)
 
-  d3.csv("income_unemployment.csv", function(error, data) {
+  d3.csv("income.csv", function(error, data) {
   if (error) throw error;
   
   data = data.filter(function(d) { return d.County === currentCounty & d.State === currentState; })
@@ -297,12 +324,28 @@ function chartonClick(d) {
 
   // this just adds another one below
   // var chart2 = d3.select("body")
-  var chart2 = chart1
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var chart2 = d3.select("#chart1").append("svg")
+    .attr("width", 1000)
+    .attr("height", 1000);
+    // .append("g");
+    // .attr("transform", "translate(800,-200)");
+
+    // chart1.append("rect")
+    // .attr("class", "background")
+    // .attr("width", width)
+    // .attr("height", height)
+    // .on("click", reset);
+
+var g2 = chart2.append("g");
+
+
+  // var chart2 = chart1
+  // .append("svg")
+  //   .attr("width", width + margin.left + margin.right)
+  //   .attr("height", height + margin.top + margin.bottom)
+  // .append("g")
+  //   .attr("transform", "translate(800,-200)");
 
 
   var arrayLength = proportions.length; // length of dataset
@@ -327,11 +370,11 @@ function chartonClick(d) {
   .range(result); //result
 
 
-  chart2.append("g")
+  g2.append("g")
       .attr("transform", "translate(0,"+height/2+")")
       .call(d3.axisLeft(yScale));
 
-   chart2.append("g")
+   g2.append("g")
       .attr("transform", "translate(0,"+height+")")
       .call(d3.axisBottom(xScale))
       .selectAll("text")
@@ -343,7 +386,7 @@ function chartonClick(d) {
 
 
   // append the rectangles for the bar chart
-  chart2.selectAll( "rect" )
+  g2.selectAll( "rect" )
     .data( proportions )
     .enter()
     .append("rect")
@@ -358,7 +401,7 @@ function chartonClick(d) {
     .attr( "height", function(d){
       return yScale(d) ; // Set height of rectangle to data value
     })
-    .attr( "fill", "steelblue")
+    .attr( "fill", "red")
     .text(function(d){ return d;});
 });
 }
