@@ -47,9 +47,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 
 <body>
-	<div class="container" id="chart1">
+<!-- 	<div class="container" id="chart1">
 </div>
-<div class="container" id="chart2">
+<div class="container" id="chart2"> -->
 </div>
 </body>
 
@@ -60,10 +60,10 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 // Set the dimensions of the canvas / graph.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var rawHeight = 700;
+var rawHeight = 650;
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var width = w = 1000 - margin.left - margin.right;
-var height = h = (rawHeight - margin.top - margin.bottom);
+var width = w = 1332/2 - margin.left - margin.right;
+var height = h = (rawHeight); // - margin.top - margin.bottom);
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -79,7 +79,8 @@ var currentState;
 // Set the title.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var title = d3.select("#chart1").append("svg")
+var title = d3.select("chart1").append("svg")
+// var title = d3.select("#chart1").append("svg")
     .attr("width", width)
     .attr("height", 2*margin.top);
 
@@ -108,7 +109,8 @@ title.append("text")
 // Make the map.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var chart1 = d3.select("#chart1").append("svg")
+var chart1 = d3.select("body").append("svg")
+// var chart1 = d3.select("#chart1").append("svg")
     .attr("width", width)
     .attr("height", height);
     // .attr("transform", "translate(,0)");
@@ -124,13 +126,13 @@ var g = chart1.append("g");
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor + width/2+100 , (y - height/2) * scaleFactor + height/5); // + height/2);
+      this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/5); // + height/2);
     }
   });
 }
-
+var mapScale = .6
 var path = d3.geoPath()
-  .projection(scale(1,width,height))
+  .projection(scale(mapScale,width,height))
 
 var x = d3.scaleLinear()
     .domain([1, 10])
@@ -325,9 +327,10 @@ function chartonClick(d) {
   // this just adds another one below
   // var chart2 = d3.select("body")
 
-  var chart2 = d3.select("#chart1").append("svg")
-    .attr("width", 1000)
-    .attr("height", 1000);
+  var chart2 = d3.select("body").append("svg")
+  // var chart2 = d3.select("#chart1").append("svg")
+    .attr("width", width)
+    .attr("height", height);
     // .append("g");
     // .attr("transform", "translate(800,-200)");
 
