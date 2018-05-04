@@ -289,14 +289,15 @@ var county = d3.map();
 
  var chart2 = d3.select("body").append("svg")
   // var chart2 = d3.select("#chart1").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
-
-
-var g2 = chart2.append("g")
+    .attr("width", width) // + margin.left + margin.right)
+    .attr("height", height) // + margin.top + margin.bottom) //;
+	.append("g")
 	.attr("transform","translate(40,"+height/2+")"); // Move chart to center of SVG
-	// .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-		//, "translate(50,-200)");
+
+
+// var g2 = chart2.append("g")
+// 	.attr("transform","translate(40,"+height/2+")"); // Move chart to center of SVG
+
 
 
 var distribution_breakdowns = ["Estimate; Total: - Less than $10,000"
@@ -365,12 +366,12 @@ console.log('-------------------------------');
   .range(result); //result
 
   console.log(height - yScale(maxValue));
-
-  g2.append("g")
+//was g2
+  chart2.append("g")
       .attr("transform", "translate(0,0)") // How far to shift down so ?
       .call(d3.axisLeft(yScale));
-
-   g2.append("g")
+//was g2
+   chart2.append("g")
       .attr("transform", "translate(0,0)")
       .call(d3.axisBottom(xScale))
       .selectAll("text")
@@ -381,8 +382,19 @@ console.log('-------------------------------');
     .style("text-anchor", "start");
 
 
+ // var chart2 = d3.select("body").append("svg")
+ //  // var chart2 = d3.select("#chart1").append("svg")
+ //    .attr("width", width + margin.left + margin.right)
+ //    .attr("height", height + margin.top + margin.bottom) //;
+	// .append("g")
+	// .attr("transform","translate(40,"+height/2+")");
+
+
   // append the rectangles for the bar chart
-  var barz = g2.selectAll( "rect" )
+  var barz = chart2
+  .append('g')
+  	.attr("transform", "translate(0,-"+height/2+")")
+  	.selectAll( "rect" )
     .data( proportions );
 
   // barz.update().exit().remove();
