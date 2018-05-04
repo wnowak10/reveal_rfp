@@ -47,10 +47,10 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 
 <body>
-<!-- 	<div class="container" id="chart1">
+	<div class="container" id="chart1">
 </div>
-<div class="container" id="chart2"> -->
-</div>
+<!-- <div class="container" id="chart2"> -->
+<!-- </div> -->
 </body>
 
 <script>
@@ -74,34 +74,6 @@ var rawHeight = 700
 var centered;
 var currentState;
 
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Set the title.
-//////////////////////////////////////////
-//////////////////////////////////////////
-var title = d3.select("chart1").append("svg")
-// var title = d3.select("#chart1").append("svg")
-    .attr("width", width)
-    .attr("height", 2*margin.top);
-
-var textWidth = width / 2
-title.append("text")
-        .attr("x", textWidth) // Center            
-        .attr("y", margin.top*.5) 
-        .attr("text-anchor", "middle")  
-        .style("font-size", "26px") 
-        .style("text-decoration", "underline")
-        .attr("class", "title")  
-        .text("Poverty in America")
-
-title.append("text")
-        .attr("x", textWidth) // Center            
-        .attr("y", margin.top * 1.5) 
-        .attr("text-anchor", "middle")  
-        .style("text-decoration", "underline")  
-        .attr("class", "title")  
-        .style("font-size", "16px") 
-        .text("Percent of households in county making less than $20,000. Click once/twice to zoom in/out.")
 
 
 //////////////////////////////////////////
@@ -159,9 +131,9 @@ function ready(error, us) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
-          clicked(d);
+          // clicked(d);
           chartonClick(d);
-          updateData(d);
+          // updateData(d);
       })
 
       .on("mouseover", function(d) {
@@ -213,6 +185,35 @@ function ready(error, us) {
 
 //////////////////////////////////////////
 //////////////////////////////////////////
+// Set the title.
+//////////////////////////////////////////
+//////////////////////////////////////////
+var title = d3.select("chart1").append("svg")
+// var title = d3.select("#chart1").append("svg")
+    .attr("width", width)
+    .attr("height", 2*margin.top);
+
+var textWidth = width / 2
+title.append("text")
+        .attr("x", textWidth) // Center            
+        .attr("y", margin.top*.5) 
+        .attr("text-anchor", "middle")  
+        .style("font-size", "26px") 
+        .style("text-decoration", "underline")
+        .attr("class", "title")  
+        .text("Poverty in America")
+
+title.append("text")
+        .attr("x", textWidth) // Center            
+        .attr("y", margin.top * 1.5) 
+        .attr("text-anchor", "middle")  
+        .style("text-decoration", "underline")  
+        .attr("class", "title")  
+        .style("font-size", "16px") 
+        .text("Percent of households in county making less than $20,000. Click once/twice to zoom in/out.")
+
+//////////////////////////////////////////
+//////////////////////////////////////////
 // Zoom functionality.
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -242,30 +243,30 @@ function zoomed() {
 // Zoom on click function
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-function clicked(d) {
-  var x, y, k;
+// function clicked(d) {
+//   var x, y, k;
 
-  if (d && centered !== d) {
-    var centroid = path.centroid(d);
-    x = centroid[0];
-    y = centroid[1];
-    k = 4;
-    centered = d;
-  } else {
-    x = width / 2;
-    y = height / 2;
-    k = 1;
-    centered = null;
-  }
+//   if (d && centered !== d) {
+//     var centroid = path.centroid(d);
+//     x = centroid[0];
+//     y = centroid[1];
+//     k = 4;
+//     centered = d;
+//   } else {
+//     x = width / 2;
+//     y = height / 2;
+//     k = 1;
+//     centered = null;
+//   }
 
-  g.selectAll("path")
-      .classed("active", centered && function(d) { return d === centered; });
+//   g.selectAll("path")
+//       .classed("active", centered && function(d) { return d === centered; });
 
-  g.transition()
-      .duration(750)
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-      .style("stroke-width", 1.5 / k + "px");
-}
+//   g.transition()
+//       .duration(750)
+//       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+//       .style("stroke-width", 1.5 / k + "px");
+// }
 
 function reset() {
     g.selectAll(".active").classed("active", active = false);
