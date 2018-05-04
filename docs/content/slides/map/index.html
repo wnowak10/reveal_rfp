@@ -320,6 +320,7 @@ var distribution_breakdowns = ["Estimate; Total: - Less than $10,000"
 
 function chartonClick(d) {
 
+	// d3.selectAll("chart2").remove();
     var currentState = state.get(d.id);
     var currentCounty = county.get(d.id);
 
@@ -395,12 +396,17 @@ console.log('-------------------------------');
   .append('g')
   	.attr("transform", "translate(0,-"+height/2+")")
   	.selectAll( "rect" )
+  	.exit()
+  	.remove()
     .data( proportions );
 
   // barz.update().exit().remove();
+  var enter = barz.enter()
+  var exit = barz.exit()
 
-  barz
-    .enter()
+  // barz
+  //   .enter()
+  enter
     .append("rect")
     .attr( "x", function(d,i){
       console.log('--------------*******************__________________');
@@ -418,7 +424,11 @@ console.log('-------------------------------');
     })
     .attr( "fill", "red")
     .text(function(d){ return d;});
+
+
+
 });
+  exit.remove();	
 }
 
 </script>
