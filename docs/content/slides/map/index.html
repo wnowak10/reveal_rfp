@@ -60,9 +60,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 // Set the dimensions of the canvas / graph.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var rawHeight = 650;
+var rawHeight = 550;
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var width = w = 1332/2 - margin.left - margin.right;
+var width = w = 550; // - margin.left - margin.right;
 var height = h = (rawHeight); // - margin.top - margin.bottom);
 
 //////////////////////////////////////////
@@ -70,7 +70,7 @@ var height = h = (rawHeight); // - margin.top - margin.bottom);
 // Assign global variables. 
 //////////////////////////////////////////
 //////////////////////////////////////////
-var rawHeight = 700
+// var rawHeight = 700
 var centered;
 var currentState;
 
@@ -83,14 +83,14 @@ var currentState;
 //////////////////////////////////////////
 var chart1 = d3.select("body").append("svg")
 // var chart1 = d3.select("#chart1").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
     // .attr("transform", "translate(,0)");
 
 chart1.append("rect")
     .attr("class", "background")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .on("click", reset);
 
 var g = chart1.append("g");
@@ -289,12 +289,14 @@ var county = d3.map();
 
  var chart2 = d3.select("body").append("svg")
   // var chart2 = d3.select("#chart1").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
 
 var g2 = chart2.append("g")
-	.attr("transform", "translate(50,-200)");
+	.attr("transform","translate(40,"+height/2+")"); // Move chart to center of SVG
+	// .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+		//, "translate(50,-200)");
 
 
 var distribution_breakdowns = ["Estimate; Total: - Less than $10,000"
@@ -342,8 +344,9 @@ console.log('-------------------------------');
 
   var arrayLength = proportions.length; // length of dataset
   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+  console.log(maxValue);
   var x_axisLength = width - margin.left; // length of x-axis in our layout
-  var y_axisLength = height / 2;
+  var y_axisLength = (height / 2)*.85;
 
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   var yScale = d3.scaleLinear()
@@ -364,11 +367,11 @@ console.log('-------------------------------');
   console.log(height - yScale(maxValue));
 
   g2.append("g")
-      .attr("transform", "translate(0,"+y_axisLength+")") // How far to shift down so ?
+      .attr("transform", "translate(0,0)") // How far to shift down so ?
       .call(d3.axisLeft(yScale));
 
    g2.append("g")
-      .attr("transform", "translate(0,"+height+")")
+      .attr("transform", "translate(0,0)")
       .call(d3.axisBottom(xScale))
       .selectAll("text")
     .attr("y", 0)
@@ -382,7 +385,7 @@ console.log('-------------------------------');
   var barz = g2.selectAll( "rect" )
     .data( proportions );
 
-  barz.exit().remove();
+  // barz.update().exit().remove();
 
   barz
     .enter()
@@ -395,11 +398,11 @@ console.log('-------------------------------');
       // Add 30 to account for our left margin.
     })
     .attr( "y", function(d){
-      return height - yScale(d); // Set y coordinate for each bar to height minus the data value
+      return yScale(d); // Set y coordinate for each bar to height minus the data value
     })
     .attr( "width", 10 )
     .attr( "height", function(d){
-      return yScale(d) ; // Set height of rectangle to data value
+      return height/2 - yScale(d); // Set height of rectangle to data value
     })
     .attr( "fill", "red")
     .text(function(d){ return d;});
