@@ -30,13 +30,11 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 }
 .background {
 	fill: green;
-	/*fill: white;*/
   stroke: white;
   stroke-linejoin: round;
 }
 .title {
 	fill: darkred;
-  /*stroke: darkred;*/
 }
 </style>
 
@@ -47,32 +45,24 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 
 <body>
-	<div class="container" id="chart1">
-</div>
-<!-- <div class="container" id="chart2"> -->
-<!-- </div> -->
 </body>
 
 <script>
 
 //////////////////////////////////////////
 //////////////////////////////////////////
-// Set the dimensions of the canvas / graph.
+// Set the dimensions of the canvas/graph.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var rawHeight = 550;
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var width = w = 550; // - margin.left - margin.right;
-var height = h = (rawHeight); // - margin.top - margin.bottom);
+var width = 550;
+var height = 550;
 
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Assign global variables. 
 //////////////////////////////////////////
 //////////////////////////////////////////
-// var rawHeight = 700
-var centered;
-var currentState;
 
 
 
@@ -82,60 +72,47 @@ var currentState;
 //////////////////////////////////////////
 //////////////////////////////////////////
 var chart1 = d3.select("body").append("svg")
-// var chart1 = d3.select("#chart1").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
-    // .attr("transform", "translate(,0)");
-
 chart1.append("rect")
     .attr("class", "background")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .on("click", reset);
-
+    .attr("height", height + margin.top + margin.bottom);
 var g = chart1.append("g");
+var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
 
+//////////////////////////////////////////
+// Scale map down
+//////////////////////////////////////////
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
       this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/5); // + height/2);
-    }
+                          }
   });
 }
 var mapScale = .6
 var path = d3.geoPath()
   .projection(scale(mapScale,width,height))
 
-var x = d3.scaleLinear()
-    .domain([1, 10])
-    .rangeRound([600, 860]);
-
-var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
-
-/////
-//////
-// Interactive map.
-/////
-//////
-
-
+//////////////////////////////////////////
+// Interactive map function.
+//////////////////////////////////////////
 function ready(error, us) {
   if (error) throw error;
 
   g.append("g")
       .attr("class", "counties")
-    .selectAll("path")
-    .data(topojson.feature(us, us.objects.counties).features)
-    .enter().append("path")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features)
+      .enter()
+      .append("path")
       .attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
-          // clicked(d);
           chartonClick(d);
-          // updateData(d);
       })
-
       .on("mouseover", function(d) {
                     var xPosition = d3.mouse(this)[0];
                     var yPosition = d3.mouse(this)[1] - 30;
@@ -155,7 +132,6 @@ function ready(error, us) {
                     d3.select(this)
                     .style("fill", "darkred");
                          })
-
       .on("mouseout", function(d) {
                     d3.select("#tooltip").remove();
 
@@ -179,8 +155,7 @@ function ready(error, us) {
       .attr("class", "counties")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
-
-}
+} // Close ready() function
 
 
 //////////////////////////////////////////
@@ -188,13 +163,8 @@ function ready(error, us) {
 // Set the title.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var title = d3.select("chart1").append("svg")
-// var title = d3.select("#chart1").append("svg")
-    .attr("width", width)
-    .attr("height", 2*margin.top);
-
 var textWidth = width / 2
-title.append("text")
+chart1.append("text")
         .attr("x", textWidth) // Center            
         .attr("y", margin.top*.5) 
         .attr("text-anchor", "middle")  
@@ -203,8 +173,8 @@ title.append("text")
         .attr("class", "title")  
         .text("Poverty in America")
 
-title.append("text")
-        .attr("x", textWidth) // Center            
+chart1.append("text")
+        .attr("x", textWidth)           
         .attr("y", margin.top * 1.5) 
         .attr("text-anchor", "middle")  
         .style("text-decoration", "underline")  
@@ -220,10 +190,18 @@ title.append("text")
 var zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on("zoom", zoomed);
-
 chart1
-    .call(zoom)
-// Make map
+    .call(zoom);
+function zoomed() {
+  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+  g.attr("transform", d3.event.transform); // updated for d3 v4
+};
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Make map (load data).
+//////////////////////////////////////////
+//////////////////////////////////////////
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
     .defer(d3.csv, "income.csv", function(d) { 
@@ -231,49 +209,6 @@ d3.queue()
       state.set(d.id, d.State);
       county.set(d.id, d.County);})
     .await(ready);
-
-  
-function zoomed() {
-  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-  g.attr("transform", d3.event.transform); // updated for d3 v4
-}
-
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-// Zoom on click function
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-// function clicked(d) {
-//   var x, y, k;
-
-//   if (d && centered !== d) {
-//     var centroid = path.centroid(d);
-//     x = centroid[0];
-//     y = centroid[1];
-//     k = 4;
-//     centered = d;
-//   } else {
-//     x = width / 2;
-//     y = height / 2;
-//     k = 1;
-//     centered = null;
-//   }
-
-//   g.selectAll("path")
-//       .classed("active", centered && function(d) { return d === centered; });
-
-//   g.transition()
-//       .duration(750)
-//       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-//       .style("stroke-width", 1.5 / k + "px");
-// }
-
-function reset() {
-    g.selectAll(".active").classed("active", active = false);
-    g.transition().duration(750).attr("transform", "");
-}
-
-
 
 
 /////////////////////////////////////////////
