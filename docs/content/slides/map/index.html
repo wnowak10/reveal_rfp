@@ -111,7 +111,10 @@ function ready(error, us) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
-          chartonClick(d);
+            // barz.remove();
+          chartonClick(d, barz);
+          // barz.remove();
+
       })
       .on("mouseover", function(d) {
                     var xPosition = d3.mouse(this)[0];
@@ -260,10 +263,14 @@ function getDistribution(data){
   return proportions
 };
 
+function spread(i){
+  // Spread a sequence (say, of x values), out.
+  return i*20+20;
+};
 function get_bar_x_positions(){
   var barXvalues = [];
   for(var i=0; i<distribution_breakdowns.length; i++){
-    barXvalues.push(i*25 + 30);
+    barXvalues.push(spread(i));
   }
   return barXvalues;
 };
@@ -305,7 +312,8 @@ function drawAxes(yScale, xScale){
 // Draw initial chart.
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-function initialChart(d) {
+// var barz;
+function initialChart() {
     var currentState = 'North Carolina'
     var currentCounty = 'Harnett County'
 
@@ -322,18 +330,17 @@ function initialChart(d) {
 
 
       // Append the rectangles (bars) for the bar chart
-      var barz = chart2
+      barz = chart2
         .append('g')
         .attr("transform", "translate(0,-"+height/2+")")
         .selectAll( "rect" )
         .data( proportions );
 
-
       barz
         .enter()
         .append("rect")
         .attr( "x", function(d,i){
-          return i*25 + 30; // Set x coordinate of rectangle to index of data value (i)*25.
+          return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
           })
         .attr( "y", function(d){
           return yScale(d); // Set y coordinate for each bar to height minus the data value
@@ -345,7 +352,7 @@ function initialChart(d) {
         .attr( "fill", "green");
 });
 };
-initialChart() // Call to initially populate with inital chart.
+initialChart(); // Call to initially populate with inital chart.
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
@@ -378,7 +385,7 @@ function chartonClick(d) {
         .enter()
         .append("rect")
         .attr( "x", function(d,i){
-          return i*25 + 30; // Set x coordinate of rectangle to index of data value (i)*25.
+          return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
           })
         .attr( "y", function(d){
           return yScale(d); // Set y coordinate for each bar to height minus the data value
