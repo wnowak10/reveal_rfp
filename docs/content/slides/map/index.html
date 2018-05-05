@@ -428,7 +428,121 @@ console.log('-------------------------------');
 
 
 });
-  exit.remove();	
+  // exit.remove();	
 }
 
+
+function initialChart() {
+
+  // d3.selectAll("chart2").remove();
+    var currentState = 'North Carolina'
+    var currentCounty = 'Harnett County'
+
+    console.log(currentState)
+    console.log(currentCounty)
+
+  d3.csv("income.csv", function(error, data) {
+  if (error) throw error;
+  
+
+  data = data.filter(function(d) { return d.County === currentCounty & d.State === currentState; })
+  console.log(data);
+  var proportions = []
+  
+  var countyPopulation = data[0]["Estimate; Total:"]
+  for(var i=0; i<distribution_breakdowns.length; i++){
+    proportions.push( data[0][distribution_breakdowns[i]]  / countyPopulation);
+  }
+
+console.log('proportionsUpdate?');
+console.log(proportions);
+console.log('-------------------------------');
+
+  var arrayLength = proportions.length; // length of dataset
+  var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+  console.log(maxValue);
+  var x_axisLength = width - margin.left; // length of x-axis in our layout
+  var y_axisLength = (height / 2)*.85;
+
+  // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
+  var yScale = d3.scaleLinear()
+  // .domain([0, 1])
+  .domain([0, maxValue])
+  .range([y_axisLength, 0]);
+
+
+  var result = [];
+  for(var i=0; i<distribution_breakdowns.length; i++){
+    result.push(i*25 + 30);
+  }
+
+  var xScale = d3.scaleOrdinal()
+  .domain(distribution_breakdowns)
+  .range(result); //result
+
+  console.log(height - yScale(maxValue));
+//was g2
+  chart2.append("g")
+      .attr("transform", "translate(0,0)") // How far to shift down so ?
+      .call(d3.axisLeft(yScale));
+//was g2
+   chart2.append("g")
+      .attr("transform", "translate(0,0)")
+      .call(d3.axisBottom(xScale))
+      .selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", ".35em")
+    .attr("transform", "rotate(90)")
+    .style("text-anchor", "start");
+
+
+ // var chart2 = d3.select("body").append("svg")
+ //  // var chart2 = d3.select("#chart1").append("svg")
+ //    .attr("width", width + margin.left + margin.right)
+ //    .attr("height", height + margin.top + margin.bottom) //;
+  // .append("g")
+  // .attr("transform","translate(40,"+height/2+")");
+
+
+  // append the rectangles for the bar chart
+  var barz = chart2
+  .append('g')
+    .attr("transform", "translate(0,-"+height/2+")")
+    .selectAll( "rect" )
+    .exit()
+    .remove()
+    .data( proportions );
+
+  // barz.update().exit().remove();
+  var enter = barz.enter()
+  var exit = barz.exit()
+
+  // barz
+  //   .enter()
+  enter
+    .append("rect")
+    .attr( "x", function(d,i){
+      console.log('--------------*******************__________________');
+      console.log(d);
+      return i*25 + 30; // Set x coordinate of rectangle to index of data value (i)*25.
+
+      // Add 30 to account for our left margin.
+    })
+    .attr( "y", function(d){
+      return yScale(d); // Set y coordinate for each bar to height minus the data value
+    })
+    .attr( "width", 10 )
+    .attr( "height", function(d){
+      return height/2 - yScale(d); // Set height of rectangle to data value
+    })
+    .attr( "fill", "blue")
+    .text(function(d){ return d;});
+
+
+
+});
+  // exit.remove();  
+};
+initialChart()
 </script>
