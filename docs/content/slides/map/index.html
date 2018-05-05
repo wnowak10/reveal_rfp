@@ -281,9 +281,10 @@ function getYscale(proportions){
   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
   console.log(maxValue);
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
-  return yScale = d3.scaleLinear()
+  yScale = d3.scaleLinear()
     .domain([0, maxValue])
     .range([y_axisLength, 0]);
+  return [yScale, maxValue];
 }
 function getXscale(barXvalues){
    return xScale = d3.scaleOrdinal()
@@ -327,7 +328,7 @@ function initialChart() {
       proportions = getDistribution(data);
 
       barXvalues  = get_bar_x_positions();
-      yScale = getYscale(proportions);
+      yScale = getYscale(proportions)[0];
       xScale = getXscale(barXvalues);
       drawAxes(yScale, xScale);
 
@@ -380,7 +381,7 @@ function chartonClick(d) {
       
 
       barXvalues  = get_bar_x_positions();
-      yScale = getYscale(proportions);
+      yScale = getYscale(proportions)[0];
       xScale = getXscale(barXvalues);
       drawAxes(yScale, xScale);
 
@@ -398,10 +399,18 @@ function chartonClick(d) {
         .attr( "x", function(d,i){
           return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
           })
+        .attr("y", function(d) {
+        return yScale(-getYscale(proportions)[1]);
+        })
+        .attr("height", 0)
+        .transition()
+        .duration(100)
         .attr( "y", function(d){
           return yScale(d); // Set y coordinate for each bar to height minus the data value
           })
         .attr( "width", 10 )
+         // .transition()
+        // .duration(2000)
         .attr( "height", function(d){
           return height/2 - yScale(d); // Set height of rectangle to data value
           })
