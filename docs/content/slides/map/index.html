@@ -29,7 +29,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   stroke-linejoin: round;
 }
 .background {
-	fill: green;
+	fill: white;
   stroke: white;
   stroke-linejoin: round;
 }
@@ -65,7 +65,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 //////////////////////////////////////////
     //Slider Properties
     var sliderWidth = 320;
-    var maxValue = 2018;
+    var maxValue = 2016;
     var minValue = 2010;
     var initialValue = minValue;
     var color = "red";
@@ -78,7 +78,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
     var selectedValue;
     var sliderSVG = d3.select("#button1").append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
     initialValue = 2016;
-    var fileName = 'black2016map.csv';
+    var fileName = 'black2015map.csv';
     function dragEnded() {
         selectedValue = d3.event.x;
         if (selectedValue < 0)
@@ -93,9 +93,10 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
         console.log(Math.round(NormValue*(maxValue-minValue)+minValue));
         document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
         // console.log(selectedValue);
-        fileName = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
-        console.log(fileName);
-        // updateMap();
+        xx = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
+        console.log(xx);
+        drawMap("mapData/"+xx);
+        // chartonClick(d);
     }
     //Line to represent the current value
     var valueLine = sliderSVG.append("line")
@@ -166,7 +167,7 @@ var color = d3.scaleLinear().domain([0, .5]).range(['lightblue', 'darkblue']);
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/5); // + height/2);
+      this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/10);
                           }
   });
 }
@@ -286,15 +287,17 @@ var poverty = d3.map();
 var state = d3.map();
 var county = d3.map();
 
-console.log(fileName);
+function drawMap(incomeData){
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.csv, "mapData/"+fileName, function(d) {     
+    .defer(d3.csv, incomeData, function(d) {     
     // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
       poverty.set(d.id, +d.percent_poor); // Need for choropleth.
       state.set(d.id, d.State); // Need for filtering data.
       county.set(d.id, d.County);}) // ""
     .await(ready);
+};
+drawMap("mapData/"+fileName);
 
 
 /////////////////////////////////////////////
