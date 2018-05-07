@@ -111,10 +111,7 @@ function ready(error, us) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
-            // barz.remove();
-          chartonClick(d, barz);
-          // barz.remove();
-
+          chartonClick(d);
       })
       .on("mouseover", function(d) {
                     var xPosition = d3.mouse(this)[0];
@@ -130,7 +127,8 @@ function ready(error, us) {
                         .attr("font-size", "11px")
                         .attr("font-weight", "bold")
                         .style("fill", "darkred")
-                        .text(d.percent_poor * 100 + '%');
+                        .text(county.get(d.id));
+                        // .text(d.percent_poor * 100 + '%');
 
                     d3.select(this)
                     .style("fill", "darkred");
@@ -140,7 +138,7 @@ function ready(error, us) {
 
                     d3.select(this)
                     .transition()
-                    .duration(250)
+                    .duration(600)
                     .attr("fill", color(d.percent_poor))
                     .style("fill", function(d) {
                       return color(d.percent_poor);
