@@ -43,11 +43,87 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
+<script src="https://d3js.org/d3-drag.v1.min.js"></script>
 
 <body>
+   <div class="headmenu" >
+            <a id="button1"></a>
+            <a> <input id="value" type="number"> </a>
+
+        </div>
+        <div id="vis"></div>
+
 </body>
 
+
 <script>
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Slider.
+// https://github.com/arbelzinger/d3_v4_slider/blob/master/d3-slider.html
+//////////////////////////////////////////
+//////////////////////////////////////////
+    //Slider Properties
+    var sliderWidth = 320;
+    var maxValue = 2018;
+    var minValue = 2010;
+    var initialValue = minValue;
+    var color = "red";
+    var emptyColor = "#ECECEC";
+    var thumbColor = "white";
+    var lineWidth = 6;
+    var thumbSize = 6;
+    ////////////////////////////////////////
+    var NormValue = (initialValue-minValue)/(maxValue-minValue); // value normalized between 0-1
+    var selectedValue;
+    var sliderSVG = d3.select("#button1").append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
+    initialValue = 2010;
+    function dragEnded() {
+        selectedValue = d3.event.x;
+        if (selectedValue < 0)
+            selectedValue = 0;
+        else if (selectedValue > sliderWidth)
+            selectedValue = sliderWidth;
+        NormValue = selectedValue / sliderWidth;
+        valueCircle.attr("cx", selectedValue);
+        valueLine.attr("x2", sliderWidth * NormValue);
+        emptyLine.attr("x1", sliderWidth * NormValue);
+        d3.event.sourceEvent.stopPropagation();
+        console.log(Math.round(NormValue*(maxValue-minValue)+minValue));
+        document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
+        // console.log(selectedValue);
+        fileName = 'file'+Math.round(NormValue*(maxValue-minValue)+minValue);
+        console.log(fileName);
+        // updateMap();
+    }
+    //Line to represent the current value
+    var valueLine = sliderSVG.append("line")
+            .attr("x1", 0)
+            .attr("x2", sliderWidth * NormValue)
+            .attr("y1", 20)
+            .attr("y2", 20)
+            .style("stroke", color)
+            .style("stroke-linecap", "round")
+            .style("stroke-width", lineWidth);
+    //Line to show the remaining value
+    var emptyLine = sliderSVG.append("line")
+            .attr("x1", sliderWidth * NormValue)
+            .attr("x2", sliderWidth)
+            .attr("y1", 20)
+            .attr("y2", 20)
+            .style("stroke", emptyColor)
+            .style("stroke-linecap", "round")
+            .style("stroke-width", lineWidth);
+    //Draggable circle to represent the current value
+    var valueCircle = sliderSVG.append("circle")
+            .attr("cx", sliderWidth * NormValue)
+            .attr("cy", 20)
+            .attr("r", thumbSize)
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+            .style("fill", thumbColor)
+            .call(d3.drag().on("drag", dragEnded));
+
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -58,11 +134,13 @@ var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 550;
 var height = 550;
 
-//////////////////////////////////////////
-//////////////////////////////////////////
+
+
+////////////////////////////////////////
+////////////////////////////////////////
 // Assign global variables. 
-//////////////////////////////////////////
-//////////////////////////////////////////
+////////////////////////////////////////
+////////////////////////////////////////
 
 
 
