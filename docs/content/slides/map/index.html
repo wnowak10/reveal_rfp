@@ -77,7 +77,8 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
     var NormValue = (initialValue-minValue)/(maxValue-minValue); // value normalized between 0-1
     var selectedValue;
     var sliderSVG = d3.select("#button1").append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
-    initialValue = 2010;
+    initialValue = 2016;
+    var fileName = 'black2016map.csv';
     function dragEnded() {
         selectedValue = d3.event.x;
         if (selectedValue < 0)
@@ -92,7 +93,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
         console.log(Math.round(NormValue*(maxValue-minValue)+minValue));
         document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
         // console.log(selectedValue);
-        fileName = 'file'+Math.round(NormValue*(maxValue-minValue)+minValue);
+        fileName = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
         console.log(fileName);
         // updateMap();
     }
@@ -285,9 +286,11 @@ var poverty = d3.map();
 var state = d3.map();
 var county = d3.map();
 
+console.log(fileName);
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.csv, "income.csv", function(d) { 
+    .defer(d3.csv, "mapData/"+fileName, function(d) {     
+    // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
       poverty.set(d.id, +d.percent_poor); // Need for choropleth.
       state.set(d.id, d.State); // Need for filtering data.
       county.set(d.id, d.County);}) // ""
@@ -394,10 +397,10 @@ function drawAxes(yScale, xScale){
 /////////////////////////////////////////////
 // var barz;
 function initialChart() {
-    var currentState = 'North Carolina'
-    var currentCounty = 'Harnett County'
+    var currentState = 'North Dakota'
+    var currentCounty = 'Cavalier County'
 
-    d3.csv("income.csv", function(error, data) {
+    d3.csv("mapData/"+fileName, function(error, data) {
       if (error) throw error;
   
       data = filterbyCounty(data, currentCounty, currentState);
@@ -446,7 +449,7 @@ function chartonClick(d) {
     var currentCounty = county.get(d.id);
     var currentState = state.get(d.id);
 
-    d3.csv("income.csv", function(error, data) {
+    d3.csv("mapData/"+fileName, function(error, data) {
       if (error) throw error;
   
       data = filterbyCounty(data, currentCounty, currentState);
