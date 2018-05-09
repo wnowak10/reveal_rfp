@@ -178,6 +178,11 @@ var path = d3.geoPath()
 //////////////////////////////////////////
 // Interactive map function.
 //////////////////////////////////////////
+var numclicks =  0;
+function incrementValue(){
+  numclicks+=1;
+  // console.log(numclicks);
+}
 function ready(error, us) {
   if (error) throw error;
 
@@ -191,7 +196,8 @@ function ready(error, us) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("click", function(d){
-          chartonClick(d);
+          incrementValue();
+          chartonClick(d, numclicks);
       })
       .on("mouseover", function(d) {
                     var xPosition = d3.mouse(this)[0];
@@ -316,7 +322,7 @@ drawMap("mapData/"+fileName);
     .attr("width", width) 
     .attr("height", height)
   	.append("g")
-  	.attr("transform","translate(40,"+height/2+")"); // Move chart to center of SVG
+  	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
 
 var distribution_breakdowns = [
                                 "Estimate; Total: - Less than $10,000"
@@ -353,7 +359,7 @@ function getDistribution(data){
   }
   return proportions
 };
-
+// https://www.investopedia.com/financial-edge/0912/which-income-class-are-you.aspx
 function low_Middle_High_class(proportions){
   newData = []
   low = 0
@@ -361,8 +367,6 @@ function low_Middle_High_class(proportions){
     low += proportions[i]
   }
   newData.push(low)
-  console.log('Percent of individuals in low class (<35k')
-  console.log(newData);
   medium = 0
   for(var i=7; i<13;i++){
     medium += proportions[i]
@@ -373,23 +377,32 @@ function low_Middle_High_class(proportions){
     high += proportions[i]
   }
   newData.push(high)
-  console.log(newData);
   return newData;
 
 };
-var barSpacing = 150;
-var barWidth = barSpacing*.75
+var barSpacing = 100;
+var barWidth = 20;
+function bar_location(d,i, numclicks){
+  console.log("d", d);
+  console.log("i", i);
+  // console.log(x);
+  console.log("numclicks", numclicks);
+  // console.log("numclicks*barWidth", numclicks*barWidth);
+  bar_loc = (i*barSpacing)+barWidth*(numclicks);
+  return bar_loc;
+};
+
 function spread(i){
   // Spread a sequence (say, of x values), out.
-  return i*barSpacing+20;
+  return i*barSpacing+barWidth;
 };
-function get_bar_x_positions(){
-  var barXvalues = [];
-  for(var i=0; i<distribution_breakdowns.length; i++){
-    barXvalues.push(spread(i));
-  }
-  return barXvalues;
-};
+// function get_bar_x_positions(){
+//   var barXvalues = [];
+//   for(var i=0; i<distribution_breakdowns.length; i++){
+//     barXvalues.push(spread(i));
+//   }
+//   return barXvalues;
+// };
 
 classes = ["Low", "Middle", "High"]
 function get_CLASS_bar_x_positions(){
@@ -397,19 +410,21 @@ function get_CLASS_bar_x_positions(){
   for(var i=0; i<classes.length; i++){
     barXvalues.push(spread(i));
   }
+  console.log(barXvalues);
   return barXvalues;
 };
 
-var y_axisLength = (height / 2)*.85;
+var y_axisLength = (height / 2); //*.85;
 function getYscale(proportions){
-  console.log('?????')
-  console.log(proportions);
+  // console.log('?????')
+  // console.log(proportions);
   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
-  console.log('maxValue');
-  console.log(maxValue);
+  // console.log('maxValue');
+  // console.log(maxValue);
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   yScale = d3.scaleLinear()
-    .domain([0, maxValue])
+    .domain([0, 1])
+    // .domain([0, maxValue])
     .range([y_axisLength, 0]);
   return [yScale, maxValue];
 }
@@ -444,56 +459,65 @@ function drawAxes(yScale, xScale){
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 // var barz;
-function initialChart() {
-    var currentState = 'Maine'
-    var currentCounty = 'Aroostook County'
+// function initialChart() {
+//     var currentState = 'Maine'
+//     var currentCounty = 'Aroostook County'
 
-    d3.csv("mapData/"+fileName, function(error, data) {
-      if (error) throw error;
+//     d3.csv("mapData/"+fileName, function(error, data) {
+//       if (error) throw error;
   
-      data = filterbyCounty(data, currentCounty, currentState);
-      proportions = getDistribution(data);
+//       data = filterbyCounty(data, currentCounty, currentState);
+//       proportions = getDistribution(data);
 
-      barXvalues  = get_bar_x_positions();
-      yScale = getYscale(proportions)[0];
-      xScale = getXscale(barXvalues);
-      drawAxes(yScale, xScale);
+//       barXvalues  = get_bar_x_positions();
+//       yScale = getYscale(proportions)[0];
+//       xScale = getXscale(barXvalues);
+//       drawAxes(yScale, xScale);
 
 
-      // Append the rectangles (bars) for the bar chart
-      barz = chart2
-        .append('g')
-        .attr("transform", "translate(0,-"+height/2+")")
-        .selectAll( "rect" )
-        .data( proportions );
+//       // Append the rectangles (bars) for the bar chart
+//       barz = chart2
+//         .append('g')
+//         .attr("transform", "translate(0,-"+height/2+")")
+//         .selectAll( "rect" )
+//         .data( proportions );
 
-      barz
-        .enter()
-        .append("rect")
-        .attr( "x", function(d,i){
-          return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
-          })
-        .attr( "y", function(d){
-          return yScale(d); // Set y coordinate for each bar to height minus the data value
-          })
-        .attr( "width", 10 )
-        .attr( "height", function(d){
-          return height/2 - yScale(d); // Set height of rectangle to data value
-          })
-        .attr( "fill", "green")
-        .attr("id",function(d,i){
-          return "bar"+i; // Set x coordinate of rectangle to index of data value (i)*25.
-          });
-});
-};
-initialChart(); // Call to initially populate with inital chart.
+//       barz
+//         .enter()
+//         .append("rect")
+//         .attr( "x", function(d,i){
+//           return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
+//           })
+//         .attr( "y", function(d){
+//           return yScale(d); // Set y coordinate for each bar to height minus the data value
+//           })
+//         .attr( "width", 10 )
+//         .attr( "height", function(d){
+//           return height/2 - yScale(d); // Set height of rectangle to data value
+//           })
+//         .attr( "fill", "green")
+//         .attr("id",function(d,i){
+//           return "bar"+i; // Set x coordinate of rectangle to index of data value (i)*25.
+//           });
+// });
+// };
+// initialChart(); // Call to initially populate with inital chart.
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 // Add new data viz on click. 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-function chartonClick(d) {
+function bar_colors(numclicks){
+  if (numclicks %2 == 0) {
+      return  "green";
+          } else {
+      return "red";
+          }
+};
+
+function chartonClick(d, numclicks) {
+    console.log("numclicks", numclicks);
     var currentCounty = county.get(d.id);
     var currentState = state.get(d.id);
 
@@ -502,13 +526,14 @@ function chartonClick(d) {
   
       data = filterbyCounty(data, currentCounty, currentState);
       proportions = getDistribution(data);
-      console.log('proportions to input to y value', proportions);
+      // console.log('proportions to input to y value', proportions);
       class_dist = low_Middle_High_class(proportions);
+
       console.log('class_dist to input to y value', class_dist);
 
 
-      d3.selectAll("rect").remove(); // Remove old bar.
-      d3.selectAll("#axes").remove(); // Remove old axes.
+      // d3.selectAll("rect").remove(); // Remove old bar.
+      // d3.selectAll("#axes").remove(); // Remove old axes.
       
 
       barXvalues = get_CLASS_bar_x_positions();
@@ -517,9 +542,10 @@ function chartonClick(d) {
       // barXvalues  = get_bar_x_positions();
       yScale = getYscale(class_dist)[0];
       // yScale = getYscale(proportions)[0];
-      xScale = getXscale(barXvalues);
-      drawAxes(yScale, xScale);
-
+      if (numclicks ==1){
+        xScale = getXscale(barXvalues);
+        drawAxes(yScale, xScale);
+      }
 
       // Append the rectangles (bars) for the bar chart
       var barz = chart2
@@ -527,12 +553,15 @@ function chartonClick(d) {
         .attr("transform", "translate(0,-"+height/2+")")
         .selectAll( "rect" )
         .data( class_dist );
-
+      // var barWidth = barSpacing*.75
+      // var barWidth = 50;
+      console.log('bars > numclicks', numclicks);
       barz
         .enter()
         .append("rect")
-        .attr( "x", function(d,i){
-          return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
+        .attr( "x", function(d, i){
+           // console.log("bar locations", bar_location(numclicks, i));
+          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
           })
         .attr("y", function(d) {
         return yScale(-getYscale(class_dist)[1]);
@@ -549,7 +578,8 @@ function chartonClick(d) {
         .attr( "height", function(d){
           return height/2 - yScale(d); // Set height of rectangle to data value
           })
-        .attr( "fill", "red");
+        // .attr( "fill", "red");
+        .attr("fill", bar_colors(numclicks));
 });
 };
 
