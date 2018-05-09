@@ -256,12 +256,21 @@ chart1.append("text")
 
 chart1.append("text")
         .attr("x", textWidth)           
-        .attr("y", margin.top * 1.5) 
+        .attr("y", margin.top * 1.2) 
         .attr("text-anchor", "middle")  
         .style("text-decoration", "underline")  
         .attr("class", "title")  
         .style("font-size", "16px") 
         .text("Percent of households in a county making less than $20,000.")
+
+chart1.append("text")
+        .attr("x", textWidth)           
+        .attr("y", margin.top * 1.75) 
+        .attr("text-anchor", "middle")  
+        .style("text-decoration", "underline")  
+        .attr("class", "title")  
+        .style("font-size", "16px") 
+        .text("Click on county to see county-wide income distribution.")
 
 //////////////////////////////////////////
 //////////////////////////////////////////
