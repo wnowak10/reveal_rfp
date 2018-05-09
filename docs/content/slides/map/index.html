@@ -181,6 +181,7 @@ var path = d3.geoPath()
 var numclicks =  0;
 function incrementValue(){
   numclicks+=1;
+  numclicks = numclicks%4;
   // console.log(numclicks);
 }
 function ready(error, us) {
@@ -518,6 +519,7 @@ function bar_colors(numclicks){
 
 function chartonClick(d, numclicks) {
     console.log("numclicks", numclicks);
+    numclicks = numclicks
     var currentCounty = county.get(d.id);
     var currentState = state.get(d.id);
 
@@ -531,7 +533,11 @@ function chartonClick(d, numclicks) {
 
       console.log('class_dist to input to y value', class_dist);
 
-
+      if (numclicks == 0){
+        d3.selectAll("rect").remove(); // Remove old bar.
+        // numclicks = numclicks % 4;
+      }
+      // console.log("numclicks after reset", numclicks);
       // d3.selectAll("rect").remove(); // Remove old bar.
       // d3.selectAll("#axes").remove(); // Remove old axes.
       
