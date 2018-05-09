@@ -354,9 +354,34 @@ function getDistribution(data){
   return proportions
 };
 
+function low_Middle_High_class(proportions){
+  newData = []
+  low = 0
+  for(var i=0; i<7;i++){
+    low += proportions[i]
+  }
+  newData.push(low)
+  console.log('Percent of individuals in low class (<35k')
+  console.log(newData);
+  medium = 0
+  for(var i=7; i<13;i++){
+    medium += proportions[i]
+  }
+  newData.push(medium)
+  high = 0
+  for(var i=12; i<16;i++){
+    high += proportions[i]
+  }
+  newData.push(high)
+  console.log(newData);
+  return newData;
+
+};
+var barSpacing = 150;
+var barWidth = barSpacing*.75
 function spread(i){
   // Spread a sequence (say, of x values), out.
-  return i*20+20;
+  return i*barSpacing+20;
 };
 function get_bar_x_positions(){
   var barXvalues = [];
@@ -366,10 +391,21 @@ function get_bar_x_positions(){
   return barXvalues;
 };
 
+classes = ["Low", "Middle", "High"]
+function get_CLASS_bar_x_positions(){
+  var barXvalues = [];
+  for(var i=0; i<classes.length; i++){
+    barXvalues.push(spread(i));
+  }
+  return barXvalues;
+};
 
 var y_axisLength = (height / 2)*.85;
 function getYscale(proportions){
+  console.log('?????')
+  console.log(proportions);
   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+  console.log('maxValue');
   console.log(maxValue);
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   yScale = d3.scaleLinear()
@@ -379,7 +415,7 @@ function getYscale(proportions){
 }
 function getXscale(barXvalues){
    return xScale = d3.scaleOrdinal()
-      .domain(distribution_breakdowns)
+      .domain(classes)
       .range(barXvalues); //result
 }
 
@@ -409,8 +445,8 @@ function drawAxes(yScale, xScale){
 /////////////////////////////////////////////
 // var barz;
 function initialChart() {
-    var currentState = 'North Dakota'
-    var currentCounty = 'Cavalier County'
+    var currentState = 'Maine'
+    var currentCounty = 'Aroostook County'
 
     d3.csv("mapData/"+fileName, function(error, data) {
       if (error) throw error;
@@ -466,13 +502,21 @@ function chartonClick(d) {
   
       data = filterbyCounty(data, currentCounty, currentState);
       proportions = getDistribution(data);
+      console.log('proportions to input to y value', proportions);
+      class_dist = low_Middle_High_class(proportions);
+      console.log('class_dist to input to y value', class_dist);
+
 
       d3.selectAll("rect").remove(); // Remove old bar.
       d3.selectAll("#axes").remove(); // Remove old axes.
       
 
-      barXvalues  = get_bar_x_positions();
-      yScale = getYscale(proportions)[0];
+      barXvalues = get_CLASS_bar_x_positions();
+
+
+      // barXvalues  = get_bar_x_positions();
+      yScale = getYscale(class_dist)[0];
+      // yScale = getYscale(proportions)[0];
       xScale = getXscale(barXvalues);
       drawAxes(yScale, xScale);
 
@@ -482,7 +526,7 @@ function chartonClick(d) {
         .append('g')
         .attr("transform", "translate(0,-"+height/2+")")
         .selectAll( "rect" )
-        .data( proportions );
+        .data( class_dist );
 
       barz
         .enter()
@@ -491,7 +535,7 @@ function chartonClick(d) {
           return spread(i); // Set x coordinate of rectangle to index of data value (i)*25.
           })
         .attr("y", function(d) {
-        return yScale(-getYscale(proportions)[1]);
+        return yScale(-getYscale(class_dist)[1]);
         })
         .attr("height", 0)
         .transition()
@@ -499,7 +543,7 @@ function chartonClick(d) {
         .attr( "y", function(d){
           return yScale(d); // Set y coordinate for each bar to height minus the data value
           })
-        .attr( "width", 10 )
+        .attr( "width", barWidth )
          // .transition()
         // .duration(2000)
         .attr( "height", function(d){
