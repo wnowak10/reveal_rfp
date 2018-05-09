@@ -178,10 +178,13 @@ var path = d3.geoPath()
 //////////////////////////////////////////
 // Interactive map function.
 //////////////////////////////////////////
-var numclicks =  0;
+var numclicks = -1;
 function incrementValue(){
   numclicks+=1;
-  numclicks = numclicks%4;
+  if (numclicks > 4){
+  	 numclicks = (numclicks%5);
+  }
+ 
   // console.log(numclicks);
 }
 function ready(error, us) {
@@ -389,7 +392,7 @@ function bar_location(d,i, numclicks){
   // console.log(x);
   console.log("numclicks", numclicks);
   // console.log("numclicks*barWidth", numclicks*barWidth);
-  bar_loc = (i*barSpacing)+barWidth*(numclicks);
+  bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
   return bar_loc;
 };
 
@@ -510,18 +513,34 @@ function drawAxes(yScale, xScale){
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 function bar_colors(numclicks){
-  if (numclicks %2 == 0) {
-      return  "green";
-          } else {
-      return "red";
-          }
+  if (numclicks == 0) { return  "#137ed9"; } 
+  else if (numclicks == 1) { return "#00b0ff"; }
+  else if (numclicks == 2) { return "#0c9fc6"; }
+  else if (numclicks == 3) { return "#0ab4c8"; }
+  else if (numclicks == 4) { return "#00d7ff"; }
 };
 
+yScale = d3.scaleLinear()
+    .domain([0, 1])
+    // .domain([0, maxValue])
+    .range([y_axisLength, 0]);
+    barXvalues =  get_CLASS_bar_x_positions();
+    xScale = getXscale(barXvalues);
+    
+    drawAxes(yScale, xScale);
 function chartonClick(d, numclicks) {
     console.log("numclicks", numclicks);
     numclicks = numclicks
     var currentCounty = county.get(d.id);
     var currentState = state.get(d.id);
+	// yScale = d3.scaleLinear()
+ //    .domain([0, 1])
+ //    // .domain([0, maxValue])
+ //    .range([y_axisLength, 0]);
+ //    barXvalues =  get_CLASS_bar_x_positions();
+ //    xScale = getXscale(barXvalues);
+
+ //    drawAxes(yScale, xScale);
 
     d3.csv("mapData/"+fileName, function(error, data) {
       if (error) throw error;
@@ -535,6 +554,7 @@ function chartonClick(d, numclicks) {
 
       if (numclicks == 0){
         d3.selectAll("rect").remove(); // Remove old bar.
+        d3.selectAll("text").remove();
         // numclicks = numclicks % 4;
       }
       // console.log("numclicks after reset", numclicks);
@@ -542,16 +562,16 @@ function chartonClick(d, numclicks) {
       // d3.selectAll("#axes").remove(); // Remove old axes.
       
 
-      barXvalues = get_CLASS_bar_x_positions();
+      // barXvalues = get_CLASS_bar_x_positions();
 
 
       // barXvalues  = get_bar_x_positions();
-      yScale = getYscale(class_dist)[0];
+      // yScale = getYscale(class_dist)[0];
       // yScale = getYscale(proportions)[0];
-      if (numclicks ==1){
-        xScale = getXscale(barXvalues);
-        drawAxes(yScale, xScale);
-      }
+      // if (numclicks ==1){
+      //   xScale = getXscale(barXvalues);
+      //   drawAxes(yScale, xScale);
+      // }
 
       // Append the rectangles (bars) for the bar chart
       var barz = chart2
@@ -562,7 +582,7 @@ function chartonClick(d, numclicks) {
       // var barWidth = barSpacing*.75
       // var barWidth = 50;
       console.log('bars > numclicks', numclicks);
-      barz
+      var barChart = barz
         .enter()
         .append("rect")
         .attr( "x", function(d, i){
@@ -586,6 +606,59 @@ function chartonClick(d, numclicks) {
           })
         // .attr( "fill", "red");
         .attr("fill", bar_colors(numclicks));
+
+
+
+        barz
+        .enter()
+        .append("text")
+        // .attr("transform","translate(-100,0)")
+        // .attr("transform", "rotate(90)")
+        .attr( "x", function(d, i){
+           // console.log("bar locations", bar_location(numclicks, i));
+          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
+          })
+        // .attr("y", function(d) {
+        // return yScale(-getYscale(class_dist)[1]);
+        // })
+        // .attr("height", 0)
+        // .transition()
+        // .duration(100)
+        .attr( "y", function(d){
+          return yScale(d); // Set y coordinate for each bar to height minus the data value
+          })
+        // .attr( "width", barWidth )
+         // .transition()
+        // .duration(2000)
+        // .attr( "height", function(d){
+        //   return height/2 - yScale(d); // Set height of rectangle to data value
+        //   })
+        // .attr( "fill", "red");
+        .text(function(d){ return currentCounty; });
+		// .attr("transform", "rotate(90)");
+
+
+
+
+
+
+
+  //      barz
+  //      	.enter()
+  //      	.append("text")
+  //      	.text(function(d){ return currentCounty; 
+  //      })
+  //      	.attr("y", function(d) { return yScale(d); })
+		// .attr( "x", function(d, i){
+  //          // console.log("bar locations", bar_location(numclicks, i));
+  //         return bar_location(d, i,); // Set x coordinate of rectangle to index of data value (i)*25.
+  //         })
+  //    	.attr("transform", "rotate(90)");
+
+
+
+
+
 });
 };
 
