@@ -17,6 +17,18 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 60px;          
+    height: 28px;         
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+}
 .container {
   float: left;
 }
@@ -528,6 +540,13 @@ yScale = d3.scaleLinear()
     xScale = getXscale(barXvalues);
     
     drawAxes(yScale, xScale);
+
+
+
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
 function chartonClick(d, numclicks) {
     console.log("numclicks", numclicks);
     numclicks = numclicks
@@ -554,7 +573,7 @@ function chartonClick(d, numclicks) {
 
       if (numclicks == 0){
         d3.selectAll("rect").remove(); // Remove old bar.
-        d3.selectAll("text").remove();
+        d3.selectAll("#barlabel").remove();
         // numclicks = numclicks % 4;
       }
       // console.log("numclicks after reset", numclicks);
@@ -582,6 +601,7 @@ function chartonClick(d, numclicks) {
       // var barWidth = barSpacing*.75
       // var barWidth = 50;
       console.log('bars > numclicks', numclicks);
+
       var barChart = barz
         .enter()
         .append("rect")
@@ -593,8 +613,8 @@ function chartonClick(d, numclicks) {
         return yScale(-getYscale(class_dist)[1]);
         })
         .attr("height", 0)
-        .transition()
-        .duration(100)
+        // .transition()
+        // .duration(100)
         .attr( "y", function(d){
           return yScale(d); // Set y coordinate for each bar to height minus the data value
           })
@@ -607,35 +627,69 @@ function chartonClick(d, numclicks) {
         // .attr( "fill", "red");
         .attr("fill", bar_colors(numclicks));
 
+        barChart
+        // .on("mouseover", function() {
+        //   console.log("Your mouse went over", currentCounty);
+        // });
 
 
-        barz
-        .enter()
-        .append("text")
-        // .attr("transform","translate(-100,0)")
-        // .attr("transform", "rotate(90)")
-        .attr( "x", function(d, i){
-           // console.log("bar locations", bar_location(numclicks, i));
-          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
-          })
-        // .attr("y", function(d) {
-        // return yScale(-getYscale(class_dist)[1]);
-        // })
-        // .attr("height", 0)
-        // .transition()
-        // .duration(100)
-        .attr( "y", function(d){
-          return yScale(d); // Set y coordinate for each bar to height minus the data value
-          })
-        // .attr( "width", barWidth )
-         // .transition()
-        // .duration(2000)
-        // .attr( "height", function(d){
-        //   return height/2 - yScale(d); // Set height of rectangle to data value
-        //   })
-        // .attr( "fill", "red");
-        .text(function(d){ return currentCounty; });
-		// .attr("transform", "rotate(90)");
+
+
+
+        // .on("mouseover", function(){
+        // 	d3.select(this)
+        // 	.transition()
+        // 	.attr("width", barWidth*1.5)
+        // });
+        
+    //     .on("mouseover", function() { tooltip.style("display", null); })
+		  // .on("mouseout", function() { tooltip.style("display", "none"); })
+		  // .on("mousemove", function(d) {
+		  //   var xPosition = d3.mouse(this)[0] - 15;
+		  //   var yPosition = d3.mouse(this)[1] - 25;
+		  //   tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+		  //   tooltip.select("text").text(d);
+		  // });
+        .on("mouseover", function() {	
+        	d3.select(this)
+            	// .attr("fill", "red");	
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(currentCounty)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })			
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
+
+
+
+  //       barz
+  //       .enter()
+  //       .append("text")
+  //       .attr("id", "barlabel")
+  //       // .attr( "x", function(d, i){
+  //       //   var xText = bar_location(d, i, numclicks);
+  //       //   return xText; // Set x coordinate of rectangle to index of data value (i)*25.
+  //       //   })
+  //       // .attr( "y", function(d){
+  //       // 	var yText = yScale(d);
+  //       //   return yText; // Set y coordinate for each bar to height minus the data value
+  //       //   })
+  //       .attr("height", 150)
+  //       .attr("transform", function(d,i){
+		//   var xText = bar_location(d, i, numclicks);
+		//   		  console.log("xtext", xText)
+		//   var yText = height/2 - height/4;
+		//   // var yText = yScale(d);
+		//   return "translate(" + xText + "," + yText + ") rotate(90)";
+		// })
+  //       // .attr("transform", "translate(" + xText + "," + yText + ") rotate(90)")
+  //       .text(function(d){ return currentCounty; });
 
 
 
