@@ -200,9 +200,10 @@ var plot = svg.append("g")
     .attr("class", "plot")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("circles.csv", prepare, function(data) {
+d3.csv("mapData/black2015map.csv", prepare, function(data) {
+  console.log("data", data);
   dataset = data;
-  drawPlot(dataset);
+  // drawPlot(dataset);
   
   playButton
     .on("click", function() {
