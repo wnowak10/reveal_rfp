@@ -26,6 +26,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+<!-- <script src="helpers.js"></script> -->
 
 <body>
    <div class="headmenu" >
@@ -89,13 +90,9 @@ var chart1 = d3.select("body").append("svg")
         valueLine.attr("x2", sliderWidth * NormValue);
         emptyLine.attr("x1", sliderWidth * NormValue);
         d3.event.sourceEvent.stopPropagation();
-        console.log(Math.round(NormValue*(maxValue-minValue)+minValue));
         document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
-        // console.log(selectedValue);
-        xx = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
-        console.log(xx);
-        drawMap("mapData/"+xx);
-        // chartonClick(d);
+        fileName = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
+        drawMap("mapData/"+fileName);
     }
     //Line to represent the current value
     var valueLine = sliderSVG.append("line")
@@ -373,7 +370,6 @@ function get_CLASS_bar_x_positions(){
   for(var i=0; i<classes.length; i++){
     barXvalues.push(spread(i));
   }
-  console.log(barXvalues);
   return barXvalues;
 };
 
@@ -468,36 +464,26 @@ yScale = d3.scaleLinear()
     
     drawAxes(yScale, xScale);
 
-
-
 var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
 function chartonClick(d, numclicks) {
-    console.log("numclicks", numclicks);
     numclicks = numclicks
     var currentCounty = county.get(d.id);
     var currentState = state.get(d.id);
-
-
 
     d3.csv("mapData/"+fileName, function(error, data) {
       if (error) throw error;
   
       data = filterbyCounty(data, currentCounty, currentState);
       proportions = getDistribution(data);
-      // console.log('proportions to input to y value', proportions);
       class_dist = low_Middle_High_class(proportions);
-
-      console.log('class_dist to input to y value', class_dist);
 
       if (numclicks == 0){
         d3.selectAll("#incomebars").remove(); // Remove old bar.
         d3.selectAll("#barlabel").remove();
-        // numclicks = numclicks % 4;
-      }
-     
+      }     
 
       // Append the rectangles (bars) for the bar chart
       var barz = chart2
@@ -505,9 +491,6 @@ function chartonClick(d, numclicks) {
         .attr("transform", "translate(0,-"+height/2+")")
         .selectAll( "rect" )
         .data( class_dist );
-      // var barWidth = barSpacing*.75
-      // var barWidth = 50;
-      console.log('bars > numclicks', numclicks);
 
       var barChart = barz
         .enter()
