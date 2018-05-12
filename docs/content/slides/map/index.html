@@ -17,8 +17,82 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-<link rel="stylesheet" type="text/css" href="map.css">
+<!-- <link rel="stylesheet" type="text/css" href="map.css"> -->
 <style>
+div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 80px;          
+    height: 60px;         
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 8px;     
+    pointer-events: none;     
+}
+#maphover.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 60px;          
+    height: 60px;         
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 8px;     
+    pointer-events: none;  
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  /*text-transform: uppercase;   */
+}
+.container {
+  float: left;
+}
+.counties {
+  fill: none;
+}
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+.background {
+  fill: white;
+  stroke: white;
+  stroke-linejoin: round;
+}
+.title {
+  fill: darkblue;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+}
+.legend {
+  font-size: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     body {
       font-family:"avenir next", Arial, sans-serif;
       font-size: 12px;
@@ -200,7 +274,8 @@ var plot = svg.append("g")
     .attr("class", "plot")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("mapData/black2015map.csv", prepare, function(data) {
+d3.csv("circles.csv", prepare, function(data) {
+// d3.csv("mapData/blackmap.csv", prepare, function(data) {
   console.log("data", data);
   dataset = data;
   // drawPlot(dataset);
@@ -224,7 +299,8 @@ d3.csv("mapData/black2015map.csv", prepare, function(data) {
 
 function prepare(d) {
   d.id = d.id;
-  d.date = parseDate(d.date);
+  d.year = d.year;
+  // d.date = parseDate(d.date);
   return d;
 }
   
@@ -273,21 +349,21 @@ function update(h) {
     .attr("x", x(h))
     .text(formatDate(h));
 
-var format = d3.timeParse("%Y");
+var format = d3.timeParse("%y");
 
   // filter data set and redraw plot
   var newData = dataset.filter(function(d) {
     // console.log("h", h);
     // console.log("h", format(h));
     year = d3.timeFormat("%Y")(h);
-    console.log("hh", d3.timeFormat("%Y")(h));
+    console.log("hh", d3.timeFormat("%y")(h));
     newFileName = "black"+year+"map.csv"
     console.log(newFileName)
     // return d.date < h;
 
-    return d.year == d3.timeFormat("%Y")(h);
+    return d.year == d3.timeFormat("%y")(h);
   })
-  drawMap("mapData/"+fileName);
+  // drawMap("mapData/"+fileName);
   // drawPlot(newData);
 }
 
@@ -390,7 +466,7 @@ var chart1 = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
-var fileName = 'black2015map.csv';
+// var fileName = 'black2015map.csv';
 
 
     // //Slider Properties
@@ -491,47 +567,22 @@ function incrementValue(){
   	 numclicks = (numclicks%5);
   }
  }
-function ready(error, us) {
+
+function drawMapOutline(error, us) {
   if (error) throw error;
 
-  g.append("g")
+  var mapoutline = g.append("g")
       .attr("class", "counties")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.counties).features)
       .enter()
       .append("path")
-      .attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
+      .attr("fill", "black")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-      .attr("d", path)
-      .on("click", function(d){
-          incrementValue();
-          chartonClick(d, numclicks);
-      })
-      .on("mouseover", function(d, i, c) { 
-          d3.select(this)
-            div.transition()    
-                .duration(200)    
-                .attr("id", "maphover")
-                .style("opacity", .9);
+      .attr("d", path);
+      
 
-            div.html(county.get(d.id) + "," + state.get(d.id)) 
-                .attr("id", "maphover")
-                .style("left", (d3.event.pageX) + "px")   
-                .style("top", (d3.event.pageY - 28) + "px");  
-            })
-      .on("mouseout", function(d) {
-                    d3.select("#tooltip").remove();
-
-                    d3.select(this)
-                    .transition()
-                    .duration(600)
-                    .attr("fill", color(d.percent_poor))
-                    .style("fill", function(d) {
-                      return color(d.percent_poor);
-                    })
-                });
-
-  g.append("path")
+  mapoutline.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
@@ -542,8 +593,41 @@ function ready(error, us) {
       .attr("class", "counties")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
-} // Close ready() function
+}; // Close ready() function
 
+// function colorMap(poverty){
+
+//   mapoutline.attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
+//       // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+//       // .attr("d", path)
+//       .on("click", function(d){
+//           incrementValue();
+//           chartonClick(d, numclicks);
+//       })
+//       .on("mouseover", function(d, i, c) { 
+//           d3.select(this)
+//             div.transition()    
+//                 .duration(200)    
+//                 .attr("id", "maphover")
+//                 .style("opacity", .9);
+
+//             div.html(county.get(d.id) + "," + state.get(d.id)) 
+//                 .attr("id", "maphover")
+//                 .style("left", (d3.event.pageX) + "px")   
+//                 .style("top", (d3.event.pageY - 28) + "px");  
+//             })
+//       .on("mouseout", function(d) {
+//                     d3.select("#tooltip").remove();
+
+//                     d3.select(this)
+//                     .transition()
+//                     .duration(600)
+//                     .attr("fill", color(d.percent_poor))
+//                     .style("fill", function(d) {
+//                       return color(d.percent_poor);
+//                     })
+//                 });
+// };
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -602,17 +686,107 @@ var poverty = d3.map();
 var state = d3.map();
 var county = d3.map();
 
-function drawMap(incomeData){
+function drawMap(){
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.csv, incomeData, function(d) {     
-    // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
-      poverty.set(d.id, +d.percent_poor); // Need for choropleth.
-      state.set(d.id, d.State); // Need for filtering data.
-      county.set(d.id, d.County);}) // ""
-    .await(ready);
+    // .defer(d3.csv, incomeData, function(d) {     
+    // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
+    //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
+    //   state.set(d.id, d.State); // Need for filtering data.
+    //   county.set(d.id, d.County);}) // ""
+    .await(drawMapOutline);
 };
-drawMap("mapData/"+fileName);
+drawMap();
+// loadData()
+// drawMap("mapData/"+fileName);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /////////////////////////////////////////////
