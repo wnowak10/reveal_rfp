@@ -346,32 +346,32 @@ var plot = svg.append("g")
     .attr("class", "plot")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("circles.csv", prepare, function(data) {
-// d3.csv("mapData/blackmap.csv", prepare, function(data) {
-  console.log("data", data);
-  dataset = data;
-  // drawPlot(dataset);
+// d3.csv("circles.csv", prepare, function(data) {
+// // d3.csv("mapData/blackmap.csv", prepare, function(data) {
+//   console.log("data", data);
+//   dataset = data;
+//   // drawPlot(dataset);
   
-  playButton
-    .on("click", function() {
-    var button = d3.select(this);
-    if (button.text() == "Pause") {
-      moving = false;
-      clearInterval(timer);
-      // timer = 0;
-      button.text("Play");
-    } else {
-      moving = true;
-      timer = setInterval(step, 100);
-      button.text("Pause");
-    }
-    console.log("Slider moving: " + moving);
-  })
-})
+//   playButton
+//     .on("click", function() {
+//     var button = d3.select(this);
+//     if (button.text() == "Pause") {
+//       moving = false;
+//       clearInterval(timer);
+//       // timer = 0;
+//       button.text("Play");
+//     } else {
+//       moving = true;
+//       timer = setInterval(step, 100);
+//       button.text("Pause");
+//     }
+//     console.log("Slider moving: " + moving);
+//   })
+// })
 
 function prepare(d) {
   d.id = d.id;
-  d.year = d.year;
+  d.year = d.year; // Keep as string
   // d.date = parseDate(d.date);
   return d;
 }
@@ -425,16 +425,22 @@ var format = d3.timeParse("%y");
 
   // filter data set and redraw plot
   var newData = dataset.filter(function(d) {
-    year = d3.timeFormat("%Y")(h);
-    console.log("hh", d3.timeFormat("%y")(h));
-    newFileName = "black"+year+"map.csv"
-    console.log(newFileName)
     return d.year == d3.timeFormat("%y")(h);
+    // console.log(d.year);
+    // console.log(d3.timeFormat("%y")(h))
+    // return d.year == d3.timeFormat("%y")(h);
+    // console.log("dataset", dataset)
+    // year = d3.timeFormat("%Y")(h);
+    // console.log("hh", d3.timeFormat("%y")(h));
+    // newFileName = "black"+year+"map.csv"
+    // console.log(newFileName)
+    // return d.year == d3.timeFormat("%y")(h);
   })
+  console.log("filtered ?newData", newData);
+  
   // drawMap("mapData/"+fileName);
   // drawPlot(newData);
 }
-
 
 
 
@@ -505,7 +511,7 @@ function incrementValue(){
 function drawMapOutline(error, us) {
   if (error) throw error;
 
-  var mapoutline = g.append("g")
+  g.append("g")
       .attr("class", "counties")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.counties).features)
@@ -516,7 +522,7 @@ function drawMapOutline(error, us) {
       .attr("d", path);
       
 
-  mapoutline.append("path")
+  g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
@@ -580,14 +586,55 @@ d3.queue()
 // drawMap("mapData/"+fileName);
 
 
+var poverty = d3.map();
+var state = d3.map();
+var county = d3.map();
+
+d3.csv("mapData/blackmap.csv", prepare, function(d) {
+// d3.csv("mapData/blackmap.csv", prepare, function(data) {
+  // pov2010 = d.filter(function(d){return d.category == 2010});
+  dataset = d;
+
+
+
+  // poverty.set(d.year, 10);
+  // console.log(poverty);
+  // console.log("data", d);
+  // console.log("dataset", dataset);
+  // drawPlot(dataset);
+
+   playButton
+    .on("click", function() {
+    var button = d3.select(this);
+    if (button.text() == "Pause") {
+      moving = false;
+      clearInterval(timer);
+      // timer = 0;
+      button.text("Play");
+    } else {
+      moving = true;
+      timer = setInterval(step, 100);
+      button.text("Pause");
+    }
+  })
+  });
 
 
 
 
 
+// var poverty = d3.map();
+// var state = d3.map();
+// var county = d3.map();
 
-
-
+// function drawMap(){
+// d3.queue()
+//     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+//     // .defer(d3.csv, incomeData, function(d) {     
+//     // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
+//     //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
+//     //   state.set(d.id, d.State); // Need for filtering data.
+//     //   county.set(d.id, d.County);}) // "
 
 
 
