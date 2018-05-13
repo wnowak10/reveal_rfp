@@ -165,8 +165,10 @@ div.tooltip {
 <!-- <script src="helpers.js"></script> -->
 
 <body>
+  <div id="title"></div>
   <div id="vis">
   <button id="play-button">Play</button>
+  <div id="vis">
 <!-- </div> -->
    <!-- <div class="headmenu" > -->
             <!-- <a id="button1"></a> -->
@@ -181,7 +183,77 @@ div.tooltip {
 <script>
 
 
-  //////////////////////////////////////////
+
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Set the title.
+//////////////////////////////////////////
+//////////////////////////////////////////
+var margin = {top: 40, right: 20, bottom: 30, left: 50};
+var width = 1100;
+var height = 40;
+var textWidth = width / 2
+
+var titlesvg = d3.select("#title")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height); 
+
+
+titlesvg.append("svg").append("text")
+        .attr("x", textWidth) // Center            
+        .attr("y", margin.top*.7) 
+        .attr("text-anchor", "middle")  
+        .style("font-size", "36px") 
+        .style("text-decoration", "underline")
+        .attr("class", "title")  
+        .text("POVERTY IN AMERICA")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////
 //////////////////////////////////////////
 // Set the dimensions of the canvas/graph.
 //////////////////////////////////////////
@@ -196,20 +268,20 @@ var parseDate = d3.timeParse("%m/%d/%y");
 var startDate = new Date("2010"),
     endDate = new Date("2017");
 
-var margin = {top:0, right:50, bottom:0, left:50},
-    width = 500 - margin.left - margin.right,
-    height = 50 - margin.top - margin.bottom;
+var slidermargin = {top:0, right:50, bottom:0, left:50},
+    sliderwidth = 500 - slidermargin.left - slidermargin.right,
+    sliderheight = 50 - slidermargin.top - slidermargin.bottom;
 
 var svg = d3.select("#vis")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);  
+    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
+    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
 
 ////////// slider //////////
 
 var moving = false;
 var currentValue = 0;
-var targetValue = width;
+var targetValue = sliderwidth;
 
 var playButton = d3.select("#play-button");
     
@@ -353,14 +425,10 @@ var format = d3.timeParse("%y");
 
   // filter data set and redraw plot
   var newData = dataset.filter(function(d) {
-    // console.log("h", h);
-    // console.log("h", format(h));
     year = d3.timeFormat("%Y")(h);
     console.log("hh", d3.timeFormat("%y")(h));
     newFileName = "black"+year+"map.csv"
     console.log(newFileName)
-    // return d.date < h;
-
     return d.year == d3.timeFormat("%y")(h);
   })
   // drawMap("mapData/"+fileName);
@@ -373,88 +441,15 @@ var format = d3.timeParse("%y");
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //////////////////////////////////////////
-//////////////////////////////////////////
-// Set the dimensions of the canvas/graph.
-//////////////////////////////////////////
-//////////////////////////////////////////
+//   //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Set the dimensions of the canvas/graph.
+// //////////////////////////////////////////
+// //////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 550;
 var height = 550;
+
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -466,68 +461,7 @@ var chart1 = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
-// var fileName = 'black2015map.csv';
 
-
-    // //Slider Properties
-    // var sliderWidth = 320;
-    // var maxValue = 2016;
-    // var minValue = 2010;
-    // var initialValue = minValue;
-    // var color = "red";
-    // var emptyColor = "#ECECEC";
-    // var thumbColor = "white";
-    // var lineWidth = 6;
-    // var thumbSize = 6;
-    // ////////////////////////////////////////
-    // var NormValue = (initialValue-minValue)/(maxValue-minValue); // value normalized between 0-1
-    // var selectedValue;
-    // // var sliderSVG = chart1.append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
-    // var sliderSVG = d3.select("#button1").append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
-    // initialValue = 2016;
-    // var fileName = 'black2015map.csv';
-    // function dragEnded() {
-    //     selectedValue = d3.event.x;
-    //     if (selectedValue < 0)
-    //         selectedValue = 0;
-    //     else if (selectedValue > sliderWidth)
-    //         selectedValue = sliderWidth;
-    //     NormValue = selectedValue / sliderWidth;
-    //     valueCircle.attr("cx", selectedValue);
-    //     valueLine.attr("x2", sliderWidth * NormValue);
-    //     emptyLine.attr("x1", sliderWidth * NormValue);
-    //     d3.event.sourceEvent.stopPropagation();
-    //     document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
-    //     fileName = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
-    //     drawMap("mapData/"+fileName);
-    // }
-    // //Line to represent the current value
-    // var valueLine = sliderSVG.append("line")
-    //         .attr("x1", 0)
-    //         .attr("x2", sliderWidth * NormValue)
-    //         .attr("y1", 20)
-    //         .attr("y2", 20)
-    //         .style("stroke", color)
-    //         .style("stroke-linecap", "round")
-    //         .style("stroke-width", lineWidth);
-    // //Line to show the remaining value
-    // var emptyLine = sliderSVG.append("line")
-    //         .attr("x1", sliderWidth * NormValue)
-    //         .attr("x2", sliderWidth)
-    //         .attr("y1", 20)
-    //         .attr("y2", 20)
-    //         .style("stroke", emptyColor)
-    //         .style("stroke-linecap", "round")
-    //         .style("stroke-width", lineWidth);
-    // //Draggable circle to represent the current value
-    // var valueCircle = sliderSVG.append("circle")
-    //         .attr("cx", sliderWidth * NormValue)
-    //         .attr("cy", 20)
-    //         .attr("r", thumbSize)
-    //         .style("stroke", "black")
-    //         .style("stroke-width", 1)
-    //         .style("fill", thumbColor)
-    //         .call(d3.drag().on("drag", dragEnded));
 
 
 //////////////////////////////////////////
@@ -536,10 +470,10 @@ var chart1 = d3.select("body").append("svg")
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-chart1.append("rect")
-    .attr("class", "background")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+// chart1.append("rect")
+//     .attr("class", "background")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom);
 var g = chart1.append("g");
 var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
 
@@ -564,7 +498,7 @@ var numclicks = -1;
 function incrementValue(){
   numclicks+=1;
   if (numclicks > 4){
-  	 numclicks = (numclicks%5);
+    numclicks = (numclicks%5);
   }
  }
 
@@ -595,100 +529,45 @@ function drawMapOutline(error, us) {
       .attr("d", path);
 }; // Close ready() function
 
-// function colorMap(poverty){
+function colorMap(poverty){
 
-//   mapoutline.attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
-//       // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-//       // .attr("d", path)
-//       .on("click", function(d){
-//           incrementValue();
-//           chartonClick(d, numclicks);
-//       })
-//       .on("mouseover", function(d, i, c) { 
-//           d3.select(this)
-//             div.transition()    
-//                 .duration(200)    
-//                 .attr("id", "maphover")
-//                 .style("opacity", .9);
+  mapoutline.attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
+      // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      // .attr("d", path)
+      .on("click", function(d){
+          incrementValue();
+          chartonClick(d, numclicks);
+      })
+      .on("mouseover", function(d, i, c) { 
+          d3.select(this)
+            div.transition()    
+                .duration(200)    
+                .attr("id", "maphover")
+                .style("opacity", .9);
 
-//             div.html(county.get(d.id) + "," + state.get(d.id)) 
-//                 .attr("id", "maphover")
-//                 .style("left", (d3.event.pageX) + "px")   
-//                 .style("top", (d3.event.pageY - 28) + "px");  
-//             })
-//       .on("mouseout", function(d) {
-//                     d3.select("#tooltip").remove();
+            div.html(county.get(d.id) + "," + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX) + "px")   
+                .style("top", (d3.event.pageY - 28) + "px");  
+            })
+      .on("mouseout", function(d) {
+                    d3.select("#tooltip").remove();
 
-//                     d3.select(this)
-//                     .transition()
-//                     .duration(600)
-//                     .attr("fill", color(d.percent_poor))
-//                     .style("fill", function(d) {
-//                       return color(d.percent_poor);
-//                     })
-//                 });
-// };
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Set the title.
-//////////////////////////////////////////
-//////////////////////////////////////////
-var textWidth = width / 2
-chart1.append("text")
-        .attr("x", textWidth) // Center            
-        .attr("y", margin.top*.7) 
-        .attr("text-anchor", "middle")  
-        .style("font-size", "36px") 
-        .style("text-decoration", "underline")
-        .attr("class", "title")  
-        .text("POVERTY IN AMERICA")
-
-chart1.append("text")
-        .attr("x", textWidth)           
-        .attr("y", margin.top * 1.2) 
-        .attr("text-anchor", "middle")  
-        .style("text-decoration", "underline")  
-        .attr("class", "title")  
-        .style("font-size", "16px") 
-        .text("Percent of households in a county making less than $20,000.")
-
-chart1.append("text")
-        .attr("x", textWidth)           
-        .attr("y", margin.top * 1.75) 
-        .attr("text-anchor", "middle")  
-        .style("text-decoration", "underline")  
-        .attr("class", "title")  
-        .style("font-size", "16px") 
-        .text("Click on county to see county-wide income distribution.")
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Zoom functionality.
-//////////////////////////////////////////
-//////////////////////////////////////////
-var zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .on("zoom", zoomed);
-chart1
-    .call(zoom);
-function zoomed() {
-  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-  g.attr("transform", d3.event.transform); // updated for d3 v4
+                    d3.select(this)
+                    .transition()
+                    .duration(600)
+                    .attr("fill", color(d.percent_poor))
+                    .style("fill", function(d) {
+                      return color(d.percent_poor);
+                    })
+                });
 };
 
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Make map (load data).
-//////////////////////////////////////////
-//////////////////////////////////////////
-var poverty = d3.map();
-var state = d3.map();
-var county = d3.map();
 
 function drawMap(){
 d3.queue()
-    .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+    // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+    .defer(d3.json, "usa.json")
     // .defer(d3.csv, incomeData, function(d) {     
     // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
     //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
@@ -762,6 +641,258 @@ drawMap();
 
 
 
+//   //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Set the dimensions of the canvas/graph.
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// var margin = {top: 40, right: 20, bottom: 30, left: 50};
+// var width = 550;
+// var height = 550;
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Slider.
+// // https://github.com/arbelzinger/d3_v4_slider/blob/master/d3-slider.html
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// var chart1 = d3.select("body").append("svg")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom);
+
+// // var fileName = 'black2015map.csv';
+
+
+//     // //Slider Properties
+//     // var sliderWidth = 320;
+//     // var maxValue = 2016;
+//     // var minValue = 2010;
+//     // var initialValue = minValue;
+//     // var color = "red";
+//     // var emptyColor = "#ECECEC";
+//     // var thumbColor = "white";
+//     // var lineWidth = 6;
+//     // var thumbSize = 6;
+//     // ////////////////////////////////////////
+//     // var NormValue = (initialValue-minValue)/(maxValue-minValue); // value normalized between 0-1
+//     // var selectedValue;
+//     // // var sliderSVG = chart1.append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
+//     // var sliderSVG = d3.select("#button1").append("svg").attr('width', sliderWidth + 30).attr("viewBox", '-15,0,' + (sliderWidth + 30) + ',40');
+//     // initialValue = 2016;
+//     // var fileName = 'black2015map.csv';
+//     // function dragEnded() {
+//     //     selectedValue = d3.event.x;
+//     //     if (selectedValue < 0)
+//     //         selectedValue = 0;
+//     //     else if (selectedValue > sliderWidth)
+//     //         selectedValue = sliderWidth;
+//     //     NormValue = selectedValue / sliderWidth;
+//     //     valueCircle.attr("cx", selectedValue);
+//     //     valueLine.attr("x2", sliderWidth * NormValue);
+//     //     emptyLine.attr("x1", sliderWidth * NormValue);
+//     //     d3.event.sourceEvent.stopPropagation();
+//     //     document.getElementById("value").value = (NormValue*(maxValue-minValue)+minValue).toFixed(0)
+//     //     fileName = 'black'+Math.round(NormValue*(maxValue-minValue)+minValue)+'map.csv';
+//     //     drawMap("mapData/"+fileName);
+//     // }
+//     // //Line to represent the current value
+//     // var valueLine = sliderSVG.append("line")
+//     //         .attr("x1", 0)
+//     //         .attr("x2", sliderWidth * NormValue)
+//     //         .attr("y1", 20)
+//     //         .attr("y2", 20)
+//     //         .style("stroke", color)
+//     //         .style("stroke-linecap", "round")
+//     //         .style("stroke-width", lineWidth);
+//     // //Line to show the remaining value
+//     // var emptyLine = sliderSVG.append("line")
+//     //         .attr("x1", sliderWidth * NormValue)
+//     //         .attr("x2", sliderWidth)
+//     //         .attr("y1", 20)
+//     //         .attr("y2", 20)
+//     //         .style("stroke", emptyColor)
+//     //         .style("stroke-linecap", "round")
+//     //         .style("stroke-width", lineWidth);
+//     // //Draggable circle to represent the current value
+//     // var valueCircle = sliderSVG.append("circle")
+//     //         .attr("cx", sliderWidth * NormValue)
+//     //         .attr("cy", 20)
+//     //         .attr("r", thumbSize)
+//     //         .style("stroke", "black")
+//     //         .style("stroke-width", 1)
+//     //         .style("fill", thumbColor)
+//     //         .call(d3.drag().on("drag", dragEnded));
+
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Make the map.
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+
+// chart1.append("rect")
+//     .attr("class", "background")
+//     .attr("width", width + margin.left + margin.right)
+//     .attr("height", height + margin.top + margin.bottom);
+// var g = chart1.append("g");
+// var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+
+// //////////////////////////////////////////
+// // Scale map down
+// //////////////////////////////////////////
+// function scale (scaleFactor,width,height) {
+//   return d3.geoTransform({
+//     point: function(x, y) {
+//       this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/10);
+//                           }
+//   });
+// }
+// var mapScale = .6
+// var path = d3.geoPath()
+//   .projection(scale(mapScale,width,height))
+
+// //////////////////////////////////////////
+// // Interactive map function.
+// //////////////////////////////////////////
+// var numclicks = -1;
+// function incrementValue(){
+//   numclicks+=1;
+//   if (numclicks > 4){
+//   	 numclicks = (numclicks%5);
+//   }
+//  }
+
+// function drawMapOutline(error, us) {
+//   if (error) throw error;
+
+//   var mapoutline = g.append("g")
+//       .attr("class", "counties")
+//       .selectAll("path")
+//       .data(topojson.feature(us, us.objects.counties).features)
+//       .enter()
+//       .append("path")
+//       .attr("fill", "black")
+//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+//       .attr("d", path);
+      
+
+//   mapoutline.append("path")
+//       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+//       .attr("class", "states")
+//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+//       .attr("d", path);
+
+//   chart1.append("path")
+//       .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
+//       .attr("class", "counties")
+//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+//       .attr("d", path);
+// }; // Close ready() function
+
+// // function colorMap(poverty){
+
+// //   mapoutline.attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
+// //       // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+// //       // .attr("d", path)
+// //       .on("click", function(d){
+// //           incrementValue();
+// //           chartonClick(d, numclicks);
+// //       })
+// //       .on("mouseover", function(d, i, c) { 
+// //           d3.select(this)
+// //             div.transition()    
+// //                 .duration(200)    
+// //                 .attr("id", "maphover")
+// //                 .style("opacity", .9);
+
+// //             div.html(county.get(d.id) + "," + state.get(d.id)) 
+// //                 .attr("id", "maphover")
+// //                 .style("left", (d3.event.pageX) + "px")   
+// //                 .style("top", (d3.event.pageY - 28) + "px");  
+// //             })
+// //       .on("mouseout", function(d) {
+// //                     d3.select("#tooltip").remove();
+
+// //                     d3.select(this)
+// //                     .transition()
+// //                     .duration(600)
+// //                     .attr("fill", color(d.percent_poor))
+// //                     .style("fill", function(d) {
+// //                       return color(d.percent_poor);
+// //                     })
+// //                 });
+// // };
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Set the title.
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// var textWidth = width / 2
+// chart1.append("text")
+//         .attr("x", textWidth) // Center            
+//         .attr("y", margin.top*.7) 
+//         .attr("text-anchor", "middle")  
+//         .style("font-size", "36px") 
+//         .style("text-decoration", "underline")
+//         .attr("class", "title")  
+//         .text("POVERTY IN AMERICA")
+
+// chart1.append("text")
+//         .attr("x", textWidth)           
+//         .attr("y", margin.top * 1.2) 
+//         .attr("text-anchor", "middle")  
+//         .style("text-decoration", "underline")  
+//         .attr("class", "title")  
+//         .style("font-size", "16px") 
+//         .text("Percent of households in a county making less than $20,000.")
+
+// chart1.append("text")
+//         .attr("x", textWidth)           
+//         .attr("y", margin.top * 1.75) 
+//         .attr("text-anchor", "middle")  
+//         .style("text-decoration", "underline")  
+//         .attr("class", "title")  
+//         .style("font-size", "16px") 
+//         .text("Click on county to see county-wide income distribution.")
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Zoom functionality.
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// var zoom = d3.zoom()
+//     .scaleExtent([1, 8])
+//     .on("zoom", zoomed);
+// chart1
+//     .call(zoom);
+// function zoomed() {
+//   g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+//   g.attr("transform", d3.event.transform); // updated for d3 v4
+// };
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Make map (load data).
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// var poverty = d3.map();
+// var state = d3.map();
+// var county = d3.map();
+
+// function drawMap(){
+// d3.queue()
+//     .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+//     // .defer(d3.csv, incomeData, function(d) {     
+//     // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
+//     //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
+//     //   state.set(d.id, d.State); // Need for filtering data.
+//     //   county.set(d.id, d.County);}) // ""
+//     .await(drawMapOutline);
+// };
+// drawMap();
+// // loadData()
+// // drawMap("mapData/"+fileName);
 
 
 
@@ -789,252 +920,315 @@ drawMap();
 
 
 
-/////////////////////////////////////////////
-// Prepare for second chart.
-/////////////////////////////////////////////
- var chart2 = d3.select("body").append("svg") // append to svg will put side by side if there is enough room.
-    .attr("width", width) 
-    .attr("height", height)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// /////////////////////////////////////////////
+// // Prepare for second chart.
+// /////////////////////////////////////////////
+//  var chart2 = d3.select("body").append("svg") // append to svg will put side by side if there is enough room.
+//     .attr("width", width) 
+//     .attr("height", height)
     
-  	.append("g")
-  	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
+//   	.append("g")
+//   	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
 
-var distribution_breakdowns = [
-                                "Estimate; Total: - Less than $10,000"
-                                ,"Estimate; Total: - $10,000 to $14,999"
-                                ,"Estimate; Total: - $15,000 to $19,999"
-                                ,"Estimate; Total: - $20,000 to $24,999"
-                                ,"Estimate; Total: - $25,000 to $29,999"
-                                ,"Estimate; Total: - $30,000 to $34,999"
-                                ,"Estimate; Total: - $35,000 to $39,999"
-                                ,"Estimate; Total: - $40,000 to $44,999"
-                                ,"Estimate; Total: - $45,000 to $49,999"
-                                ,"Estimate; Total: - $50,000 to $59,999"
-                                ,"Estimate; Total: - $60,000 to $74,999"
-                                ,"Estimate; Total: - $75,000 to $99,999"
-                                ,"Estimate; Total: - $100,000 to $124,999"
-                                ,"Estimate; Total: - $125,000 to $149,999"
-                                ,"Estimate; Total: - $150,000 to $199,999"
-                                ,"Estimate; Total: - $200,000 or more"
-                              ]
+// var distribution_breakdowns = [
+//                                 "Estimate; Total: - Less than $10,000"
+//                                 ,"Estimate; Total: - $10,000 to $14,999"
+//                                 ,"Estimate; Total: - $15,000 to $19,999"
+//                                 ,"Estimate; Total: - $20,000 to $24,999"
+//                                 ,"Estimate; Total: - $25,000 to $29,999"
+//                                 ,"Estimate; Total: - $30,000 to $34,999"
+//                                 ,"Estimate; Total: - $35,000 to $39,999"
+//                                 ,"Estimate; Total: - $40,000 to $44,999"
+//                                 ,"Estimate; Total: - $45,000 to $49,999"
+//                                 ,"Estimate; Total: - $50,000 to $59,999"
+//                                 ,"Estimate; Total: - $60,000 to $74,999"
+//                                 ,"Estimate; Total: - $75,000 to $99,999"
+//                                 ,"Estimate; Total: - $100,000 to $124,999"
+//                                 ,"Estimate; Total: - $125,000 to $149,999"
+//                                 ,"Estimate; Total: - $150,000 to $199,999"
+//                                 ,"Estimate; Total: - $200,000 or more"
+//                               ]
 
-/////////////////////////////////////////////
-// Helper functions for onclick update.
-/////////////////////////////////////////////
-function filterbyCounty(x, currentCounty, currentState){
-  return x.filter(function(d) { return d.County === currentCounty & d.State === currentState; });
-};
+// /////////////////////////////////////////////
+// // Helper functions for onclick update.
+// /////////////////////////////////////////////
+// function filterbyCounty(x, currentCounty, currentState){
+//   return x.filter(function(d) { return d.County === currentCounty & d.State === currentState; });
+// };
 
-function getDistribution(data){
-  var proportions = []
-  var countyPopulation = data[0]["Estimate; Total:"]
-  // Populate the income distribution list `proportions`
-  for(var i=0; i<distribution_breakdowns.length; i++){
-    proportions.push( data[0][distribution_breakdowns[i]]  / countyPopulation);
-  }
-  return proportions
-};
-// https://www.investopedia.com/financial-edge/0912/which-income-class-are-you.aspx
-function low_Middle_High_class(proportions){
-  /// Take what proportion of citizens in each bin as defined by CB
-  /// Then just bin into low or high with 35K and 100K as cutoffs.
-  newData = []
-  low = 0
-  for(var i=0; i<7;i++){
-    low += proportions[i]
-  }
-  newData.push(low)
-  medium = 0
-  for(var i=7; i<13;i++){
-    medium += proportions[i]
-  }
-  newData.push(medium)
-  high = 0
-  for(var i=12; i<16;i++){
-    high += proportions[i]
-  }
-  newData.push(high)
-  return newData;
+// function getDistribution(data){
+//   var proportions = []
+//   var countyPopulation = data[0]["Estimate; Total:"]
+//   // Populate the income distribution list `proportions`
+//   for(var i=0; i<distribution_breakdowns.length; i++){
+//     proportions.push( data[0][distribution_breakdowns[i]]  / countyPopulation);
+//   }
+//   return proportions
+// };
+// // https://www.investopedia.com/financial-edge/0912/which-income-class-are-you.aspx
+// function low_Middle_High_class(proportions){
+//   /// Take what proportion of citizens in each bin as defined by CB
+//   /// Then just bin into low or high with 35K and 100K as cutoffs.
+//   newData = []
+//   low = 0
+//   for(var i=0; i<7;i++){
+//     low += proportions[i]
+//   }
+//   newData.push(low)
+//   medium = 0
+//   for(var i=7; i<13;i++){
+//     medium += proportions[i]
+//   }
+//   newData.push(medium)
+//   high = 0
+//   for(var i=12; i<16;i++){
+//     high += proportions[i]
+//   }
+//   newData.push(high)
+//   return newData;
 
-};
-var barSpacing = 100;
-var barWidth = 20;
-function bar_location(d,i, numclicks){
-  bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
-  return bar_loc;
-};
+// };
+// var barSpacing = 100;
+// var barWidth = 20;
+// function bar_location(d,i, numclicks){
+//   bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
+//   return bar_loc;
+// };
 
-function spread(i){
-  // Spread a sequence (say, of x values), out.
-  return i*barSpacing+barWidth;
-};
+// function spread(i){
+//   // Spread a sequence (say, of x values), out.
+//   return i*barSpacing+barWidth;
+// };
 
-classes = ["Low", "Middle", "High"]
-function get_CLASS_bar_x_positions(){
-  var barXvalues = [];
-  for(var i=0; i<classes.length; i++){
-    barXvalues.push(spread(i));
-  }
-  return barXvalues;
-};
+// classes = ["Low", "Middle", "High"]
+// function get_CLASS_bar_x_positions(){
+//   var barXvalues = [];
+//   for(var i=0; i<classes.length; i++){
+//     barXvalues.push(spread(i));
+//   }
+//   return barXvalues;
+// };
 
-var y_axisLength = (height / 2); //*.85;
-function getYscale(proportions){
-  var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
-  // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
-  yScale = d3.scaleLinear()
-    .domain([0, 1])
-    .range([y_axisLength, 0]);
-  return [yScale, maxValue];
-}
-function getXscale(barXvalues){
-   return xScale = d3.scaleOrdinal()
-      .domain(classes)
-      .range(barXvalues);
-}
+// var y_axisLength = (height / 2); //*.85;
+// function getYscale(proportions){
+//   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+//   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
+//   yScale = d3.scaleLinear()
+//     .domain([0, 1])
+//     .range([y_axisLength, 0]);
+//   return [yScale, maxValue];
+// }
+// function getXscale(barXvalues){
+//    return xScale = d3.scaleOrdinal()
+//       .domain(classes)
+//       .range(barXvalues);
+// }
 
-function drawAxes(yScale, xScale){
-      var axez = chart2.append("g");
-        axez
-        .attr("transform", "translate(0,-"+y_axisLength+")") // How far to shift down so ?
-        .attr("id", "axes")
-        .call(d3.axisLeft(yScale));
+// function drawAxes(yScale, xScale){
+//       var axez = chart2.append("g");
+//         axez
+//         .attr("transform", "translate(0,-"+y_axisLength+")") // How far to shift down so ?
+//         .attr("id", "axes")
+//         .call(d3.axisLeft(yScale));
 
-      // Add x scale
-      chart2.append("g")
-        .attr("transform", "translate(0,0)")
-        .call(d3.axisBottom(xScale))
-        .selectAll("text")
-        .attr("y", 0)
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .attr("transform", "translate(0,10)")
-        .attr("id", "axes")
-        .style("text-anchor", "start");
-};
-
-
-/////////////////////////////////////////////
-/////////////////////////////////////////////
- //Adding legend for our Choropleth
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-
-var ext_color_domain = [.2, .4, .6, .8, 1]
-var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+//       // Add x scale
+//       chart2.append("g")
+//         .attr("transform", "translate(0,0)")
+//         .call(d3.axisBottom(xScale))
+//         .selectAll("text")
+//         .attr("y", 0)
+//         .attr("x", 9)
+//         .attr("dy", ".35em")
+//         .attr("transform", "translate(0,10)")
+//         .attr("id", "axes")
+//         .style("text-anchor", "start");
+// };
 
 
-  var legend = chart1.selectAll("g.legend")
-  .attr("transform", "rotate(90)")
-  .data(ext_color_domain)
-  .enter().append("g")
-  .attr("class", "legend");
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+//  //Adding legend for our Choropleth
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
 
-  var ls_w = 20, ls_h = 20;
-
-  legend.append("rect")
-  .attr("x", 20)
-  .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
-  .attr("width", ls_w)
-  .attr("height", ls_h)
-  .style("fill", function(d, i) { return color(d); })
-  .style("opacity", 0.8);
-
-  legend.append("text")
-  .attr("x", 50)
-  .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
-  .text(function(d, i){ return legend_labels[i]; });
+// var ext_color_domain = [.2, .4, .6, .8, 1]
+// var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
 
 
+//   var legend = chart1.selectAll("g.legend")
+//   .attr("transform", "rotate(90)")
+//   .data(ext_color_domain)
+//   .enter().append("g")
+//   .attr("class", "legend");
 
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-// Add new data viz on click. 
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-function bar_colors(numclicks){
-  if (numclicks == 0) { return  "#137ed9"; } 
-  else if (numclicks == 1) { return "#00b0ff"; }
-  else if (numclicks == 2) { return "#0c9fc6"; }
-  else if (numclicks == 3) { return "#0ab4c8"; }
-  else if (numclicks == 4) { return "#00d7ff"; }
-};
+//   var ls_w = 20, ls_h = 20;
 
-yScale = d3.scaleLinear()
-    .domain([0, 1])
-    // .domain([0, maxValue])
-    .range([y_axisLength, 0]);
-    barXvalues =  get_CLASS_bar_x_positions();
-    xScale = getXscale(barXvalues);
+//   legend.append("rect")
+//   .attr("x", 20)
+//   .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+//   .attr("width", ls_w)
+//   .attr("height", ls_h)
+//   .style("fill", function(d, i) { return color(d); })
+//   .style("opacity", 0.8);
+
+//   legend.append("text")
+//   .attr("x", 50)
+//   .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+//   .text(function(d, i){ return legend_labels[i]; });
+
+
+
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+// // Add new data viz on click. 
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+// function bar_colors(numclicks){
+//   if (numclicks == 0) { return  "#137ed9"; } 
+//   else if (numclicks == 1) { return "#00b0ff"; }
+//   else if (numclicks == 2) { return "#0c9fc6"; }
+//   else if (numclicks == 3) { return "#0ab4c8"; }
+//   else if (numclicks == 4) { return "#00d7ff"; }
+// };
+
+// yScale = d3.scaleLinear()
+//     .domain([0, 1])
+//     // .domain([0, maxValue])
+//     .range([y_axisLength, 0]);
+//     barXvalues =  get_CLASS_bar_x_positions();
+//     xScale = getXscale(barXvalues);
     
-    drawAxes(yScale, xScale);
+//     drawAxes(yScale, xScale);
 
-var div = d3.select("body").append("div") 
-    .attr("class", "tooltip")       
-    .style("opacity", 0);
+// var div = d3.select("body").append("div") 
+//     .attr("class", "tooltip")       
+//     .style("opacity", 0);
 
-function chartonClick(d, numclicks) {
-    numclicks = numclicks
-    var currentCounty = county.get(d.id);
-    var currentState = state.get(d.id);
+// function chartonClick(d, numclicks) {
+//     numclicks = numclicks
+//     var currentCounty = county.get(d.id);
+//     var currentState = state.get(d.id);
 
-    d3.csv("mapData/"+fileName, function(error, data) {
-      if (error) throw error;
+//     d3.csv("mapData/"+fileName, function(error, data) {
+//       if (error) throw error;
   
-      data = filterbyCounty(data, currentCounty, currentState);
-      proportions = getDistribution(data);
-      class_dist = low_Middle_High_class(proportions);
+//       data = filterbyCounty(data, currentCounty, currentState);
+//       proportions = getDistribution(data);
+//       class_dist = low_Middle_High_class(proportions);
 
-      if (numclicks == 0){
-        d3.selectAll("#incomebars").remove(); // Remove old bar.
-        d3.selectAll("#barlabel").remove();
-      }     
+//       if (numclicks == 0){
+//         d3.selectAll("#incomebars").remove(); // Remove old bar.
+//         d3.selectAll("#barlabel").remove();
+//       }     
 
-      // Append the rectangles (bars) for the bar chart
-      var barz = chart2
-        .append('g')
-        .attr("transform", "translate(0,-"+height/2+")")
-        .selectAll( "rect" )
-        .data( class_dist );
+//       // Append the rectangles (bars) for the bar chart
+//       var barz = chart2
+//         .append('g')
+//         .attr("transform", "translate(0,-"+height/2+")")
+//         .selectAll( "rect" )
+//         .data( class_dist );
 
-      var barChart = barz
-        .enter()
-        .append("rect")
-        .attr("id", "incomebars")
-        .attr( "x", function(d, i){
-          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
-          })
-        .attr("y", function(d) {
-        return yScale(-getYscale(class_dist)[1]);
-        })
-        .attr("height", 0)
-        .attr( "y", function(d){
-          return yScale(d); // Set y coordinate for each bar to height minus the data value
-          })
-        .attr( "width", barWidth )
-        .attr( "height", function(d){
-          return height/2 - yScale(d); // Set height of rectangle to data value
-          })
-        .attr("fill", bar_colors(numclicks));
+//       var barChart = barz
+//         .enter()
+//         .append("rect")
+//         .attr("id", "incomebars")
+//         .attr( "x", function(d, i){
+//           return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
+//           })
+//         .attr("y", function(d) {
+//         return yScale(-getYscale(class_dist)[1]);
+//         })
+//         .attr("height", 0)
+//         .attr( "y", function(d){
+//           return yScale(d); // Set y coordinate for each bar to height minus the data value
+//           })
+//         .attr( "width", barWidth )
+//         .attr( "height", function(d){
+//           return height/2 - yScale(d); // Set height of rectangle to data value
+//           })
+//         .attr("fill", bar_colors(numclicks));
 
-        barChart
-        .on("mouseover", function(d, i) {	
-        	d3.select(this)
-            div.transition()		
-                .duration(200)		
-                .style("opacity", .9);
+//         barChart
+//         .on("mouseover", function(d, i) {	
+//         	d3.select(this)
+//             div.transition()		
+//                 .duration(200)		
+//                 .style("opacity", .9);
 
-            div	.html( Math.round((100*d),0)+ "% \"" + classes[i] +" class\" in " + currentCounty + "," + currentState)	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })			
-        .on("mouseout", function(d) {		
-            div.transition()		
-                .duration(500)		
-                .style("opacity", 0);	
-        });
+//             div	.html( Math.round((100*d),0)+ "% \"" + classes[i] +" class\" in " + currentCounty + "," + currentState)	
+//                 .style("left", (d3.event.pageX) + "px")		
+//                 .style("top", (d3.event.pageY - 28) + "px");	
+//             })			
+//         .on("mouseout", function(d) {		
+//             div.transition()		
+//                 .duration(500)		
+//                 .style("opacity", 0);	
+//         });
 
-});
-};
+// });
+// };
 
 </script>
