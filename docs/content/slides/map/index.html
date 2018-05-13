@@ -262,8 +262,8 @@ titlesvg.append("svg").append("text")
 
 
 var formatDateIntoYear = d3.timeFormat("%Y");
-var formatDate = d3.timeFormat("%b %Y");
-var parseDate = d3.timeParse("%m/%d/%y");
+var formatDate = d3.timeFormat("%Y");
+var parseDate = d3.timeParse("%y");
 
 var startDate = new Date("2010"),
     endDate = new Date("2017");
@@ -311,6 +311,10 @@ slider.append("line")
           // console.log(invert(currentValue));
           // console(x.invert(currentValue))
           console.log(x.invert(currentValue));
+          // if (d3.timeFormat("%m")(currentValue) == 12 ){
+            // update(x.invert(currentValue)); 
+          // }
+          // console.log(x.invert(currentValue));
           update(x.invert(currentValue)); 
         })
     );
@@ -414,6 +418,19 @@ function drawPlot(data) {
     .remove();
 }
 
+var poverty = d3.map();
+
+
+function setDict(newData){
+  console.log("??")
+  for(var i = 0; i<newData.length; i++) {
+    console.info("called?", newData[i]["id"]);
+    poverty.set(newData[i]["id"], newData[i]["percent_poor"]);
+  }
+  // poverty.set(newData["id"], +newData["percent_poor"]); 
+};
+
+
 function update(h) {
   // update position and text of label according to slider scale
   handle.attr("cx", x(h));
@@ -421,23 +438,20 @@ function update(h) {
     .attr("x", x(h))
     .text(formatDate(h));
 
-var format = d3.timeParse("%y");
+  var format = d3.timeParse("%y");
 
   // filter data set and redraw plot
   var newData = dataset.filter(function(d) {
     return d.year == d3.timeFormat("%y")(h);
-    // console.log(d.year);
-    // console.log(d3.timeFormat("%y")(h))
-    // return d.year == d3.timeFormat("%y")(h);
-    // console.log("dataset", dataset)
-    // year = d3.timeFormat("%Y")(h);
-    // console.log("hh", d3.timeFormat("%y")(h));
-    // newFileName = "black"+year+"map.csv"
-    // console.log(newFileName)
-    // return d.year == d3.timeFormat("%y")(h);
   })
+
+
+
+  setDict(newData);
+  console.info("poverty", poverty);
+
   console.log("filtered ?newData", newData);
-  
+
   // drawMap("mapData/"+fileName);
   // drawPlot(newData);
 }
