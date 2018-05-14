@@ -261,12 +261,12 @@ titlesvg.append("svg").append("text")
 
 
 
-var formatDateIntoYear = d3.timeFormat("%Y");
-var formatDate = d3.timeFormat("%Y");
-var parseDate = d3.timeParse("%y");
+// var formatDateIntoYear = d3.timeFormat("%Y");
+// var formatDate = d3.timeFormat("%Y");
+// var parseDate = d3.timeParse("%y");
 
-var startDate = new Date("2010"),
-    endDate = new Date("2017");
+var startDate = 2010; //new Date("2010"),
+var endDate = 2016; //new Date("2017");
 
 var slidermargin = {top:0, right:50, bottom:0, left:50},
     sliderwidth = 500 - slidermargin.left - slidermargin.right,
@@ -284,8 +284,13 @@ var currentValue = 0;
 var targetValue = sliderwidth;
 
 var playButton = d3.select("#play-button");
+
+// var x = d3.scaleQuantize()
+//       .domain([0, targetValue])
+//       .range([2010,2011,2012,2013,2014,2015,2016])
+//       .clamp(true);
     
-var x = d3.scaleTime()
+var x = d3.scaleLinear() //scaleTime()
     .domain([startDate, endDate])
     .range([0, targetValue])
     .clamp(true);
@@ -323,13 +328,14 @@ slider.insert("g", ".track-overlay")
     .attr("class", "ticks")
     .attr("transform", "translate(0," + 18 + ")")
   .selectAll("text")
-    .data(x.ticks(10))
+    .data(x.ticks(6))
     .enter()
     .append("text")
     .attr("x", x)
     .attr("y", 10)
     .attr("text-anchor", "middle")
-    .text(function(d) { return formatDateIntoYear(d); });
+    .text(function(d) { return (d); });
+    // .text(function(d) { return formatDateIntoYear(d); });
 
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
@@ -338,7 +344,7 @@ var handle = slider.insert("circle", ".track-overlay")
 var label = slider.append("text")  
     .attr("class", "label")
     .attr("text-anchor", "middle")
-    .text(formatDate(startDate))
+    // .text(formatDate(startDate))
     .attr("transform", "translate(0," + (-25) + ")")
 
  
@@ -430,31 +436,57 @@ function setDict(newData){
   // poverty.set(newData["id"], +newData["percent_poor"]); 
 };
 
-
+var initialYear = 2010;
 function update(h) {
   // update position and text of label according to slider scale
+  // console.log("h",Math.round(h,0));
+  // console.log("dataset", dataset);
+  // var initialYear = Math.round(h,0);
+  console.log("initialYear", initialYear);
+  // console.log("maps", maps);
+  
+  var format = d3.timeParse("%y");
+
   handle.attr("cx", x(h));
   label
     .attr("x", x(h))
-    .text(formatDate(h));
+    .text(d3.timeFormat("%y")(h)); // Not working. Why?
+  // console.log("get?", maps[initialYear]);
 
-  var format = d3.timeParse("%y");
+  if (Math.round(h,0) > initialYear){
+    // console.log("get?", maps[initialYear]);
+
+    console.log("step?????");
+    initialYear = Math.round(h,0);
+    console.log("get?", maps[initialYear]);
+
+    // console.
+    // var newData = dataset.filter(function(d) {
+    // return d.year == d3.timeFormat("%y")(h);
+      // console.log("why so many?", Math.round(h,0));
+      // return d.year == Math.round(h,0);
+    // console
+  };
+      // console.log("newData after filter?", newData);
+  // };
+  
 
   // filter data set and redraw plot
-  var newData = dataset.filter(function(d) {
-    return d.year == d3.timeFormat("%y")(h);
-  })
+  // var newData = dataset.filter(function(d) {
+  //   // return d.year == d3.timeFormat("%y")(h);
+  //   return d.year == Math.round(h,0);
+  // })
 
 
 
-  setDict(newData);
-  console.info("poverty", poverty);
+  // setDict(newData);
+  // console.info("poverty", poverty);
 
-  console.log("filtered ?newData", newData);
+  // console.log("filtered ?newData", newData);
 
   // drawMap("mapData/"+fileName);
   // drawPlot(newData);
-}
+};
 
 
 
@@ -609,8 +641,29 @@ d3.csv("mapData/blackmap.csv", prepare, function(d) {
   // pov2010 = d.filter(function(d){return d.category == 2010});
   dataset = d;
 
+  map2010 = d3.map()
+  var year2010 = dataset.filter(function(d) {
+    return d.year == '10';
+  })
+  for(var i = 0; i<year2010.length; i++) {
+    map2010.set(year2010[i]["id"], year2010[i]["percent_poor"]);
+  }
+  // console.log("map2010", map2010);
 
+  map2011 = d3.map()
+  var year2011 = dataset.filter(function(d) {
+    return d.year == '11';
+  })
+  for(var i = 0; i<year2010.length; i++) {
+    map2011.set(year2011[i]["id"], year2011[i]["percent_poor"]);
+  }
+  // console.log("map2011", map2011);
 
+  maps = {
+  2010: map2010,
+  2011: map2011
+};
+  console.log(maps);
   // poverty.set(d.year, 10);
   // console.log(poverty);
   // console.log("data", d);
