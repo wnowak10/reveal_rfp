@@ -438,11 +438,12 @@ function setDict(newData){
 
 var initialYear = 2010;
 function update(h) {
+  // console.log("usa wouldnt exist here?", usa);
   // update position and text of label according to slider scale
   // console.log("h",Math.round(h,0));
   // console.log("dataset", dataset);
   // var initialYear = Math.round(h,0);
-  console.log("initialYear", initialYear);
+  // console.log("initialYear", initialYear);
   // console.log("maps", maps);
   
   var format = d3.timeParse("%y");
@@ -456,11 +457,13 @@ function update(h) {
   if (Math.round(h,0) > initialYear){
     // console.log("get?", maps[initialYear]);
 
-    console.log("step?????");
+    // console.log("step?????");
     initialYear = Math.round(h,0);
-    poverty_dict = maps[initialYear]
-    colorMap(poverty_dict);
-    console.log("get?", maps[initialYear]);
+    // poverty_dict = maps[initialYear]
+    drawMapOutline(usa, poverty2016);
+    // drawMapOutline();
+    // colorMap(poverty_dict);
+    // console.log("get?", maps[initialYear]);
 
     // console.
     // var newData = dataset.filter(function(d) {
@@ -556,8 +559,10 @@ function incrementValue(){
   }
  }
 
-function drawMapOutline(error, us) {
-  if (error) throw error;
+// function drawMapOutline(error, us) {
+//   if (error) throw error;
+function drawMapOutline(us, poverty_dict) {
+  // if (error) throw error;
   console.log(topojson.feature(us, us.objects.counties).features);
 
   g.append("g")
@@ -566,7 +571,8 @@ function drawMapOutline(error, us) {
       .data(topojson.feature(us, us.objects.counties).features)
       .enter()
       .append("path")
-      .attr("fill", "black")
+      // .attr("fill", "black")
+      .attr("fill", colorMap(us, poverty_dict))
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
       
@@ -584,56 +590,115 @@ function drawMapOutline(error, us) {
       .attr("d", path);
 }; // Close ready() function
 
-function colorMap(poverty){
-  console.log("colorMap called")
-  console.log(poverty);
+// console.log("does g exist?", g);
 
-  d3.selectAll(".counties").attr("fill", function(d) { 
-    console.log("county id", d.id);
-    return color(d.percent_poor = poverty.get(d.id)); 
-        })
+function colorMap(usa, poverty_dict){
+  console.log("incolormap", poverty_dict);
+  console.log(poverty_dict.get(usa.id));
+  // console.log(usa);
+  // console.log("usa id", usa["objects"]);
+  // console.log("usa id", usa["objects"]["counties"]);
+  // console.log("usa id", usa["objects"]["counties"]["geometries"]);
+  // // console.log("?get pov?", poverty_dict[usa.id]);
+  // for(var i = 0; i<usa["objects"]["counties"]["geometries"].length; i++) {
+  //   // var id_dict = {}
+  //   // var pp_dict = {}
+  //   // id_dict["id"] = year2010[i]["id"]
+  //   // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
+  //   // map2010.set(id_dict, pp_dict); // Add labels?
+  //   // Add labels?
+  //   console.log(usa["objects"]["counties"]["geometries"][i]["id"])
+  //   console.log(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
+  // }
+  // return "red"
+  // match id in poverty with id in usa
+  // return color (percentpoor)
+
+  return color(poverty_dict.percent_poor = poverty_dict.get(usa.id));
+  // console.log("colorMap called")
+  // console.log(poverty);
+
+  // d3.selectAll(".counties") //.append("g")
+  //     // .attr("class", "counties")
+  //     // .selectAll("path")
+  //     // .data(topojson.feature(us, us.objects.counties).features)
+  //     // .enter()
+  //     // .append("path")
+  //     .attr("fill", "red");
       // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-      // .attr("d", path)
-      .on("click", function(d){
-          incrementValue();
-          chartonClick(d, numclicks);
-      })
-      .on("mouseover", function(d, i, c) { 
-          d3.select(this)
-            div.transition()    
-                .duration(200)    
-                .attr("id", "maphover")
-                .style("opacity", .9);
+      // .attr("d", path);
 
-            div.html(county.get(d.id) + "," + state.get(d.id)) 
-                .attr("id", "maphover")
-                .style("left", (d3.event.pageX) + "px")   
-                .style("top", (d3.event.pageY - 28) + "px");  
-            })
-      .on("mouseout", function(d) {
-                    d3.select("#tooltip").remove();
+  // g.attr("fill", function(d) { 
+  //   console.log(d);
+  //   console.log("county id", d.id);
+  //   return color(d.percent_poor = poverty.get(d.id)); 
+  //       })
+  //     // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+  //     // .attr("d", path)
+  //     .on("click", function(d){
+  //         incrementValue();
+  //         chartonClick(d, numclicks);
+  //     })
+  //     .on("mouseover", function(d, i, c) { 
+  //         d3.select(this)
+  //           div.transition()    
+  //               .duration(200)    
+  //               .attr("id", "maphover")
+  //               .style("opacity", .9);
 
-                    d3.select(this)
-                    .transition()
-                    .duration(600)
-                    .attr("fill", color(d.percent_poor))
-                    .style("fill", function(d) {
-                      return color(d.percent_poor);
-                    })
-                });
+  //           div.html(county.get(d.id) + "," + state.get(d.id)) 
+  //               .attr("id", "maphover")
+  //               .style("left", (d3.event.pageX) + "px")   
+  //               .style("top", (d3.event.pageY - 28) + "px");  
+  //           })
+  //     .on("mouseout", function(d) {
+  //                   d3.select("#tooltip").remove();
+
+  //                   d3.select(this)
+  //                   .transition()
+  //                   .duration(600)
+  //                   .attr("fill", color(d.percent_poor))
+  //                   .style("fill", function(d) {
+  //                     return color(d.percent_poor);
+  //                   })
+  //               });
 };
 
+var poverty2016 = d3.map();
 
-// function drawMap(){
 d3.queue()
     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-    .defer(d3.json, "usa.json")
-    // .defer(d3.csv, incomeData, function(d) {     
+    .defer(d3.json, "usa.json", function(us){
+      usa = us;
+    })
+    .defer(d3.csv, "mapData/black_income_2016.csv", function(d) {
+
+      // var poverty2016 = d3.map();
+     
     // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
-    //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
+      poverty2016.set(d.id, +d.percent_poor); // Need for choropleth.
     //   state.set(d.id, d.State); // Need for filtering data.
     //   county.set(d.id, d.County);}) // ""
+  })
     .await(drawMapOutline);
+
+// function drawMap(){
+// d3.json("usa.json", function(us){
+ // usa = us;
+ // drawMapOutline(usa);
+// <!-- }) -->
+// drawMapOutline(usa, poverty_dict);
+
+// console.log("does usa exist?", usa); // Not here, but it does exist in update?
+// d3.queue()
+//     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+//     .defer(d3.json, "usa.json")
+//     // .defer(d3.csv, incomeData, function(d) {     
+//     // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
+//     //   poverty.set(d.id, +d.percent_poor); // Need for choropleth.
+//     //   state.set(d.id, d.State); // Need for filtering data.
+//     //   county.set(d.id, d.County);}) // ""
+//     .await(drawMapOutline);
 // };
 // drawMap();
 // loadData()
@@ -643,6 +708,18 @@ d3.queue()
 var poverty = d3.map();
 var state = d3.map();
 var county = d3.map();
+
+
+// var poverty2016 = d3.map();
+
+// d3.csv("mapData/black_income_2016.csv", function(d) { 
+//     poverty2016.set(d.id, +d.percent_poor); // Need for choropleth.
+// });
+
+// console.log("poverty2016" poverty2016);
+//     //   state.set(d.id, d.State); // Need for filtering data.
+//     //   county.set(d.id, d.County);}) // ""
+
 
 d3.csv("mapData/blackmap.csv", prepare, function(d) {
 // d3.csv("mapData/blackmap.csv", prepare, function(data) {
