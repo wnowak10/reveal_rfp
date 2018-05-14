@@ -457,9 +457,10 @@ function update(h) {
   if (Math.round(h,0) > initialYear){
     // console.log("get?", maps[initialYear]);
 
-    // console.log("step?????");
+    console.log("step?????");
     initialYear = Math.round(h,0);
     // poverty_dict = maps[initialYear]
+    console.log(poverty2016);
     drawMapOutline(usa, poverty2016);
     // drawMapOutline();
     // colorMap(poverty_dict);
@@ -592,29 +593,40 @@ function drawMapOutline(us, poverty_dict) {
 
 // console.log("does g exist?", g);
 
-function colorMap(usa, poverty_dict){
-  console.log("incolormap", poverty_dict);
-  console.log(poverty_dict.get(usa.id));
+function colorMap(us, poverty_dict){
+  console.log(1, "incolormap", poverty_dict);
+  console.log(2, us["objects"]["counties"]);
+
+  console.log(3, us["objects"]["counties"]["geometries"]);
+  console.log(4, us["objects"]["counties"]["geometries"]["id"]);
+  console.log(5, poverty_dict.get(us["objects"]["counties"]["geometries"]["id"]));
   // console.log(usa);
   // console.log("usa id", usa["objects"]);
   // console.log("usa id", usa["objects"]["counties"]);
   // console.log("usa id", usa["objects"]["counties"]["geometries"]);
   // // console.log("?get pov?", poverty_dict[usa.id]);
-  // for(var i = 0; i<usa["objects"]["counties"]["geometries"].length; i++) {
+  for(var i = 0; i<usa["objects"]["counties"]["geometries"].length; i++) {
   //   // var id_dict = {}
   //   // var pp_dict = {}
   //   // id_dict["id"] = year2010[i]["id"]
   //   // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
   //   // map2010.set(id_dict, pp_dict); // Add labels?
   //   // Add labels?
-  //   console.log(usa["objects"]["counties"]["geometries"][i]["id"])
+    console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
+    console.log(7, poverty_dict['01001'])
+    console.log(8, poverty_dict[01001])
+    console.log(9, 'access odict', poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]))
+    return color(poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]));
+
+    // return color(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
+    // console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
   //   console.log(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
-  // }
+  }
   // return "red"
   // match id in poverty with id in usa
   // return color (percentpoor)
-
-  return color(poverty_dict.percent_poor = poverty_dict.get(usa.id));
+  // return "red";
+  // return color(poverty_dict.percent_poor = poverty_dict.get(usa.id));
   // console.log("colorMap called")
   // console.log(poverty);
 
