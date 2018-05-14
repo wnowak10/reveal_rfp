@@ -435,6 +435,14 @@ function incrementValue(){
   }
  }
 
+var numclicks = -1;
+function incrementValue(){
+  numclicks+=1;
+  if (numclicks > 4){
+     numclicks = (numclicks%5);
+  }
+ }
+ 
 // function drawMapOutline(error, us) {
 //   if (error) throw error;
 function drawMapOutline(us, poverty_dict) {
@@ -451,7 +459,7 @@ function drawMapOutline(us, poverty_dict) {
 
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
       .on("click", function(d){
-  //         incrementValue();
+          incrementValue();
           chartonClick(d, numclicks);
       })
       // .attr("fill", colorMap(us, poverty_dict))
