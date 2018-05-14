@@ -458,6 +458,8 @@ function update(h) {
 
     console.log("step?????");
     initialYear = Math.round(h,0);
+    poverty_dict = maps[initialYear]
+    colorMap(poverty_dict);
     console.log("get?", maps[initialYear]);
 
     // console.
@@ -556,6 +558,7 @@ function incrementValue(){
 
 function drawMapOutline(error, us) {
   if (error) throw error;
+  console.log(topojson.feature(us, us.objects.counties).features);
 
   g.append("g")
       .attr("class", "counties")
@@ -582,8 +585,13 @@ function drawMapOutline(error, us) {
 }; // Close ready() function
 
 function colorMap(poverty){
+  console.log("colorMap called")
+  console.log(poverty);
 
-  mapoutline.attr("fill", function(d) { return color(d.percent_poor = poverty.get(d.id)); })
+  d3.selectAll(".counties").attr("fill", function(d) { 
+    console.log("county id", d.id);
+    return color(d.percent_poor = poverty.get(d.id)); 
+        })
       // .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       // .attr("d", path)
       .on("click", function(d){
@@ -646,7 +654,12 @@ d3.csv("mapData/blackmap.csv", prepare, function(d) {
     return d.year == '10';
   })
   for(var i = 0; i<year2010.length; i++) {
-    map2010.set(year2010[i]["id"], year2010[i]["percent_poor"]);
+    // var id_dict = {}
+    // var pp_dict = {}
+    // id_dict["id"] = year2010[i]["id"]
+    // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
+    // map2010.set(id_dict, pp_dict); // Add labels?
+    map2010.set(year2010[i]["id"], year2010[i]["percent_poor"]); // Add labels?
   }
   // console.log("map2010", map2010);
 
@@ -657,11 +670,56 @@ d3.csv("mapData/blackmap.csv", prepare, function(d) {
   for(var i = 0; i<year2010.length; i++) {
     map2011.set(year2011[i]["id"], year2011[i]["percent_poor"]);
   }
+
+   map2012 = d3.map()
+  var year2012 = dataset.filter(function(d) {
+    return d.year == '12';
+  })
+  for(var i = 0; i<year2012.length; i++) {
+    map2012.set(year2012[i]["id"], year2012[i]["percent_poor"]);
+  }
+
+   map2013 = d3.map()
+  var year2013 = dataset.filter(function(d) {
+    return d.year == '13';
+  })
+  for(var i = 0; i<year2013.length; i++) {
+    map2013.set(year2013[i]["id"], year2013[i]["percent_poor"]);
+  }
+
+   map2014 = d3.map()
+  var year2014 = dataset.filter(function(d) {
+    return d.year == '14';
+  })
+  for(var i = 0; i<year2014.length; i++) {
+    map2014.set(year2014[i]["id"], year2014[i]["percent_poor"]);
+  }
+
+   map2015 = d3.map()
+  var year2015 = dataset.filter(function(d) {
+    return d.year == '15';
+  })
+  for(var i = 0; i<year2015.length; i++) {
+    map2015.set(year2015[i]["id"], year2015[i]["percent_poor"]);
+  }
+
+   map2016 = d3.map()
+  var year2016 = dataset.filter(function(d) {
+    return d.year == '16';
+  })
+  for(var i = 0; i<year2016.length; i++) {
+    map2016.set(year2016[i]["id"], year2016[i]["percent_poor"]);
+  }
   // console.log("map2011", map2011);
 
   maps = {
   2010: map2010,
-  2011: map2011
+  2011: map2011,
+  2012: map2012,
+  2013: map2013,
+  2014: map2014,
+  2015: map2015,
+  2016: map2016
 };
   console.log(maps);
   // poverty.set(d.year, 10);
