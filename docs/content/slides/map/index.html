@@ -371,7 +371,7 @@ function update(h) {
       initialYear = Math.round(h,0);
       poverty_dict = maps[initialYear]
       // console.log(poverty2016);
-      drawMapOutline(usa, poverty_dict);
+      drawMapOutline(usa, poverty_dict, initialYear);
     };
   
 };
@@ -445,7 +445,7 @@ function incrementValue(){
  
 // function drawMapOutline(error, us) {
 //   if (error) throw error;
-function drawMapOutline(us, poverty_dict) {
+function drawMapOutline(us, poverty_dict, initialYear) {
   // if (error) throw error;
   console.log(topojson.feature(us, us.objects.counties).features);
 
@@ -460,7 +460,7 @@ function drawMapOutline(us, poverty_dict) {
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
       .on("click", function(d){
           incrementValue();
-          chartonClick(d, numclicks);
+          chartonClick(d, numclicks, initialYear);
       })
       // .attr("fill", colorMap(us, poverty_dict))
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
@@ -1064,9 +1064,11 @@ var div = d3.select("body").append("div")
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
-var fileName = "black2010map.csv"
+// var fileName = "black2010map.csv"
 
-function chartonClick(d, numclicks) {
+function chartonClick(d, numclicks, initialYear) {
+    var fileName = "black"+initialYear+"map.csv"
+
     numclicks = numclicks
     console.log("clicked???d", d)
     console.log(county);
