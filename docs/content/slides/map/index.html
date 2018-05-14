@@ -211,49 +211,7 @@ titlesvg.append("svg").append("text")
         .text("POVERTY IN AMERICA")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  ////////////////////////////////////////
+////////////////////////////////////////
 //////////////////////////////////////////
 // Set the dimensions of the canvas/graph.
 //////////////////////////////////////////
@@ -284,11 +242,6 @@ var currentValue = 0;
 var targetValue = sliderwidth;
 
 var playButton = d3.select("#play-button");
-
-// var x = d3.scaleQuantize()
-//       .domain([0, targetValue])
-//       .range([2010,2011,2012,2013,2014,2015,2016])
-//       .clamp(true);
     
 var x = d3.scaleLinear() //scaleTime()
     .domain([startDate, endDate])
@@ -312,14 +265,6 @@ slider.append("line")
         .on("start.interrupt", function() { slider.interrupt(); })
         .on("start drag", function() {
           currentValue = d3.event.x;
-          // console.log(currentValue)
-          // console.log(invert(currentValue));
-          // console(x.invert(currentValue))
-          console.log(x.invert(currentValue));
-          // if (d3.timeFormat("%m")(currentValue) == 12 ){
-            // update(x.invert(currentValue)); 
-          // }
-          // console.log(x.invert(currentValue));
           update(x.invert(currentValue)); 
         })
     );
@@ -356,29 +301,6 @@ var plot = svg.append("g")
     .attr("class", "plot")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// d3.csv("circles.csv", prepare, function(data) {
-// // d3.csv("mapData/blackmap.csv", prepare, function(data) {
-//   console.log("data", data);
-//   dataset = data;
-//   // drawPlot(dataset);
-  
-//   playButton
-//     .on("click", function() {
-//     var button = d3.select(this);
-//     if (button.text() == "Pause") {
-//       moving = false;
-//       clearInterval(timer);
-//       // timer = 0;
-//       button.text("Play");
-//     } else {
-//       moving = true;
-//       timer = setInterval(step, 100);
-//       button.text("Pause");
-//     }
-//     console.log("Slider moving: " + moving);
-//   })
-// })
-
 function prepare(d) {
   d.id = d.id;
   d.year = d.year; // Keep as string
@@ -399,30 +321,30 @@ function step() {
   }
 }
 
-function drawPlot(data) {
-  var locations = plot.selectAll(".location")
-    .data(data);
+// function drawPlot(data) {
+//   var locations = plot.selectAll(".location")
+//     .data(data);
 
-  // if filtered dataset has more circles than already existing, transition new ones in
-  locations.enter()
-    .append("circle")
-    .attr("class", "location")
-    .attr("cx", function(d) { return x(d.date); })
-    .attr("cy", height/2)
-    .style("fill", function(d) { return d3.hsl(d.date/1000000000, 0.8, 0.8)})
-    .style("stroke", function(d) { return d3.hsl(d.date/1000000000, 0.7, 0.7)})
-    .style("opacity", 0.5)
-    .attr("r", 8)
-      .transition()
-      .duration(400)
-      .attr("r", 25)
-        .transition()
-        .attr("r", 8);
+//   // if filtered dataset has more circles than already existing, transition new ones in
+//   locations.enter()
+//     .append("circle")
+//     .attr("class", "location")
+//     .attr("cx", function(d) { return x(d.date); })
+//     .attr("cy", height/2)
+//     .style("fill", function(d) { return d3.hsl(d.date/1000000000, 0.8, 0.8)})
+//     .style("stroke", function(d) { return d3.hsl(d.date/1000000000, 0.7, 0.7)})
+//     .style("opacity", 0.5)
+//     .attr("r", 8)
+//       .transition()
+//       .duration(400)
+//       .attr("r", 25)
+//         .transition()
+//         .attr("r", 8);
 
-  // if filtered dataset has less circles than already existing, remove excess
-  locations.exit()
-    .remove();
-}
+//   // if filtered dataset has less circles than already existing, remove excess
+//   locations.exit()
+//     .remove();
+// }
 
 var poverty = d3.map();
 
@@ -430,7 +352,7 @@ var poverty = d3.map();
 function setDict(newData){
   console.log("??")
   for(var i = 0; i<newData.length; i++) {
-    console.info("called?", newData[i]["id"]);
+    // console.info("called?", newData[i]["id"]);
     poverty.set(newData[i]["id"], newData[i]["percent_poor"]);
   }
   // poverty.set(newData["id"], +newData["percent_poor"]); 
@@ -438,72 +360,28 @@ function setDict(newData){
 
 var initialYear = 2010;
 function update(h) {
-  // console.log("usa wouldnt exist here?", usa);
-  // update position and text of label according to slider scale
-  // console.log("h",Math.round(h,0));
-  // console.log("dataset", dataset);
-  // var initialYear = Math.round(h,0);
-  // console.log("initialYear", initialYear);
-  // console.log("maps", maps);
   
-  var format = d3.timeParse("%y");
+    handle.attr("cx", x(h));
+    label
+      .attr("x", x(h))
+      .text(d3.timeFormat("%y")(h)); // Not working. Why?
 
-  handle.attr("cx", x(h));
-  label
-    .attr("x", x(h))
-    .text(d3.timeFormat("%y")(h)); // Not working. Why?
-  // console.log("get?", maps[initialYear]);
-
-  if (Math.round(h,0) > initialYear){
-    // console.log("get?", maps[initialYear]);
-
-    console.log("step?????");
-    initialYear = Math.round(h,0);
-    // poverty_dict = maps[initialYear]
-    console.log(poverty2016);
-    drawMapOutline(usa, poverty2016);
-    // drawMapOutline();
-    // colorMap(poverty_dict);
-    // console.log("get?", maps[initialYear]);
-
-    // console.
-    // var newData = dataset.filter(function(d) {
-    // return d.year == d3.timeFormat("%y")(h);
-      // console.log("why so many?", Math.round(h,0));
-      // return d.year == Math.round(h,0);
-    // console
-  };
-      // console.log("newData after filter?", newData);
-  // };
+    if ( (Math.round(h,0) > initialYear) | (Math.round(h,0) < initialYear) ){
+      // console.log("step?????");
+      initialYear = Math.round(h,0);
+      poverty_dict = maps[initialYear]
+      // console.log(poverty2016);
+      drawMapOutline(usa, poverty_dict);
+    };
   
-
-  // filter data set and redraw plot
-  // var newData = dataset.filter(function(d) {
-  //   // return d.year == d3.timeFormat("%y")(h);
-  //   return d.year == Math.round(h,0);
-  // })
-
-
-
-  // setDict(newData);
-  // console.info("poverty", poverty);
-
-  // console.log("filtered ?newData", newData);
-
-  // drawMap("mapData/"+fileName);
-  // drawPlot(newData);
 };
 
 
-
-
-
-
-//   //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Set the dimensions of the canvas/graph.
-// //////////////////////////////////////////
-// //////////////////////////////////////////
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Set the dimensions of the canvas/graph.
+//////////////////////////////////////////
+//////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 550;
 var height = 550;
@@ -528,10 +406,7 @@ var chart1 = d3.select("body").append("svg")
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-// chart1.append("rect")
-//     .attr("class", "background")
-//     .attr("width", width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom);
+
 var g = chart1.append("g");
 var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
 
@@ -573,7 +448,9 @@ function drawMapOutline(us, poverty_dict) {
       .enter()
       .append("path")
       // .attr("fill", "black")
-      .attr("fill", colorMap(us, poverty_dict))
+
+      .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
+      // .attr("fill", colorMap(us, poverty_dict))
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
       
@@ -591,37 +468,36 @@ function drawMapOutline(us, poverty_dict) {
       .attr("d", path);
 }; // Close ready() function
 
-// console.log("does g exist?", g);
 
-function colorMap(us, poverty_dict){
-  console.log(1, "incolormap", poverty_dict);
-  console.log(2, us["objects"]["counties"]);
+// function colorMap(us, poverty_dict){
+//   console.log(1, "incolormap", poverty_dict);
+//   console.log(2, us["objects"]["counties"]);
 
-  console.log(3, us["objects"]["counties"]["geometries"]);
-  console.log(4, us["objects"]["counties"]["geometries"]["id"]);
-  console.log(5, poverty_dict.get(us["objects"]["counties"]["geometries"]["id"]));
-  // console.log(usa);
-  // console.log("usa id", usa["objects"]);
-  // console.log("usa id", usa["objects"]["counties"]);
-  // console.log("usa id", usa["objects"]["counties"]["geometries"]);
-  // // console.log("?get pov?", poverty_dict[usa.id]);
-  for(var i = 0; i<usa["objects"]["counties"]["geometries"].length; i++) {
-  //   // var id_dict = {}
-  //   // var pp_dict = {}
-  //   // id_dict["id"] = year2010[i]["id"]
-  //   // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
-  //   // map2010.set(id_dict, pp_dict); // Add labels?
-  //   // Add labels?
-    console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
-    console.log(7, poverty_dict['01001'])
-    console.log(8, poverty_dict[01001])
-    console.log(9, 'access odict', poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]))
-    return color(poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]));
+//   console.log(3, us["objects"]["counties"]["geometries"]);
+//   console.log(4, us["objects"]["counties"]["geometries"]["id"]);
+//   console.log(5, poverty_dict.get(us["objects"]["counties"]["geometries"]["id"]));
+//   // console.log(usa);
+//   // console.log("usa id", usa["objects"]);
+//   // console.log("usa id", usa["objects"]["counties"]);
+//   // console.log("usa id", usa["objects"]["counties"]["geometries"]);
+//   // // console.log("?get pov?", poverty_dict[usa.id]);
+//   for(var i = 0; i<usa["objects"]["counties"]["geometries"].length; i++) {
+//   //   // var id_dict = {}
+//   //   // var pp_dict = {}
+//   //   // id_dict["id"] = year2010[i]["id"]
+//   //   // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
+//   //   // map2010.set(id_dict, pp_dict); // Add labels?
+//   //   // Add labels?
+//     console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
+//     console.log(7, poverty_dict['01001'])
+//     console.log(8, poverty_dict[01001])
+//     console.log(9, 'access odict', poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]))
+//     return color(poverty_dict.get(usa["objects"]["counties"]["geometries"][i]["id"]));
 
-    // return color(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
-    // console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
-  //   console.log(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
-  }
+//     // return color(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
+//     // console.log(6, usa["objects"]["counties"]["geometries"][i]["id"])
+//   //   console.log(poverty_dict[usa["objects"]["counties"]["geometries"][i]["id"]])
+//   }
   // return "red"
   // match id in poverty with id in usa
   // return color (percentpoor)
@@ -674,26 +550,45 @@ function colorMap(us, poverty_dict){
   //                     return color(d.percent_poor);
   //                   })
   //               });
-};
+// };
 
+var poverty2010 = d3.map();
+var poverty2011 = d3.map();
+var poverty2012 = d3.map();
+var poverty2013 = d3.map();
+var poverty2014 = d3.map();
+var poverty2015 = d3.map();
 var poverty2016 = d3.map();
 
+var usa;
 d3.queue()
     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
     .defer(d3.json, "usa.json", function(us){
       usa = us;
     })
-    .defer(d3.csv, "mapData/black_income_2016.csv", function(d) {
+    .defer(d3.csv, "mapData/black2010map.csv", function(d) { poverty2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
 
-      // var poverty2016 = d3.map();
-     
-    // // .defer(d3.csv, "mapData/black_income_2016.csv", function(d) { 
-      poverty2016.set(d.id, +d.percent_poor); // Need for choropleth.
-    //   state.set(d.id, d.State); // Need for filtering data.
-    //   county.set(d.id, d.County);}) // ""
-  })
     .await(drawMapOutline);
 
+
+maps = {
+  2010: poverty2010,
+  2011: poverty2011,
+  2012: poverty2012,
+  2013: poverty2013,
+  2014: poverty2014,
+  2015: poverty2015,
+  2016: poverty2016
+};
+
+
+console.log("PVOVOVOV", poverty2016)
 // function drawMap(){
 // d3.json("usa.json", function(us){
  // usa = us;
@@ -733,107 +628,121 @@ var county = d3.map();
 //     //   county.set(d.id, d.County);}) // ""
 
 
-d3.csv("mapData/blackmap.csv", prepare, function(d) {
-// d3.csv("mapData/blackmap.csv", prepare, function(data) {
-  // pov2010 = d.filter(function(d){return d.category == 2010});
-  dataset = d;
+// d3.csv("mapData/blackmap.csv", prepare, function(d) {
+// // d3.csv("mapData/blackmap.csv", prepare, function(data) {
+//   // pov2010 = d.filter(function(d){return d.category == 2010});
+//   dataset = d;
 
-  map2010 = d3.map()
-  var year2010 = dataset.filter(function(d) {
-    return d.year == '10';
-  })
-  for(var i = 0; i<year2010.length; i++) {
-    // var id_dict = {}
-    // var pp_dict = {}
-    // id_dict["id"] = year2010[i]["id"]
-    // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
-    // map2010.set(id_dict, pp_dict); // Add labels?
-    map2010.set(year2010[i]["id"], year2010[i]["percent_poor"]); // Add labels?
-  }
-  // console.log("map2010", map2010);
+//   map2010 = d3.map()
+//   var year2010 = dataset.filter(function(d) {
+//     return d.year == '10';
+//   })
+//   for(var i = 0; i<year2010.length; i++) {
+//     // var id_dict = {}
+//     // var pp_dict = {}
+//     // id_dict["id"] = year2010[i]["id"]
+//     // pp_dict["percent_poor"] = year2010[i]["percent_poor"]
+//     // map2010.set(id_dict, pp_dict); // Add labels?
+//     map2010.set(year2010[i]["id"], year2010[i]["percent_poor"]); // Add labels?
+//   }
+//   // console.log("map2010", map2010);
 
-  map2011 = d3.map()
-  var year2011 = dataset.filter(function(d) {
-    return d.year == '11';
-  })
-  for(var i = 0; i<year2010.length; i++) {
-    map2011.set(year2011[i]["id"], year2011[i]["percent_poor"]);
-  }
+//   map2011 = d3.map()
+//   var year2011 = dataset.filter(function(d) {
+//     return d.year == '11';
+//   })
+//   for(var i = 0; i<year2010.length; i++) {
+//     map2011.set(year2011[i]["id"], year2011[i]["percent_poor"]);
+//   }
 
-   map2012 = d3.map()
-  var year2012 = dataset.filter(function(d) {
-    return d.year == '12';
-  })
-  for(var i = 0; i<year2012.length; i++) {
-    map2012.set(year2012[i]["id"], year2012[i]["percent_poor"]);
-  }
+//    map2012 = d3.map()
+//   var year2012 = dataset.filter(function(d) {
+//     return d.year == '12';
+//   })
+//   for(var i = 0; i<year2012.length; i++) {
+//     map2012.set(year2012[i]["id"], year2012[i]["percent_poor"]);
+//   }
 
-   map2013 = d3.map()
-  var year2013 = dataset.filter(function(d) {
-    return d.year == '13';
-  })
-  for(var i = 0; i<year2013.length; i++) {
-    map2013.set(year2013[i]["id"], year2013[i]["percent_poor"]);
-  }
+//    map2013 = d3.map()
+//   var year2013 = dataset.filter(function(d) {
+//     return d.year == '13';
+//   })
+//   for(var i = 0; i<year2013.length; i++) {
+//     map2013.set(year2013[i]["id"], year2013[i]["percent_poor"]);
+//   }
 
-   map2014 = d3.map()
-  var year2014 = dataset.filter(function(d) {
-    return d.year == '14';
-  })
-  for(var i = 0; i<year2014.length; i++) {
-    map2014.set(year2014[i]["id"], year2014[i]["percent_poor"]);
-  }
+//    map2014 = d3.map()
+//   var year2014 = dataset.filter(function(d) {
+//     return d.year == '14';
+//   })
+//   for(var i = 0; i<year2014.length; i++) {
+//     map2014.set(year2014[i]["id"], year2014[i]["percent_poor"]);
+//   }
 
-   map2015 = d3.map()
-  var year2015 = dataset.filter(function(d) {
-    return d.year == '15';
-  })
-  for(var i = 0; i<year2015.length; i++) {
-    map2015.set(year2015[i]["id"], year2015[i]["percent_poor"]);
-  }
+//    map2015 = d3.map()
+//   var year2015 = dataset.filter(function(d) {
+//     return d.year == '15';
+//   })
+//   for(var i = 0; i<year2015.length; i++) {
+//     map2015.set(year2015[i]["id"], year2015[i]["percent_poor"]);
+//   }
 
-   map2016 = d3.map()
-  var year2016 = dataset.filter(function(d) {
-    return d.year == '16';
-  })
-  for(var i = 0; i<year2016.length; i++) {
-    map2016.set(year2016[i]["id"], year2016[i]["percent_poor"]);
-  }
-  // console.log("map2011", map2011);
+//    map2016 = d3.map()
+//   var year2016 = dataset.filter(function(d) {
+//     return d.year == '16';
+//   })
+//   for(var i = 0; i<year2016.length; i++) {
+//     map2016.set(year2016[i]["id"], year2016[i]["percent_poor"]);
+//   }
+//   // console.log("map2011", map2011);
 
-  maps = {
-  2010: map2010,
-  2011: map2011,
-  2012: map2012,
-  2013: map2013,
-  2014: map2014,
-  2015: map2015,
-  2016: map2016
-};
-  console.log(maps);
-  // poverty.set(d.year, 10);
-  // console.log(poverty);
-  // console.log("data", d);
-  // console.log("dataset", dataset);
-  // drawPlot(dataset);
+//   maps = {
+//   2010: map2010,
+//   2011: map2011,
+//   2012: map2012,
+//   2013: map2013,
+//   2014: map2014,
+//   2015: map2015,
+//   2016: map2016
+// };
+//   console.log(maps);
+//   // poverty.set(d.year, 10);
+//   // console.log(poverty);
+//   // console.log("data", d);
+//   // console.log("dataset", dataset);
+//   // drawPlot(dataset);
 
-   playButton
+//    playButton
+//     .on("click", function() {
+//     var button = d3.select(this);
+//     if (button.text() == "Pause") {
+//       moving = false;
+//       clearInterval(timer);
+//       // timer = 0;
+//       button.text("Play");
+//     } else {
+//       moving = true;
+//       timer = setInterval(step, 100);
+//       button.text("Pause");
+//     }
+//   })
+//   });
+
+playButton
     .on("click", function() {
-    var button = d3.select(this);
-    if (button.text() == "Pause") {
-      moving = false;
-      clearInterval(timer);
-      // timer = 0;
-      button.text("Play");
-    } else {
-      moving = true;
-      timer = setInterval(step, 100);
-      button.text("Pause");
-    }
-  })
-  });
-
-
+        var button = d3.select(this);
+        if (button.text() == "Pause") {
+            moving = false;
+            clearInterval(timer);
+            // timer = 0;
+            button.text("Play");
+        } 
+        else {
+            moving = true;
+            timer = setInterval(step, 100);
+            button.text("Pause");
+            }
+    });
 
 
 
