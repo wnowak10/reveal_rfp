@@ -224,11 +224,11 @@ titlesvg.append("svg").append("text")
 // var parseDate = d3.timeParse("%y");
 
 var startDate = 2010; //new Date("2010"),
-var endDate = 2016; //new Date("2017");
+var endDate = 2016.5; //new Date("2017");
 
 var slidermargin = {top:0, right:50, bottom:0, left:50},
-    sliderwidth = 500 - slidermargin.left - slidermargin.right,
-    sliderheight = 50 - slidermargin.top - slidermargin.bottom;
+    sliderwidth = 360 - slidermargin.left - slidermargin.right,
+    sliderheight = 40 - slidermargin.top - slidermargin.bottom;
 
 var svg = d3.select("#vis")
     .append("svg")
@@ -265,6 +265,8 @@ slider.append("line")
         .on("start.interrupt", function() { slider.interrupt(); })
         .on("start drag", function() {
           currentValue = d3.event.x;
+          console.log("slidervalue!")
+          console.log(x.invert(currentValue));
           update(x.invert(currentValue)); 
         })
     );
@@ -285,12 +287,16 @@ slider.insert("g", ".track-overlay")
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
     .attr("r", 9);
+    // .text(h);
 
 var label = slider.append("text")  
     .attr("class", "label")
     .attr("text-anchor", "middle")
+    .text("2010")
+
+    // .text()
     // .text(formatDate(startDate))
-    .attr("transform", "translate(0," + (-25) + ")")
+    .attr("transform", "translate(30,0)")
 
  
 ////////// plot //////////
@@ -310,7 +316,7 @@ function prepare(d) {
   
 function step() {
   update(x.invert(currentValue));
-  currentValue = currentValue + (targetValue/151);
+  currentValue = currentValue + (targetValue/60);
   if (currentValue > targetValue) {
     moving = false;
     currentValue = 0;
@@ -321,61 +327,30 @@ function step() {
   }
 }
 
-// function drawPlot(data) {
-//   var locations = plot.selectAll(".location")
-//     .data(data);
-
-//   // if filtered dataset has more circles than already existing, transition new ones in
-//   locations.enter()
-//     .append("circle")
-//     .attr("class", "location")
-//     .attr("cx", function(d) { return x(d.date); })
-//     .attr("cy", height/2)
-//     .style("fill", function(d) { return d3.hsl(d.date/1000000000, 0.8, 0.8)})
-//     .style("stroke", function(d) { return d3.hsl(d.date/1000000000, 0.7, 0.7)})
-//     .style("opacity", 0.5)
-//     .attr("r", 8)
-//       .transition()
-//       .duration(400)
-//       .attr("r", 25)
-//         .transition()
-//         .attr("r", 8);
-
-//   // if filtered dataset has less circles than already existing, remove excess
-//   locations.exit()
-//     .remove();
-// }
-
-var poverty = d3.map();
 
 
-function setDict(newData){
-  console.log("??")
-  for(var i = 0; i<newData.length; i++) {
-    // console.info("called?", newData[i]["id"]);
-    poverty.set(newData[i]["id"], newData[i]["percent_poor"]);
-  }
-  // poverty.set(newData["id"], +newData["percent_poor"]); 
-};
+// var poverty = d3.map();
+
 
 var initialYear = 2010;
+
 function update(h) {
-  
+  console.log(h)
     handle.attr("cx", x(h));
     label
       .attr("x", x(h))
-      .text(d3.timeFormat("%y")(h)); // Not working. Why?
+      
+      // .text("hi");
+      .text(Math.floor(h)); // Not working. Why?
 
-    if ( (Math.round(h,0) > initialYear) | (Math.round(h,0) < initialYear) ){
-      // console.log("step?????");
+    if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
+
       initialYear = Math.round(h,0);
       poverty_dict = maps[initialYear]
-      // console.log(poverty2016);
       drawMapOutline(usa, poverty_dict, initialYear);
     };
   
 };
-
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -447,7 +422,7 @@ function incrementValue(){
 //   if (error) throw error;
 function drawMapOutline(us, poverty_dict, initialYear) {
   // if (error) throw error;
-  console.log(topojson.feature(us, us.objects.counties).features);
+  // console.log(topojson.feature(us, us.objects.counties).features);
 
   g.append("g")
       .attr("class", "counties")
@@ -608,9 +583,12 @@ maps = {
   2015: poverty2015,
   2016: poverty2016
 };
+// console
+d3.json("usa.json", function(d){
+  drawMapOutline(d, maps[2010], 2010);
+} );
 
-
-console.log("PVOVOVOV", poverty2016)
+// console.log("PVOVOVOV", poverty2016)
 // function drawMap(){
 // d3.json("usa.json", function(us){
  // usa = us;
