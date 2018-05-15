@@ -29,9 +29,18 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 
 <body>
   <div id="title"></div>
-  <div id="vis">
-   <select id="dropdown"></select>
-  <button id="play-button">Play</button>
+  <div id="selectors">
+
+
+      <div id = "vis"></div>
+    
+      <div id="play-button"> </div>
+
+      <div id="dropdown"> </div>
+
+
+
+</div>
   <div id="charts"> </div>
   <!-- <div id="vis"> -->
 <!-- </div> -->
@@ -53,9 +62,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 //////////////////////////////////////////
 
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var width = 1100;
+var titlewidth = 1100;
 var titleheight = 60;
-var textWidth = width / 2
+var textWidth = titlewidth / 2
 
 
 //////////////////////////////////////////
@@ -65,7 +74,7 @@ var textWidth = width / 2
 //////////////////////////////////////////
 var titlesvg = d3.select("#title")
     .append("svg")
-    .attr("width", width)
+    .attr("width", titlewidth)
     .attr("height", titleheight); 
 
 
@@ -100,7 +109,7 @@ var moving = false;
 var currentValue = 0;
 var targetValue = sliderwidth;
 
-var playButton = d3.select("#play-button");
+var playButton = d3.select("#play-button").append("button").attr("id", "pb").text("Play");
     
 var x = d3.scaleLinear() //scaleTime()
     .domain([startDate, endDate])
@@ -183,8 +192,11 @@ var dropdown_options = [
 
 
 var initial_value = "black";
-d3.select("#dropdown")
-.attr("width", 200)
+var ddbutton = d3.select("#dropdown").append("select").attr("id", "dd");
+
+
+// .attr("width", 200)
+ddbutton
           .selectAll("option")
           .data(dropdown_options)
           .enter()
@@ -195,7 +207,8 @@ d3.select("#dropdown")
           })
           .text(function(option) { return option.text; });
 
-d3.select("#dropdown").on("change", change)
+// d3.select("#dropdown").on("change", change)
+ddbutton.on("change", change)
 var v;
 function change() {
     v=  this.options[this.selectedIndex].value;
@@ -289,11 +302,11 @@ function update(h) {
 //////////////////////////////////////////
 //////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var width = 550;
+var width = 850;
 var height = 550;
 
 
-var chart1 = d3.select("body").append("svg")
+var chart1 = d3.select("#charts").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
@@ -324,11 +337,11 @@ chart1
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor+300 , (y - height/2) * scaleFactor + height/10 - 9);
+      this.stream.point( (x - width/2) * scaleFactor+300 +200, (y - height/2) * scaleFactor + height/10 - 9);
                           }
   });
 }
-var mapScale = .6
+var mapScale = .8
 var path = d3.geoPath()
   .projection(scale(mapScale,width,height))
 
@@ -527,7 +540,7 @@ var county = d3.map();
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
- var chart2 = d3.select("body").append("svg") // append to svg will put side by side if there is enough room.
+ var chart2 = d3.select("#charts").append("svg") // append to svg will put side by side if there is enough room.
     .attr("width", width) 
     .attr("height", height)
     
