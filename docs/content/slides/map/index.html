@@ -54,7 +54,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 1100;
-var height = 40;
+var titleheight = 60;
 var textWidth = width / 2
 
 
@@ -66,7 +66,7 @@ var textWidth = width / 2
 var titlesvg = d3.select("#title")
     .append("svg")
     .attr("width", width)
-    .attr("height", height); 
+    .attr("height", titleheight); 
 
 
 titlesvg.append("svg").append("text")
@@ -175,15 +175,15 @@ playButton
 //////////////////////////////////////////
 
 var dropdown_options = [ 
-{ value: "all",
-  text: "All races" },
+// { value: "all",
+  // text: "All races" },
 { value: "black",
   text: "Black" },
 { value: "white",
   text: "White" }]
 
 
-var selectedValue;
+var initial_value = "black";
 d3.select("#dropdown")
 .attr("width", 200)
           .selectAll("option")
@@ -197,12 +197,25 @@ d3.select("#dropdown")
           .text(function(option) { return option.text; });
 
 d3.select("#dropdown").on("change", change)
-
+var v;
 function change() {
     v=  this.options[this.selectedIndex].value;
     console.log(v);
-    return v;
+    // return v;
+
+   
+    dict_to_use = dict_of_dicts[v]
+     
+
+    poverty_dict = dict_to_use[initialYear]
+      // poverty_dict = blackmaps[initialYear]
+    drawMapOutline(usa, poverty_dict, initialYear);
+
+
 };
+console.log("selectedValue", selectedValue);
+
+console.log("v", v);
 
 
 //////////////////////////////////////////
@@ -239,7 +252,7 @@ function step() {
 
 
 var initialYear = 2010;
-
+var race = initial_value;
 function update(h) {
 
     handle.attr("cx", x(h));
@@ -250,8 +263,20 @@ function update(h) {
     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
 
       initialYear = Math.round(h,0);
-      poverty_dict = maps[initialYear]
-      drawMapOutline(usa, poverty_dict, initialYear);
+      console.log("v input to dict to use ", v);
+      if (v == undefined){
+        race = initial_value;
+        dict_to_use = dict_of_dicts[race]
+      }
+      else {
+        race = v;
+         dict_to_use = dict_of_dicts[race]
+      }
+     
+
+      poverty_dict = dict_to_use[initialYear]
+      // poverty_dict = blackmaps[initialYear]
+      drawMapOutline(usa, poverty_dict, initialYear, race);
 
     };
   
@@ -328,7 +353,7 @@ function incrementValue(){
  }
  
 
-function drawMapOutline(us, poverty_dict, initialYear) {
+function drawMapOutline(us, poverty_dict, initialYear, race) {
   // if (error) throw error;
   g.append("g")
       .attr("class", "counties")
@@ -340,7 +365,7 @@ function drawMapOutline(us, poverty_dict, initialYear) {
 
       .on("click", function(d){
           incrementValue();
-          chartonClick(d, numclicks, initialYear);
+          chartonClick(d, numclicks, initialYear, race);
       })
 
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
@@ -413,10 +438,10 @@ d3.queue()
     .defer(d3.csv, "mapData/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
     .defer(d3.csv, "mapData/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
 
-    .await(drawMapOutline);
+    .await(done);
 
 
-maps = {
+blackmaps = {
   2010: poverty2010,
   2011: poverty2011,
   2012: poverty2012,
@@ -425,9 +450,65 @@ maps = {
   2015: poverty2015,
   2016: poverty2016
 };
+
+var white2010 = d3.map();
+var white2011 = d3.map();
+var white2012 = d3.map();
+var white2013 = d3.map();
+var white2014 = d3.map();
+var white2015 = d3.map();
+var white2016 = d3.map();
+
+
+d3.queue()
+    .defer(d3.csv, "mapData/white/white10map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white11map.csv", function(d) { white2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white12map.csv", function(d) { white2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white13map.csv", function(d) { white2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white14map.csv", function(d) { white2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white15map.csv", function(d) { white2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white16map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
+    .await(done);
+
+function done(d){
+  console.log("Read");
+}
+
+
+
+whitemaps = {
+  2010: white2010,
+  2011: white2011,
+  2012: white2012,
+  2013: white2013,
+  2014: white2014,
+  2015: white2015,
+  2016: white2016
+};
+
+
+
+// allmaps = {
+//   2010: all2010,
+//   2011: all2011,
+//   2012: all2012,
+//   2013: all2013,
+//   2014: all2014,
+//   2015: all2015,
+//   2016: all2016
+// };
+
+dict_of_dicts = {
+  "white" : whitemaps,
+  "black" : blackmaps
+  // "all" : allmaps
+}
+console.log(dict_of_dicts['white'])
+
 // console
 d3.json("usa.json", function(d){
-  drawMapOutline(d, maps[2010], 2010);
+  console.log("initial load and race is ", race)
+  drawMapOutline(d, blackmaps[2010], 2010, race);
 } );
 
 
@@ -630,7 +711,7 @@ var div = d3.select("body").append("div")
 
 // var fileName = "black2010map.csv"
 
-function chartonClick(d, numclicks, initialYear) {
+function chartonClick(d, numclicks, initialYear, race) {
     var fileName = "black"+initialYear+"map.csv"
 
     numclicks = numclicks
@@ -686,7 +767,7 @@ function chartonClick(d, numclicks, initialYear) {
                 .duration(200)		
                 .style("opacity", .9);
 
-            div	.html( Math.round((100*d),0)+ "% \"" + classes[i] +" class\" in " + currentCounty + "," + currentState+" in "+initialYear)	
+            div	.html( Math.round((100*d),0)+ "% of "+race+"s in \"" + classes[i] +" class\" in " + currentCounty + "," + currentState+" in "+initialYear)	
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px");	
             })			
