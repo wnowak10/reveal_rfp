@@ -74,7 +74,6 @@ titlesvg.append("svg").append("text")
         .attr("y", margin.top*.7) 
         .attr("text-anchor", "middle")  
         .style("font-size", "36px") 
-        .style("text-decoration", "underline")
         .attr("class", "title")  
         .text("POVERTY IN AMERICA")
 
@@ -200,7 +199,7 @@ d3.select("#dropdown").on("change", change)
 var v;
 function change() {
     v=  this.options[this.selectedIndex].value;
-    console.log(v);
+    console.log("cliked dd and v is", v);
     // return v;
 
    
@@ -209,7 +208,7 @@ function change() {
 
     poverty_dict = dict_to_use[initialYear]
       // poverty_dict = blackmaps[initialYear]
-    drawMapOutline(usa, poverty_dict, initialYear);
+    drawMapOutline(usa, poverty_dict, initialYear, v);
 
 
 };
