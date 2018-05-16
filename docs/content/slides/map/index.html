@@ -471,6 +471,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("mouseover", function(d, i, c) { 
+        console.log(Math.round(poverty_dict.get(d.id)))
           d3.select(this)
           .style("fill", "darkblue");
 
@@ -480,7 +481,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html(county.get(d.id) + "," + state.get(d.id)) 
+            div.html(county.get(d.id) + "," + state.get(d.id)+": "+Math.round(poverty_dict.get(d.id)*100)/100) 
                 .attr("id", "maphover")
                 .style("left", (d3.event.pageX) + "px")   
                 .style("top", (d3.event.pageY - 28) + "px");  
