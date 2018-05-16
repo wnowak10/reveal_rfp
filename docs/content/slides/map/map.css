@@ -1,3 +1,42 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+/* just some content with arbitrary styles for explanation purposes */
+.modal {
+  position: fixed;
+width: 500px;
+height: 200px;
+top: 50%;
+left: 50%;
+margin-top: -100px; /* Negative half of height. */
+margin-left: -250px; /* Negative half of width. */
+text-align: center;
+    /*width: 600px;*/
+    /*height: 200px;*/
+    /*line-height: 100px;*/
+    /*position: fixed;*/
+    /*top: 50%; */
+    /*left: 25%;*/
+    /*margin-top: -100px;*/
+    /*margin-left: -150px;*/
+    background-color: #f1c40f;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 11; /* 1px higher than the overlay layer */
+    /*width:50px;*/
+    word-wrap: break-word;
+}
+
+
+
+
 div.tooltip { 
     position: absolute;     
     text-align: center;     
@@ -13,23 +52,6 @@ div.tooltip {
     pointer-events: none;     
 }
 
-#maphover.tooltip { 
-    position: absolute;     
-    text-align: center;     
-    width: 60px;          
-    height: 60px;         
-    padding: 2px;       
-    font: 12px sans-serif;    
-    background: lightsteelblue; 
-    border: 0px;    
-    border-radius: 8px;     
-    pointer-events: none;  
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: normal;
-  /*text-transform: uppercase;   */
-}
 .container {
   float: left;
 }
@@ -60,34 +82,11 @@ div.tooltip {
   font-size: 12px;
 }
 
-#vis{
-  float: left;
-  position: absolute;
-  top: 300px;
-  left: 750px;
-}
-}
-
-#dd {
-  position: absolute;
-  top: 100px;
-  left: 0px;
-  background: #f08080;
-  padding-right: 26px;
-  border-radius: 3px;
-  border: none;
-  color: white;
-  margin: 0;
-  padding: 0 12px;
-  width: 60px;
-  cursor: pointer;
-  height: 30px;
-}
 
 
 #pb {
   position: absolute;
-  top: 250px;
+  top: 325px;
   left: 900px;
   background: #f08080;
   padding-right: 26px;
