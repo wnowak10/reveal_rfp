@@ -45,13 +45,12 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 #maphover.tooltip { 
     /* Position the tooltip */
     position: absolute;
-
     text-align: center;     
-    width: 80px;          
-    height: 100px;         
+    width: 80px;    
+    height: auto;         
     padding: 2px;       
     font: 12px sans-serif;    
-    background: white; 
+    background: lightblue; 
     border: 0px;    
     border-radius: 8px;     
     pointer-events: none;  
@@ -463,7 +462,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html(county.get(d.id) + "," + state.get(d.id)+"; Poverty rate: "+Math.round(poverty_dict.get(d.id)*100) + "%") 
+            div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
                 .attr("id", "maphover")
                 .style("left", (d3.event.pageX + 28) + "px")   
                 .style("top", (d3.event.pageY) + "px");  
