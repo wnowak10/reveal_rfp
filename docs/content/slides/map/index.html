@@ -31,7 +31,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   color: white;
   margin: 0;
   padding: 0 12px;
-  width: 60px;
+  width: auto;
   cursor: pointer;
   height: 30px;
 }
@@ -267,9 +267,9 @@ var dropdown_options = [
 // { value: "all",
   // text: "All races" },
 { value: "black",
-  text: "Black" },
+  text: "Black Households" },
 { value: "white",
-  text: "White" }]
+  text: "White Households" }]
 
 
 var initial_value = "black";
@@ -724,7 +724,10 @@ function getYscale(proportions){
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   yScale = d3.scaleLinear()
     .domain([0, 1])
-    .range([y_axisLength, 0]);
+    .range([y_axisLength, 0]).tickFormat(5, "+%");
+
+  // var ticks = yScale.ticks(5),
+  // tickFormat = yScale.tickFormat(5, "+%");
   return [yScale, maxValue];
 }
 function getXscale(barXvalues){
@@ -875,7 +878,8 @@ function chartonClick(did, numclicks, initialYear, race) {
                 .duration(200)		
                 .style("opacity", .9);
 
-            div	.html( Math.round((100*d),0)+ "% of "+race+"s in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
+            div	.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
+             + " Households in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px");	
             })			
