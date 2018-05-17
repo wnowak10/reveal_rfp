@@ -393,7 +393,7 @@ function update(h) {
 //////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 700;
-var height = 550;
+var height = 350;
 
 
 var chart1 = d3.select("#charts").append("svg")
@@ -427,7 +427,7 @@ chart1
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor + height/10 - 9);
+      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 70); // + height/10);
                           }
   });
 }
