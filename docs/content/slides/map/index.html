@@ -354,6 +354,7 @@ function update(h) {
       poverty_dict = dict_to_use[initialYear]
 
       drawMapOutline(usa, poverty_dict, initialYear, race);
+      chartonClick(current_county_id, numclicks, initialYear, race);
 
     };
   
@@ -724,7 +725,7 @@ function getYscale(proportions){
   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
   yScale = d3.scaleLinear()
     .domain([0, 1])
-    .range([y_axisLength, 0]).tickFormat(5, "+%");
+    .range([y_axisLength, 0]);
 
   // var ticks = yScale.ticks(5),
   // tickFormat = yScale.tickFormat(5, "+%");
@@ -827,15 +828,16 @@ function chartonClick(did, numclicks, initialYear, race) {
 
     var currentCounty = county.get(did);
     var currentState = state.get(did);
-
+    console.log(did);
     d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
+
       if (error) throw error;
 
 
       filtered_data = filterbyCounty(data, currentCounty, currentState);
       proportions = getDistribution(filtered_data);
       class_dist = low_Middle_High_class(proportions);
-
+      console.log(class_dist)
    
       d3.selectAll("#incomebars").remove(); // Remove old bar.
       d3.selectAll("#barlabel").remove();
