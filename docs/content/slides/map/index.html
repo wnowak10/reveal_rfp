@@ -741,7 +741,7 @@ function drawAxes(yScale, xScale){
         axez
         .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
         .attr("id", "axes")
-        .call(d3.axisLeft(yScale));
+        .call(d3.axisLeft(yScale).tickFormat(d3.format(".0%")));
 
       // Add x scale
       chart2.append("g")
