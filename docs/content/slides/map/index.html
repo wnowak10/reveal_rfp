@@ -36,20 +36,19 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   height: 30px;
 }
 
-
-
 .limit {
     position: absolute;
     top: 50%;
     left: 50%;
 }
 
-
 #maphover.tooltip { 
-    position: absolute;     
+    /* Position the tooltip */
+    position: absolute;
+
     text-align: center;     
-    width: 60px;          
-    height: 60px;         
+    width: 80px;          
+    height: 100px;         
     padding: 2px;       
     font: 12px sans-serif;    
     background: white; 
@@ -60,9 +59,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: normal;
-  /*text-transform: uppercase;   */
 }
-
 
 
 #vis{
@@ -72,9 +69,17 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   left: 750px;
 }
 
-
+/*#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10;
+}
+*/
 </style>
-
 </head>
 
 
@@ -84,8 +89,11 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+<script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
+
 
 <body onclick="off()" onresize="off()">
+ <!-- Turn off the overlay on click -->
   <div id="title"></div>
   <div id="selectors">
 
@@ -103,11 +111,17 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
    </div>
 
 
-   <div class="modal" id="overlay""> 
-    <!-- <p class="limit"> -->
+   <div class="modal" id="overlay"> 
     Hover over map for county identification. Zoom for a closer look!
     (Click to remove this dialogue box)
-    <!-- </p> -->
+  </div>
+
+
+  <div id="fade">
+    <p>
+          Clicking on map counties will populate this bar graph, showing the county's income distribution.
+
+    </p>
   </div>
 
 </body>
@@ -116,25 +130,18 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <script>
 
 // Javascript calls
+
 var turnedoff = false;
 function off() {
     document.getElementById("overlay").style.display = "none";
 }
 
-// Blinking if desired
-// function blinker()
-// {
-//   if (turnedoff){
-//     console.log('turnedoff')
-//   }
-//   else{
-//     $('.modal').fadeOut(1000);
-//     $('.modal').fadeIn(1000);
-//   }
+ $(document).ready(function() {
 
-// };
-// setInterval(blinker,500);
+      // Initialize the plugin
+      $('#fade').popup();
 
+    });
 
 ////////////////////////////////////////
 //////////////////////////////////////////
@@ -438,14 +445,6 @@ function incrementValue(){
     numclicks = (numclicks%5);
   }
  }
-
-var numclicks = -1;
-function incrementValue(){
-  numclicks+=1;
-  if (numclicks > 4){
-     numclicks = (numclicks%5);
-  }
- }
  
 
 function drawMapOutline(us, poverty_dict, initialYear, race) {
@@ -459,11 +458,24 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
 
       .on("click", function(d){
+          
+          if (numclicks < 0){
+              console.log('First click?')
+
+              $('#fade').popup({
+                transition: 'all 0.3s',
+                scrolllock: true // optional
+              });
+              
+
+             // Click and scroll to bar chart.  
+              $('html,body').animate({
+              scrollTop: $("#chart2").offset().top},
+              'slow');
+          }
           incrementValue();
-          // Click and scroll to bar chart.  
-          $('html,body').animate({
-          scrollTop: $("#chart2").offset().top},
-          'slow');
+
+         
 
           chartonClick(d, numclicks, initialYear, race);
       })
@@ -481,10 +493,10 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html(county.get(d.id) + "," + state.get(d.id)+": "+Math.round(poverty_dict.get(d.id)*100)/100) 
+            div.html(county.get(d.id) + "," + state.get(d.id)+"; Poverty rate: "+Math.round(poverty_dict.get(d.id)*100) + "%") 
                 .attr("id", "maphover")
-                .style("left", (d3.event.pageX) + "px")   
-                .style("top", (d3.event.pageY - 28) + "px");  
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px");  
             })
       .on("mouseout", function(d) {
                     d3.select("#tooltip").remove();
