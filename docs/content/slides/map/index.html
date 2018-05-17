@@ -95,55 +95,44 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <body onclick="off()" onresize="off()">
  <!-- Turn off the overlay on click -->
   <div id="title"></div>
+
   <div id="selectors">
-
-
       <div id ="vis"></div>
-    
       <div id="play-button"> </div>
-
       <div id="dropdown"> </div>
-
-
-
   </div>
+
   <div id="charts"> </div>
-   </div>
 
 
    <div class="modal" id="overlay"> 
     Hover over map for county identification. Zoom for a closer look!
     (Click to remove this dialogue box)
-  </div>
-
-
-  <div id="fade">
-    <p>
-          Clicking on map counties will populate this bar graph, showing the county's income distribution.
-
-    </p>
-  </div>
+    </div>
 
 </body>
 
 
 <script>
 
-// Javascript calls
-
-var turnedoff = false;
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Javascript page dynamics.
+//////////////////////////////////////////
+//////////////////////////////////////////
+// var turnedoff = false;
 function off() {
     document.getElementById("overlay").style.display = "none";
 }
 
- $(document).ready(function() {
+ // $(document).ready(function() {
 
-      // Initialize the plugin
-      $('#fade').popup();
+ //      // Initialize the plugin
+ //      $('#fade').popup();
 
-    });
+ //    });
 
-////////////////////////////////////////
+//////////////////////////////////////////
 //////////////////////////////////////////
 // Set the dimensions of the canvas/graph.
 //////////////////////////////////////////
@@ -153,6 +142,14 @@ var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var titlewidth = 1100;
 var titleheight = 60;
 var textWidth = titlewidth / 2
+
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Set globals
+//////////////////////////////////////////
+//////////////////////////////////////////
+var current_county_id; 
 
 
 //////////////////////////////////////////
@@ -220,8 +217,6 @@ slider.append("line")
         .on("start.interrupt", function() { slider.interrupt(); })
         .on("start drag", function() {
           currentValue = d3.event.x;
-          console.log("slidervalue!")
-          console.log(x.invert(currentValue));
           update(x.invert(currentValue)); 
         })
     );
@@ -246,7 +241,6 @@ var label = slider.append("text")
     .attr("class", "label")
     .attr("text-anchor", "middle")
     .text("2010")
-    // .attr("transform", "translate(0," + (-25) + ")")
     .attr("transform", "translate(0,-25)")
 
 playButton
@@ -255,7 +249,6 @@ playButton
         if (button.text() == "Pause") {
             moving = false;
             clearInterval(timer);
-            // timer = 0;
             button.text("Play");
         } 
         else {
@@ -284,7 +277,6 @@ var initial_value = "black";
 var ddbutton = d3.select("#dropdown").append("select");
 
 
-// .attr("width", 200)
 ddbutton
     .attr("id", "dd")
           .selectAll("option")
@@ -297,27 +289,16 @@ ddbutton
           })
           .text(function(option) { return option.text; });
 
-// d3.select("#dropdown").on("change", change)
 ddbutton.on("change", change)
 var v;
 function change() {
     v=  this.options[this.selectedIndex].value;
-    console.log("cliked dd and v is", v);
-    // return v;
-
-   
-    dict_to_use = dict_of_dicts[v]
-     
-
+    dict_to_use = dict_of_dicts[v]     
     poverty_dict = dict_to_use[initialYear]
-      // poverty_dict = blackmaps[initialYear]
+    console.log('race change', v)
     drawMapOutline(usa, poverty_dict, initialYear, v);
-
-
+    chartonClick(current_county_id, numclicks, initialYear, v);
 };
-console.log("selectedValue", selectedValue);
-
-console.log("v", v);
 
 
 //////////////////////////////////////////
@@ -335,7 +316,6 @@ var plot = svg.append("g")
 function prepare(d) {
   d.id = d.id;
   d.year = d.year; // Keep as string
-  // d.date = parseDate(d.date);
   return d;
 }
   
@@ -346,9 +326,7 @@ function step() {
     moving = false;
     currentValue = 0;
     clearInterval(timer);
-    // timer = 0;
     playButton.text("Play");
-    console.log("Slider moving: " + moving);
   }
 }
 
@@ -365,7 +343,6 @@ function update(h) {
     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
 
       initialYear = Math.round(h,0);
-      console.log("v input to dict to use ", v);
       if (v == undefined){
         race = initial_value;
         dict_to_use = dict_of_dicts[race]
@@ -374,10 +351,9 @@ function update(h) {
         race = v;
          dict_to_use = dict_of_dicts[race]
       }
-     
 
       poverty_dict = dict_to_use[initialYear]
-      // poverty_dict = blackmaps[initialYear]
+
       drawMapOutline(usa, poverty_dict, initialYear, race);
 
     };
@@ -410,9 +386,8 @@ var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
 //////////////////////////////////////////
 function zoomed() {
   g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-  g.attr("transform", d3.event.transform); // updated for d3 v4
+  g.attr("transform", d3.event.transform);
 };
-
 
 var zoom = d3.zoom()
     .scaleExtent([1, 8])
@@ -420,14 +395,13 @@ var zoom = d3.zoom()
 chart1
     .call(zoom);
 
-
 //////////////////////////////////////////
 // Scale map down
 //////////////////////////////////////////
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 70); // + height/10);
+      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 70);
                           }
   });
 }
@@ -438,17 +412,16 @@ var path = d3.geoPath()
 //////////////////////////////////////////
 // Interactive map function.
 //////////////////////////////////////////
-var numclicks = -1;
-function incrementValue(){
-  numclicks+=1;
-  if (numclicks > 4){
-    numclicks = (numclicks%5);
-  }
- }
+// var numclicks = -1;
+// function incrementValue(){
+//   numclicks+=1;
+//   if (numclicks > 4){
+//     numclicks = (numclicks%5);
+//   }
+//  }
  
-
 function drawMapOutline(us, poverty_dict, initialYear, race) {
-  // if (error) throw error;
+
   g.append("g")
       .attr("class", "counties")
       .selectAll("path")
@@ -459,31 +432,28 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
 
       .on("click", function(d){
           
-          if (numclicks < 0){
-              console.log('First click?')
+          // if (numclicks < 0){
 
-              $('#fade').popup({
-                transition: 'all 0.3s',
-                scrolllock: true // optional
-              });
+              // $('#fade').popup({
+              //   transition: 'all 0.3s',
+              //   scrolllock: true // optional
+              // });
               
 
              // Click and scroll to bar chart.  
-              $('html,body').animate({
-              scrollTop: $("#chart2").offset().top},
-              'slow');
-          }
-          incrementValue();
-
-         
-
-          chartonClick(d, numclicks, initialYear, race);
+              // $('html,body').animate({
+              // scrollTop: $("#chart2").offset().top},
+              // 'slow');
+          // }
+          // incrementValue();
+          current_county_id = get_current_county_id(d)
+          numclicks = 0
+          chartonClick(current_county_id, numclicks, initialYear, race);
       })
 
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("mouseover", function(d, i, c) { 
-        console.log(Math.round(poverty_dict.get(d.id)))
           d3.select(this)
           .style("fill", "darkblue");
 
@@ -539,17 +509,17 @@ d3.queue()
     .defer(d3.json, "usa.json", function(us){
       usa = us;
     })
-    .defer(d3.csv, "mapData/black2010map.csv", function(d) { 
+    .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { 
       poverty2010.set(d.id, +d.percent_poor);
       county.set(d.id, d.County); 
       state.set(d.id, d.State); 
     })
-    .defer(d3.csv, "mapData/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
 
     .await(done);
 
@@ -574,17 +544,17 @@ var white2016 = d3.map();
 
 
 d3.queue()
-    .defer(d3.csv, "mapData/white/white10map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white11map.csv", function(d) { white2011.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white12map.csv", function(d) { white2012.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white13map.csv", function(d) { white2013.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white14map.csv", function(d) { white2014.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white15map.csv", function(d) { white2015.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/white/white16map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2010map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2011map.csv", function(d) { white2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2012map.csv", function(d) { white2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2013map.csv", function(d) { white2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2014map.csv", function(d) { white2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2015map.csv", function(d) { white2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2016map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
     .await(done);
 
 function done(d){
-  console.log("Read");
+  // console.log("Read");
 }
 
 
@@ -616,11 +586,8 @@ dict_of_dicts = {
   "black" : blackmaps
   // "all" : allmaps
 }
-console.log(dict_of_dicts['white'])
 
-// console
 d3.json("usa.json", function(d){
-  console.log("initial load and race is ", race)
   drawMapOutline(d, blackmaps[2010], 2010, race);
 } );
 
@@ -649,19 +616,24 @@ var county = d3.map();
   	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
 
 var distribution_breakdowns = [
-                                "Estimate; Total: - Less than $10,000"
+                                "Estimate; Total: - Less than $10,000" // 0
                                 ,"Estimate; Total: - $10,000 to $14,999"
                                 ,"Estimate; Total: - $15,000 to $19,999"
-                                ,"Estimate; Total: - $20,000 to $24,999"
+
+                                ,"Estimate; Total: - $20,000 to $24,999" // 4
                                 ,"Estimate; Total: - $25,000 to $29,999"
                                 ,"Estimate; Total: - $30,000 to $34,999"
-                                ,"Estimate; Total: - $35,000 to $39,999"
+
+                                ,"Estimate; Total: - $35,000 to $39,999" // 7
                                 ,"Estimate; Total: - $40,000 to $44,999"
                                 ,"Estimate; Total: - $45,000 to $49,999"
-                                ,"Estimate; Total: - $50,000 to $59,999"
+
+                                ,"Estimate; Total: - $50,000 to $59,999" //10
                                 ,"Estimate; Total: - $60,000 to $74,999"
-                                ,"Estimate; Total: - $75,000 to $99,999"
-                                ,"Estimate; Total: - $100,000 to $124,999"
+
+                                ,"Estimate; Total: - $75,000 to $99,999" //12
+
+                                ,"Estimate; Total: - $100,000 to $124,999" //13
                                 ,"Estimate; Total: - $125,000 to $149,999"
                                 ,"Estimate; Total: - $150,000 to $199,999"
                                 ,"Estimate; Total: - $200,000 or more"
@@ -683,33 +655,53 @@ function getDistribution(data){
   }
   return proportions
 };
-// https://www.investopedia.com/financial-edge/0912/which-income-class-are-you.aspx
+
 function low_Middle_High_class(proportions){
-  /// Take what proportion of citizens in each bin as defined by CB
-  /// Then just bin into low or high with 35K and 100K as cutoffs.
   newData = []
-  low = 0
-  for(var i=0; i<7;i++){
-    low += proportions[i]
+  below20 = 0
+  for(var i=0; i<4;i++){
+    below20 += proportions[i]
   }
-  newData.push(low)
-  medium = 0
-  for(var i=7; i<13;i++){
-    medium += proportions[i]
+  newData.push(below20)
+
+  twenty_to_thirtyfive = 0
+  for(var i=4; i<7;i++){
+    twenty_to_thirtyfive += proportions[i]
   }
-  newData.push(medium)
-  high = 0
-  for(var i=12; i<16;i++){
-    high += proportions[i]
+  newData.push(twenty_to_thirtyfive)
+
+  thirtyfive_to_fifty = 0
+  for(var i=7; i<10;i++){
+    thirtyfive_to_fifty += proportions[i]
   }
-  newData.push(high)
+  newData.push(thirtyfive_to_fifty)
+
+  fifty_to_seventyfive = 0
+  for(var i=10; i<12;i++){
+    fifty_to_seventyfive += proportions[i]
+  }
+  newData.push(fifty_to_seventyfive)
+
+  seventyfive_to_hundred = 0
+  for(var i=12; i<13;i++){
+    seventyfive_to_hundred += proportions[i]
+  }
+  newData.push(seventyfive_to_hundred)
+  
+  over_hundred = 0
+  for(var i=13; i<16;i++){
+    over_hundred += proportions[i]
+  }
+  newData.push(over_hundred)
+
   return newData;
 
 };
 var barSpacing = 100;
-var barWidth = 20;
+var barWidth = 50;
 function bar_location(d,i, numclicks){
-  bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
+  bar_loc =  (i*barSpacing)+barWidth*(numclicks);
+  // bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
   return bar_loc;
 };
 
@@ -718,7 +710,7 @@ function spread(i){
   return i*barSpacing+barWidth;
 };
 
-classes = ["Lower (<$35K)", "Middle", "Upper (>$100K)"]
+classes = ["<$20K", "$20-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
 function get_CLASS_bar_x_positions(){
   var barXvalues = [];
   for(var i=0; i<classes.length; i++){
@@ -745,13 +737,13 @@ function getXscale(barXvalues){
 function drawAxes(yScale, xScale){
       var axez = chart2.append("g");
         axez
-        .attr("transform", "translate(0,-"+y_axisLength+")") // How far to shift down so ?
+        .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
         .attr("id", "axes")
         .call(d3.axisLeft(yScale));
 
       // Add x scale
       chart2.append("g")
-        .attr("transform", "translate(0,0)")
+        .attr("transform", "translate(0,5)")
         .call(d3.axisBottom(xScale))
         .selectAll("text")
         .attr("y", 0)
@@ -822,29 +814,29 @@ var div = d3.select("body").append("div")
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
-// var fileName = "black2010map.csv"
 
-function chartonClick(d, numclicks, initialYear, race) {
-    var fileName = "black"+initialYear+"map.csv"
+function get_current_county_id(d) {
+  return d.id
+};
 
-    numclicks = numclicks
-    console.log("clicked???d", d)
-    console.log(county);
-    var currentCounty = county.get(d.id);
-    console.log(currentCounty);
-    var currentState = state.get(d.id);
+function chartonClick(did, numclicks, initialYear, race) {
 
-    d3.csv("mapData/"+fileName, function(error, data) {
+    var fileName = race+initialYear+"map.csv"
+
+    var currentCounty = county.get(did);
+    var currentState = state.get(did);
+
+    d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
       if (error) throw error;
-  
-      data = filterbyCounty(data, currentCounty, currentState);
-      proportions = getDistribution(data);
+
+
+      filtered_data = filterbyCounty(data, currentCounty, currentState);
+      proportions = getDistribution(filtered_data);
       class_dist = low_Middle_High_class(proportions);
 
-      if (numclicks == 0){
-        d3.selectAll("#incomebars").remove(); // Remove old bar.
-        d3.selectAll("#barlabel").remove();
-      }     
+   
+      d3.selectAll("#incomebars").remove(); // Remove old bar.
+      d3.selectAll("#barlabel").remove();
 
       // Append the rectangles (bars) for the bar chart
       var barz = chart2
@@ -858,6 +850,9 @@ function chartonClick(d, numclicks, initialYear, race) {
         .append("rect")
         .attr("id", "incomebars")
         .attr( "x", function(d, i){
+          // return function(d, i){ return (i*barSpacing)}; 
+        // })
+          numclicks = 1
           return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
           })
         .attr("y", function(d) {
@@ -871,9 +866,10 @@ function chartonClick(d, numclicks, initialYear, race) {
         .attr( "height", function(d){
           return height/2 - yScale(d); // Set height of rectangle to data value
           })
-        .attr("fill", bar_colors(numclicks));
+        .attr("fill", "red");
+        // .attr("fill", bar_colors(numclicks));
 
-        barChart
+      barChart
         .on("mouseover", function(d, i) {	
         	d3.select(this)
             div.transition()		
