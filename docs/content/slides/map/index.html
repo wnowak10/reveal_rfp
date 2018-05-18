@@ -72,41 +72,54 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 /* CSS */
 .grid {
    display: grid;
-   grid-gap: 10px;
+   grid-gap: 5px;
    width: 100vw;
    height: 100vh;
-	grid-template-rows: repeat(4, 1fr);
-  grid-template-columns: repeat(2, 1fr);
+	/*grid-template-rows: repeat(6, 1fr);*/
+	grid-template-rows: repeat(10, 10%);
+  grid-template-columns: repeat(10, 10%);
   justify-items: center;
 }
 
 .title_div {
-  fill: red;
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
-  font-size: 66px;
-  line-height: 1.2;
-  letter-spacing: normal;
-  text-transform: uppercase;
-  text-shadow: none;
-  word-wrap: break-word;
-  grid-column: 1 / -1;
-  left: 50%;
+	vertical-align: middle;
+	/*grid-row-start: 0;*/
+	/*grid-row-end:1;*/
+	grid-column-start: 1;
+	grid-column-end: -1;
 }
+
+#map_chart {
+	grid-row-start: 2;
+	grid-row-end: 8;
+	grid-column-start: 1;
+	grid-column-end: 8;
+}
+
+#chart2_div {
+	grid-row-start: 7;
+	grid-row-end: -1;
+	grid-column-start: 1;
+	grid-column-end: 8;
+}
+
 
 
 #title_text {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-weight: 600;
-  font-size: 66px;
+
+  font-size: 42px;
   line-height: 1.2;
   letter-spacing: normal;
   text-transform: uppercase;
   text-shadow: none;
   word-wrap: break-word;
   text-align: center;
-vertical-align: middle;
-/*line-height: 90px;*/
+}
+
+h1 {
+	color: darkblue;
 }
 /*#overlay {
     position: absolute;
@@ -118,6 +131,14 @@ vertical-align: middle;
     z-index: 10;
 }
 */
+
+#map_controls {
+  grid-column-start: 8;
+  grid-column-end: 9;
+  grid-row-start: 3;
+  grid-row-end: 6;
+}
+
 </style>
 </head>
 
@@ -144,10 +165,10 @@ vertical-align: middle;
   <div id="charts"> </div> -->
 
 
-   <!-- <div class="modal" id="overlay"> 
+   <div class="modal" id="overlay"> 
     Hover over map for county identification. Zoom for a closer look!
     (Click to remove this dialogue box.)
-    </div> -->
+    </div>
 
 </body>
 
@@ -205,141 +226,410 @@ var title_div = grid
     .append("div")
     .attr("class", "title_div") ;
 
-title_div.append("text")
+title_div.append("h1")
 		.attr("id", "title_text")
-		.attr("fill", "darkblue")
+		// .attr("fill", "darkblue")
         .text("Poverty in America")
 
 
+controls = grid.append("div").attr("id", "map_controls");
+// controls.append("h1").text("hi");
+// controls.append("h1").text("hi");
+// controls.append("h1").text("hi");
 
+
+// // //////////////////////////////////////////
+// // //////////////////////////////////////////
+// // // Set the dimensions of the canvas/graph.
+// // // Begin to make the map.
 
 // //////////////////////////////////////////
 // //////////////////////////////////////////
-// // Build slider
-// //////////////////////////////////////////
-// //////////////////////////////////////////
+var margin = {top: 40, right: 20, bottom: 30, left: 50};
+var width = 700;
+var height = 350;
 
-// var startDate = 2010; //new Date("2010"),
-// var endDate = 2016.5; //new Date("2017");
 
-// var slidermargin = {top:0, right:50, bottom:0, left:50},
-//     sliderwidth = 360 - slidermargin.left - slidermargin.right,
-//     sliderheight = 100 - slidermargin.top - slidermargin.bottom;
+var chart1 = grid.append("div").attr("id", "map_chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
-// var svg = d3.select("body")
-//     .append("svg")
-//     .attr("id", "slider")
-//     .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
-//     .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
+var g = chart1.append("g");
+var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
 
-// var moving = false;
-// var currentValue = 0;
-// var targetValue = sliderwidth;
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Zoom functionality.
+//////////////////////////////////////////
+//////////////////////////////////////////
+function zoomed() {
+  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+  g.attr("transform", d3.event.transform);
+};
 
-// var playButton = d3.select("body").append("button").attr("id", "pb").text("Play");
+var zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed);
+chart1
+    .call(zoom);
+
+//////////////////////////////////////////
+// Scale map down
+//////////////////////////////////////////
+function scale (scaleFactor,width,height) {
+  return d3.geoTransform({
+    point: function(x, y) {
+      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 80);
+                          }
+  });
+}
+var mapScale = .7
+var path = d3.geoPath()
+  .projection(scale(mapScale,width,height))
+
+//////////////////////////////////////////
+// Interactive map function.
+//////////////////////////////////////////
+// var numclicks = -1;
+// function incrementValue(){
+//   numclicks+=1;
+//   if (numclicks > 4){
+//     numclicks = (numclicks%5);
+//   }
+//  }
+ 
+function drawMapOutline(us, poverty_dict, initialYear, race) {
+
+  g.append("g")
+      .attr("class", "counties")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features)
+      .enter()
+      .append("path")
+      .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
+
+      .on("click", function(d){
+          
+          // if (numclicks < 0){
+
+              // $('#fade').popup({
+              //   transition: 'all 0.3s',
+              //   scrolllock: true // optional
+              // });
+              
+
+             // Click and scroll to bar chart.  
+              // $('html,body').animate({
+              // scrollTop: $("#chart2").offset().top},
+              // 'slow');
+          // }
+          // incrementValue();
+          current_county_id = get_current_county_id(d)
+          numclicks = 0
+          chartonClick(current_county_id, numclicks, initialYear, race);
+      })
+
+      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      .attr("d", path)
+      .on("mouseover", function(d, i, c) { 
+          d3.select(this)
+          .style("fill", "darkblue");
+
+          d3.select(this)
+            div.transition()    
+                .duration(200)    
+                .attr("id", "maphover")
+                .style("opacity", .9);
+
+            div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px");  
+            })
+      .on("mouseout", function(d) {
+                    d3.select("#tooltip").remove();
+
+                    d3.select(this)
+                    .transition()
+                    .duration(600)
+                    .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
+                });;
+      
+  g.on("mouseout", function(d) {
+                    d3.select("#tooltip").remove();
+                });
+
+  g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("class", "states")
+      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      .attr("d", path);
+
+  chart1.append("path")
+      .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
+      .attr("class", "counties")
+      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      .attr("d", path);
+}; // Close ready() function
+
+
+var county = d3.map();
+var state = d3.map();
+
+var poverty2010 = d3.map();
+var poverty2011 = d3.map();
+var poverty2012 = d3.map();
+var poverty2013 = d3.map();
+var poverty2014 = d3.map();
+var poverty2015 = d3.map();
+var poverty2016 = d3.map();
+
+var usa;
+d3.queue()
+    // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
+    .defer(d3.json, "usa.json", function(us){
+      usa = us;
+    })
+    .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { 
+      poverty2010.set(d.id, +d.percent_poor);
+      county.set(d.id, d.County); 
+      state.set(d.id, d.State); 
+    })
+    .defer(d3.csv, "mapData/black/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
+
+    .await(done);
+
+
+blackmaps = {
+  2010: poverty2010,
+  2011: poverty2011,
+  2012: poverty2012,
+  2013: poverty2013,
+  2014: poverty2014,
+  2015: poverty2015,
+  2016: poverty2016
+};
+
+var white2010 = d3.map();
+var white2011 = d3.map();
+var white2012 = d3.map();
+var white2013 = d3.map();
+var white2014 = d3.map();
+var white2015 = d3.map();
+var white2016 = d3.map();
+
+
+d3.queue()
+    .defer(d3.csv, "mapData/white/white2010map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2011map.csv", function(d) { white2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2012map.csv", function(d) { white2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2013map.csv", function(d) { white2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2014map.csv", function(d) { white2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2015map.csv", function(d) { white2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/white/white2016map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
+    .await(done);
+
+function done(d){
+  // console.log("Read");
+}
+var all2010 = d3.map();
+var all2011 = d3.map();
+var all2012 = d3.map();
+var all2013 = d3.map();
+var all2014 = d3.map();
+var all2015 = d3.map();
+var all2016 = d3.map();
+
+
+d3.queue()
+    .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
+    .await(done);
+
+
+whitemaps = {
+  2010: white2010,
+  2011: white2011,
+  2012: white2012,
+  2013: white2013,
+  2014: white2014,
+  2015: white2015,
+  2016: white2016
+};
+
+
+
+allmaps = {
+  2010: all2010,
+  2011: all2011,
+  2012: all2012,
+  2013: all2013,
+  2014: all2014,
+  2015: all2015,
+  2016: all2016
+};
+
+dict_of_dicts = {
+  "white" : whitemaps,
+  "black" : blackmaps,
+  "all" : allmaps
+}
+
+d3.json("usa.json", function(d){
+  drawMapOutline(d, allmaps[2010], 2010, "all");
+} );
+
+
+
+
+// grid.append("div").append("h1").text("hi");
+// grid.append("div").append("h1").text("hi");
+// grid.append("div").append("h1").text("hi");
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build slider
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var startDate = 2010; //new Date("2010"),
+var endDate = 2016.5; //new Date("2017");
+
+var slidermargin = {top:0, right:50, bottom:0, left:50},
+    sliderwidth = 360 - slidermargin.left - slidermargin.right,
+    sliderheight = 100 - slidermargin.top - slidermargin.bottom;
+
+var svg = controls
+    .append("svg")
+    .attr("id", "slider")
+    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
+    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
+
+var moving = false;
+var currentValue = 0;
+var targetValue = sliderwidth;
     
-// var x = d3.scaleLinear() //scaleTime()
-//     .domain([startDate, endDate])
-//     .range([0, targetValue])
-//     .clamp(true);
+var x = d3.scaleLinear() //scaleTime()
+    .domain([startDate, endDate])
+    .range([0, targetValue])
+    .clamp(true);
 
-// var slider = svg.append("g")
-//     .attr("class", "slider")
-//     .attr("transform", "translate(" + margin.left + ","+sliderheight/2+")");
+var slider = svg.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(" + margin.left + ","+sliderheight/2+")");
 
-// slider.append("line")
-//     .attr("class", "track")
-//     .attr("x1", x.range()[0])
-//     .attr("x2", x.range()[1])
-//   .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-//     .attr("class", "track-inset")
-//   .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-//     .attr("class", "track-overlay")
-//     .call(d3.drag()
-//         .on("start.interrupt", function() { slider.interrupt(); })
-//         .on("start drag", function() {
-//           currentValue = d3.event.x;
-//           update(x.invert(currentValue)); 
-//         })
-//     );
+slider.append("line")
+    .attr("class", "track")
+    .attr("x1", x.range()[0])
+    .attr("x2", x.range()[1])
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-inset")
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-overlay")
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function() {
+          currentValue = d3.event.x;
+          update(x.invert(currentValue)); 
+        })
+    );
 
-// slider.insert("g", ".track-overlay")
-//     .attr("class", "ticks")
-//     .attr("transform", "translate(0," + 18 + ")")
-//   .selectAll("text")
-//     .data(x.ticks(6))
-//     .enter()
-//     .append("text")
-//     .attr("x", x)
-//     .attr("y", 10)
-//     .attr("text-anchor", "middle")
-//     .text(function(d) { return (d); }); // Label
+slider.insert("g", ".track-overlay")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 18 + ")")
+  .selectAll("text")
+    .data(x.ticks(6))
+    .enter()
+    .append("text")
+    .attr("x", x)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return (d); }); // Label
 
-// var handle = slider.insert("circle", ".track-overlay")
-//     .attr("class", "handle")
-//     .attr("r", 9);
+var handle = slider.insert("circle", ".track-overlay")
+    .attr("class", "handle")
+    .attr("r", 9);
 
-// var label = slider.append("text")  
-//     .attr("class", "label")
-//     .attr("text-anchor", "middle")
-//     .text("2010")
-//     .attr("transform", "translate(0,-25)")
-
-// playButton
-//     .on("click", function() {
-//         var button = d3.select(this);
-//         if (button.text() == "Pause") {
-//             moving = false;
-//             clearInterval(timer);
-//             button.text("Play");
-//         } 
-//         else {
-//             moving = true;
-//             timer = setInterval(step, 100);
-//             button.text("Pause");
-//             }
-//     });
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Build dropdown
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-// var dropdown_options = [ 
-// { value: "all",
-//   text: "All Households" },
-// { value: "black",
-//   text: "Black Households" },
-// { value: "white",
-//   text: "White Households" }]
+var label = slider.append("text")  
+    .attr("class", "label")
+    .attr("text-anchor", "middle")
+    .text("2010")
+    .attr("transform", "translate(0,-25)")
 
 
-// var ddbutton = d3.select("body").append("select");
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Play button
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var playButton = controls.append("button").attr("id", "pb").text("Play");
+
+playButton
+    .on("click", function() {
+        var button = d3.select(this);
+        if (button.text() == "Pause") {
+            moving = false;
+            clearInterval(timer);
+            button.text("Play");
+        } 
+        else {
+            moving = true;
+            timer = setInterval(step, 100);
+            button.text("Pause");
+            }
+    });
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build dropdown
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var dropdown_options = [ 
+{ value: "all",
+  text: "All Households" },
+{ value: "black",
+  text: "Black Households" },
+{ value: "white",
+  text: "White Households" }]
 
 
-// ddbutton
-//     .attr("id", "dd")
-//           .selectAll("option")
-//           .data(dropdown_options)
-//           .enter()
-//           .append("option")
-//           .attr("value", function(option) { 
-//             selectedValue = option.value;
-//             return selectedValue; 
-//           })
-//           .text(function(option) { return option.text; });
+var ddbutton = controls.append("select");
 
-// ddbutton.on("change", change)
-// var v;
-// function change() {
-//     v=  this.options[this.selectedIndex].value;
-//     dict_to_use = dict_of_dicts[v]     
-//     poverty_dict = dict_to_use[initialYear]
-//     console.log('race change', v)
-//     drawMapOutline(usa, poverty_dict, initialYear, v);
-//     chartonClick(current_county_id, numclicks, initialYear, v);
-// };
+
+ddbutton
+    .attr("id", "dd")
+          .selectAll("option")
+          .data(dropdown_options)
+          .enter()
+          .append("option")
+          .attr("value", function(option) { 
+            selectedValue = option.value;
+            return selectedValue; 
+          })
+          .text(function(option) { return option.text; });
+
+ddbutton.on("change", change)
+var v;
+function change() {
+    v=  this.options[this.selectedIndex].value;
+    dict_to_use = dict_of_dicts[v]     
+    poverty_dict = dict_to_use[initialYear]
+    console.log('race change', v)
+    drawMapOutline(usa, poverty_dict, initialYear, v);
+    chartonClick(current_county_id, numclicks, initialYear, v);
+};
 
 
 // //////////////////////////////////////////
@@ -354,317 +644,58 @@ title_div.append("text")
 //     .attr("class", "plot")
 //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// function prepare(d) {
-//   d.id = d.id;
-//   d.year = d.year; // Keep as string
-//   return d;
-// }
+function prepare(d) {
+  d.id = d.id;
+  d.year = d.year; // Keep as string
+  return d;
+}
   
-// function step() {
-//   update(x.invert(currentValue));
-//   currentValue = currentValue + (targetValue/60);
-//   if (currentValue > targetValue) {
-//     moving = false;
-//     currentValue = 0;
-//     clearInterval(timer);
-//     playButton.text("Play");
-//   }
-// }
+function step() {
+  update(x.invert(currentValue));
+  currentValue = currentValue + (targetValue/60);
+  if (currentValue > targetValue) {
+    moving = false;
+    currentValue = 0;
+    clearInterval(timer);
+    playButton.text("Play");
+  }
+}
 
 
-// var initialYear = 2010;
+var initialYear = 2010;
 
-// var initialRace = "all";
-// var race = initialRace;
-// function update(h) {
+var initialRace = "all";
+var race = initialRace;
+function update(h) {
 
-//     handle.attr("cx", x(h));
-//     label
-//       .attr("x", x(h))
-//       .text(Math.floor(h));
+    handle.attr("cx", x(h));
+    label
+      .attr("x", x(h))
+      .text(Math.floor(h));
 
-//     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
+    if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
+    	console.log("entered?")
+      initialYear = Math.round(h,0);
+      if (v == undefined){
+        race = initialRace;
+        dict_to_use = dict_of_dicts[race]
+      }
+      else {
+        race = v;
+         dict_to_use = dict_of_dicts[race]
+      }
 
-//       initialYear = Math.round(h,0);
-//       if (v == undefined){
-//         race = initial_value;
-//         dict_to_use = dict_of_dicts[race]
-//       }
-//       else {
-//         race = v;
-//          dict_to_use = dict_of_dicts[race]
-//       }
+      poverty_dict = dict_to_use[initialYear]
 
-//       poverty_dict = dict_to_use[initialYear]
+      drawMapOutline(usa, poverty_dict, initialYear, race);
+      chartonClick(current_county_id, numclicks, initialYear, race);
 
-//       drawMapOutline(usa, poverty_dict, initialYear, race);
-//       chartonClick(current_county_id, numclicks, initialYear, race);
-
-//     };
+    };
   
-// };
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Set the dimensions of the canvas/graph.
-// // Begin to make the map.
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// var margin = {top: 40, right: 20, bottom: 30, left: 50};
-// var width = 700;
-// var height = 350;
+};
 
 
-// var chart1 = d3.select("body").append("svg")
-// 	.attr("id", "map_chart")
-//     .attr("width", width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom);
-
-// var g = chart1.append("g");
-// var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Zoom functionality.
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// function zoomed() {
-//   g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-//   g.attr("transform", d3.event.transform);
-// };
-
-// var zoom = d3.zoom()
-//     .scaleExtent([1, 8])
-//     .on("zoom", zoomed);
-// chart1
-//     .call(zoom);
-
-// //////////////////////////////////////////
-// // Scale map down
-// //////////////////////////////////////////
-// function scale (scaleFactor,width,height) {
-//   return d3.geoTransform({
-//     point: function(x, y) {
-//       this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 70);
-//                           }
-//   });
-// }
-// var mapScale = .7
-// var path = d3.geoPath()
-//   .projection(scale(mapScale,width,height))
-
-// //////////////////////////////////////////
-// // Interactive map function.
-// //////////////////////////////////////////
-// // var numclicks = -1;
-// // function incrementValue(){
-// //   numclicks+=1;
-// //   if (numclicks > 4){
-// //     numclicks = (numclicks%5);
-// //   }
-// //  }
- 
-// function drawMapOutline(us, poverty_dict, initialYear, race) {
-
-//   g.append("g")
-//       .attr("class", "counties")
-//       .selectAll("path")
-//       .data(topojson.feature(us, us.objects.counties).features)
-//       .enter()
-//       .append("path")
-//       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
-
-//       .on("click", function(d){
-          
-//           // if (numclicks < 0){
-
-//               // $('#fade').popup({
-//               //   transition: 'all 0.3s',
-//               //   scrolllock: true // optional
-//               // });
-              
-
-//              // Click and scroll to bar chart.  
-//               // $('html,body').animate({
-//               // scrollTop: $("#chart2").offset().top},
-//               // 'slow');
-//           // }
-//           // incrementValue();
-//           current_county_id = get_current_county_id(d)
-//           numclicks = 0
-//           chartonClick(current_county_id, numclicks, initialYear, race);
-//       })
-
-//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-//       .attr("d", path)
-//       .on("mouseover", function(d, i, c) { 
-//           d3.select(this)
-//           .style("fill", "darkblue");
-
-//           d3.select(this)
-//             div.transition()    
-//                 .duration(200)    
-//                 .attr("id", "maphover")
-//                 .style("opacity", .9);
-
-//             div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
-//                 .attr("id", "maphover")
-//                 .style("left", (d3.event.pageX + 28) + "px")   
-//                 .style("top", (d3.event.pageY) + "px");  
-//             })
-//       .on("mouseout", function(d) {
-//                     d3.select("#tooltip").remove();
-
-//                     d3.select(this)
-//                     .transition()
-//                     .duration(600)
-//                     .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
-//                 });;
-      
-//   g.on("mouseout", function(d) {
-//                     d3.select("#tooltip").remove();
-//                 });
-
-//   g.append("path")
-//       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-//       .attr("class", "states")
-//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-//       .attr("d", path);
-
-//   chart1.append("path")
-//       .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
-//       .attr("class", "counties")
-//       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-//       .attr("d", path);
-// }; // Close ready() function
-
-
-// var county = d3.map();
-// var state = d3.map();
-
-// var poverty2010 = d3.map();
-// var poverty2011 = d3.map();
-// var poverty2012 = d3.map();
-// var poverty2013 = d3.map();
-// var poverty2014 = d3.map();
-// var poverty2015 = d3.map();
-// var poverty2016 = d3.map();
-
-// var usa;
-// d3.queue()
-//     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
-//     .defer(d3.json, "usa.json", function(us){
-//       usa = us;
-//     })
-//     .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { 
-//       poverty2010.set(d.id, +d.percent_poor);
-//       county.set(d.id, d.County); 
-//       state.set(d.id, d.State); 
-//     })
-//     .defer(d3.csv, "mapData/black/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/black/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/black/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/black/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/black/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/black/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
-
-//     .await(done);
-
-
-// blackmaps = {
-//   2010: poverty2010,
-//   2011: poverty2011,
-//   2012: poverty2012,
-//   2013: poverty2013,
-//   2014: poverty2014,
-//   2015: poverty2015,
-//   2016: poverty2016
-// };
-
-// var white2010 = d3.map();
-// var white2011 = d3.map();
-// var white2012 = d3.map();
-// var white2013 = d3.map();
-// var white2014 = d3.map();
-// var white2015 = d3.map();
-// var white2016 = d3.map();
-
-
-// d3.queue()
-//     .defer(d3.csv, "mapData/white/white2010map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2011map.csv", function(d) { white2011.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2012map.csv", function(d) { white2012.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2013map.csv", function(d) { white2013.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2014map.csv", function(d) { white2014.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2015map.csv", function(d) { white2015.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/white/white2016map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
-//     .await(done);
-
-// function done(d){
-//   // console.log("Read");
-// }
-// var all2010 = d3.map();
-// var all2011 = d3.map();
-// var all2012 = d3.map();
-// var all2013 = d3.map();
-// var all2014 = d3.map();
-// var all2015 = d3.map();
-// var all2016 = d3.map();
-
-
-// d3.queue()
-//     .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
-//     .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
-//     .await(done);
-
-
-// whitemaps = {
-//   2010: white2010,
-//   2011: white2011,
-//   2012: white2012,
-//   2013: white2013,
-//   2014: white2014,
-//   2015: white2015,
-//   2016: white2016
-// };
-
-
-
-// allmaps = {
-//   2010: all2010,
-//   2011: all2011,
-//   2012: all2012,
-//   2013: all2013,
-//   2014: all2014,
-//   2015: all2015,
-//   2016: all2016
-// };
-
-// dict_of_dicts = {
-//   "white" : whitemaps,
-//   "black" : blackmaps,
-//   "all" : allmaps
-// }
-
-// d3.json("usa.json", function(d){
-//   drawMapOutline(d, allmaps[2010], 2010, "all");
-// } );
-
-
-
-// var poverty = d3.map();
-// var state = d3.map();
-// var county = d3.map();
-
-
-
-
+// grid.append("div").attr("id", "map_chart").append("svg")
 
 // /////////////////////////////////////////////
 // /////////////////////////////////////////////
@@ -673,378 +704,382 @@ title_div.append("text")
 // /////////////////////////////////////////////
 // /////////////////////////////////////////////
 // /////////////////////////////////////////////
-//  var chart2 = d3.select("#charts").append("svg") // append to svg will put side by side if there is enough room.
-//     .attr("width", width) 
-//     .attr("height", height)
-//     .attr('id', "chart2")
-//   	.append("g")
-//   	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
+//  // var chart2 = d3.select("#charts").append("svg")
+var chart2 = grid.append("div")
+	.attr("id", "chart2_div")
+	.append("svg")
+	  // append to svg will put side by side if there is enough room.
+    .attr("width", width) 
+    .attr("height", height)
+    .attr('id', "chart2")
+  	.append("g")
+  	.attr("transform","translate(40,"+(height/2)+")"); // Move chart to center of SVG
 
-// var distribution_breakdowns = [
-//                                 "Estimate; Total: - Less than $10,000" // 0
-//                                 ,"Estimate; Total: - $10,000 to $14,999"
-//                                 ,"Estimate; Total: - $15,000 to $19,999"
-//                                 ,"Estimate; Total: - $20,000 to $24,999" 
+var distribution_breakdowns = [
+                                "Estimate; Total: - Less than $10,000" // 0
+                                ,"Estimate; Total: - $10,000 to $14,999"
+                                ,"Estimate; Total: - $15,000 to $19,999"
+                                ,"Estimate; Total: - $20,000 to $24,999" 
 
-//                                 ,"Estimate; Total: - $25,000 to $29,999" // 5
-//                                 ,"Estimate; Total: - $30,000 to $34,999"
+                                ,"Estimate; Total: - $25,000 to $29,999" // 5
+                                ,"Estimate; Total: - $30,000 to $34,999"
 
-//                                 ,"Estimate; Total: - $35,000 to $39,999" // 7
-//                                 ,"Estimate; Total: - $40,000 to $44,999"
-//                                 ,"Estimate; Total: - $45,000 to $49,999"
+                                ,"Estimate; Total: - $35,000 to $39,999" // 7
+                                ,"Estimate; Total: - $40,000 to $44,999"
+                                ,"Estimate; Total: - $45,000 to $49,999"
 
-//                                 ,"Estimate; Total: - $50,000 to $59,999" //10
-//                                 ,"Estimate; Total: - $60,000 to $74,999"
+                                ,"Estimate; Total: - $50,000 to $59,999" //10
+                                ,"Estimate; Total: - $60,000 to $74,999"
 
-//                                 ,"Estimate; Total: - $75,000 to $99,999" //12
+                                ,"Estimate; Total: - $75,000 to $99,999" //12
 
-//                                 ,"Estimate; Total: - $100,000 to $124,999" //13
-//                                 ,"Estimate; Total: - $125,000 to $149,999"
-//                                 ,"Estimate; Total: - $150,000 to $199,999"
-//                                 ,"Estimate; Total: - $200,000 or more"
-//                               ]
+                                ,"Estimate; Total: - $100,000 to $124,999" //13
+                                ,"Estimate; Total: - $125,000 to $149,999"
+                                ,"Estimate; Total: - $150,000 to $199,999"
+                                ,"Estimate; Total: - $200,000 or more"
+                              ]
 
-// var distribution_breakdowns_all = [
-//                                 "Households; Estimate; Less than $10,000" // 0
-//                                 ,"Households; Estimate; $10,000 to $14,999"
-//                                 ,"Households; Estimate; $15,000 to $24,999"
+var distribution_breakdowns_all = [
+                                "Households; Estimate; Less than $10,000" // 0
+                                ,"Households; Estimate; $10,000 to $14,999"
+                                ,"Households; Estimate; $15,000 to $24,999"
 
-//                                 ,"Households; Estimate; $25,000 to $34,999" // 5
+                                ,"Households; Estimate; $25,000 to $34,999" // 5
 
-//                                 ,"Households; Estimate; $35,000 to 49,999" // 7
+                                ,"Households; Estimate; $35,000 to 49,999" // 7
 
-//                                 ,"Households; Estimate; $50,000 to $74,999" //10
+                                ,"Households; Estimate; $50,000 to $74,999" //10
 
-//                                 ,"Households; Estimate; $75,000 to $99,999" //12
+                                ,"Households; Estimate; $75,000 to $99,999" //12
 
-//                                 ,"Households; Estimate; $100,000 to $149,999" //13
-//                                 ,"Households; Estimate; $150,000 to $199,999"
-//                                 ,"Households; Estimate; $200,000 or more"
-//                               ]
+                                ,"Households; Estimate; $100,000 to $149,999" //13
+                                ,"Households; Estimate; $150,000 to $199,999"
+                                ,"Households; Estimate; $200,000 or more"
+                              ]
 
-// /////////////////////////////////////////////
-// // Helper functions for onclick update.
-// /////////////////////////////////////////////
-// function filterbyCounty(x, currentCounty, currentState){
-//   return x.filter(function(d) { return d.County === currentCounty & d.State === currentState; });
-// };
+/////////////////////////////////////////////
+// Helper functions for onclick update.
+/////////////////////////////////////////////
+function filterbyCounty(x, currentCounty, currentState){
+  return x.filter(function(d) { return d.County === currentCounty & d.State === currentState; });
+};
 
-// function getDistribution(data){
-//   var proportions = []
-//   var countyPopulation = data[0]["Estimate; Total:"]
-//   // Populate the income distribution list `proportions`
-//   for(var i=0; i<distribution_breakdowns.length; i++){
-//     proportions.push( data[0][distribution_breakdowns[i]]  / countyPopulation);
-//   }
-//   return proportions
-// };
+function getDistribution(data){
+  var proportions = []
+  var countyPopulation = data[0]["Estimate; Total:"]
+  // Populate the income distribution list `proportions`
+  for(var i=0; i<distribution_breakdowns.length; i++){
+    proportions.push( data[0][distribution_breakdowns[i]]  / countyPopulation);
+  }
+  return proportions
+};
 
-// function getDistributionAll(data){
-//   var proportions = []
-//   console.log(data[0])
-//   console.log("HoueholdsEstimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
-//   // var countyPopulation = data[0]["Estimate; Total:"]
-//   // Populate the income distribution list `proportions`
-//   for(var i=0; i<distribution_breakdowns_all.length; i++){
-//     console.log('dist breakdown?')
-//     console.log(distribution_breakdowns_all[i])
+function getDistributionAll(data){
+  var proportions = []
+  console.log(data[0])
+  console.log("HoueholdsEstimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
+  // var countyPopulation = data[0]["Estimate; Total:"]
+  // Populate the income distribution list `proportions`
+  for(var i=0; i<distribution_breakdowns_all.length; i++){
+    console.log('dist breakdown?')
+    console.log(distribution_breakdowns_all[i])
 
-//     proportions.push( data[0][distribution_breakdowns_all[i]] / 100);
-//   }
-//   return proportions
-// };
+    proportions.push( data[0][distribution_breakdowns_all[i]] / 100);
+  }
+  return proportions
+};
 
 
-// function low_Middle_High_class_all(proportions){
-//   console.log(proportions);
-// 	newData = []
-//   below25 = 0
-//   for(var i=0; i<4;i++){
-//     below25 += proportions[i]
-//   }
-//   newData.push(below25)
-//   console.log(below25);
+function low_Middle_High_class_all(proportions){
+  console.log(proportions);
+	newData = []
+  below25 = 0
+  for(var i=0; i<4;i++){
+    below25 += proportions[i]
+  }
+  newData.push(below25)
+  console.log(below25);
 
-//   twentyfive_to_thirtyfive = 0
-//   for(var i=4; i<5;i++){
-//     twentyfive_to_thirtyfive += proportions[i]
-//   }
-//   newData.push(twentyfive_to_thirtyfive)
+  twentyfive_to_thirtyfive = 0
+  for(var i=4; i<5;i++){
+    twentyfive_to_thirtyfive += proportions[i]
+  }
+  newData.push(twentyfive_to_thirtyfive)
 
-//   thirtyfive_to_fifty = 0
-//   for(var i=5; i<6;i++){
-//     thirtyfive_to_fifty += proportions[i]
-//   }
-//   newData.push(thirtyfive_to_fifty)
+  thirtyfive_to_fifty = 0
+  for(var i=5; i<6;i++){
+    thirtyfive_to_fifty += proportions[i]
+  }
+  newData.push(thirtyfive_to_fifty)
 
-//   fifty_to_seventyfive = 0
-//   for(var i=6; i<7;i++){
-//     fifty_to_seventyfive += proportions[i]
-//   }
-//   newData.push(fifty_to_seventyfive)
+  fifty_to_seventyfive = 0
+  for(var i=6; i<7;i++){
+    fifty_to_seventyfive += proportions[i]
+  }
+  newData.push(fifty_to_seventyfive)
 
-//   seventyfive_to_hundred = 0
-//   for(var i=7; i<8;i++){
-//     seventyfive_to_hundred += proportions[i]
-//   }
-//   newData.push(seventyfive_to_hundred)
+  seventyfive_to_hundred = 0
+  for(var i=7; i<8;i++){
+    seventyfive_to_hundred += proportions[i]
+  }
+  newData.push(seventyfive_to_hundred)
   
-//   over_hundred = 0
-//   for(var i=8; i<11;i++){
-//     over_hundred += proportions[i]
-//   }
-//   newData.push(over_hundred)
+  over_hundred = 0
+  for(var i=8; i<11;i++){
+    over_hundred += proportions[i]
+  }
+  newData.push(over_hundred)
 
-//   return newData;
-// };
+  return newData;
+};
 
-// function low_Middle_High_class_bw(proportions){
-//   newData = []
-//   below25 = 0
-//   for(var i=0; i<5;i++){
-//     below25 += proportions[i]
-//   }
-//   newData.push(below25)
+function low_Middle_High_class_bw(proportions){
+  newData = []
+  below25 = 0
+  for(var i=0; i<5;i++){
+    below25 += proportions[i]
+  }
+  newData.push(below25)
 
-//   twentyfive_to_thirtyfive = 0
-//   for(var i=5; i<7;i++){
-//     twentyfive_to_thirtyfive += proportions[i]
-//   }
-//   newData.push(twentyfive_to_thirtyfive)
+  twentyfive_to_thirtyfive = 0
+  for(var i=5; i<7;i++){
+    twentyfive_to_thirtyfive += proportions[i]
+  }
+  newData.push(twentyfive_to_thirtyfive)
 
-//   thirtyfive_to_fifty = 0
-//   for(var i=7; i<10;i++){
-//     thirtyfive_to_fifty += proportions[i]
-//   }
-//   newData.push(thirtyfive_to_fifty)
+  thirtyfive_to_fifty = 0
+  for(var i=7; i<10;i++){
+    thirtyfive_to_fifty += proportions[i]
+  }
+  newData.push(thirtyfive_to_fifty)
 
-//   fifty_to_seventyfive = 0
-//   for(var i=10; i<12;i++){
-//     fifty_to_seventyfive += proportions[i]
-//   }
-//   newData.push(fifty_to_seventyfive)
+  fifty_to_seventyfive = 0
+  for(var i=10; i<12;i++){
+    fifty_to_seventyfive += proportions[i]
+  }
+  newData.push(fifty_to_seventyfive)
 
-//   seventyfive_to_hundred = 0
-//   for(var i=12; i<13;i++){
-//     seventyfive_to_hundred += proportions[i]
-//   }
-//   newData.push(seventyfive_to_hundred)
+  seventyfive_to_hundred = 0
+  for(var i=12; i<13;i++){
+    seventyfive_to_hundred += proportions[i]
+  }
+  newData.push(seventyfive_to_hundred)
   
-//   over_hundred = 0
-//   for(var i=13; i<16;i++){
-//     over_hundred += proportions[i]
-//   }
-//   newData.push(over_hundred)
+  over_hundred = 0
+  for(var i=13; i<16;i++){
+    over_hundred += proportions[i]
+  }
+  newData.push(over_hundred)
 
-//   return newData;
+  return newData;
 
-// };
-// var barSpacing = 100;
-// var barWidth = 50;
-// function bar_location(d,i, numclicks){
-//   bar_loc =  (i*barSpacing)+barWidth*(numclicks);
-//   // bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
-//   return bar_loc;
-// };
+};
+var barSpacing = 100;
+var barWidth = 50;
+function bar_location(d,i, numclicks){
+  bar_loc =  (i*barSpacing)+barWidth*(numclicks);
+  // bar_loc = barWidth+ (i*barSpacing)+barWidth*(numclicks);
+  return bar_loc;
+};
 
-// function spread(i){
-//   // Spread a sequence (say, of x values), out.
-//   return i*barSpacing+barWidth;
-// };
+function spread(i){
+  // Spread a sequence (say, of x values), out.
+  return i*barSpacing+barWidth;
+};
 
-// classes = ["<$25K", "$25-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
-// function get_CLASS_bar_x_positions(){
-//   var barXvalues = [];
-//   for(var i=0; i<classes.length; i++){
-//     barXvalues.push(spread(i));
-//   }
-//   return barXvalues;
-// };
+classes = ["<$25K", "$25-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
+function get_CLASS_bar_x_positions(){
+  var barXvalues = [];
+  for(var i=0; i<classes.length; i++){
+    barXvalues.push(spread(i));
+  }
+  return barXvalues;
+};
 
-// var y_axisLength = (height / 2);
-// function getYscale(proportions){
-//   var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
-//   // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
-//   yScale = d3.scaleLinear()
-//     .domain([0, 1])
-//     .range([y_axisLength, 0]);
+var y_axisLength = (height / 2);
+function getYscale(proportions){
+  var maxValue = d3.max(proportions, function(d) { return +d;} ); // get max value of our dataset
+  // http://duspviz.mit.edu/d3-workshop/intro-to-d3/
+  yScale = d3.scaleLinear()
+    .domain([0, 1])
+    .range([y_axisLength, 0]);
 
-//   // var ticks = yScale.ticks(5),
-//   // tickFormat = yScale.tickFormat(5, "+%");
-//   return [yScale, maxValue];
-// }
-// function getXscale(barXvalues){
-//    return xScale = d3.scaleOrdinal()
-//       .domain(classes)
-//       .range(barXvalues);
-// }
+  // var ticks = yScale.ticks(5),
+  // tickFormat = yScale.tickFormat(5, "+%");
+  return [yScale, maxValue];
+}
+function getXscale(barXvalues){
+   return xScale = d3.scaleOrdinal()
+      .domain(classes)
+      .range(barXvalues);
+}
 
-// function drawAxes(yScale, xScale){
-//       var axez = chart2.append("g");
-//         axez
-//         .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
-//         .attr("id", "axes")
-//         .call(d3.axisLeft(yScale).tickFormat(d3.format(".0%")));
+function drawAxes(yScale, xScale){
+      var axez = chart2.append("g");
+        axez
+        .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
+        .attr("id", "axes")
+        .call(d3.axisLeft(yScale).tickFormat(d3.format(".0%")));
 
-//       // Add x scale
-//       chart2.append("g")
-//         .attr("transform", "translate(0,5)")
-//         .call(d3.axisBottom(xScale))
-//         .selectAll("text")
-//         .attr("y", 0)
-//         .attr("x", 9)
-//         .attr("dy", ".35em")
-//         .attr("transform", "translate(0,10)")
-//         .attr("id", "axes")
-//         .style("text-anchor", "start");
-// };
-
-
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-//  //Adding legend for our Choropleth
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-
-// var ext_color_domain = [.2, .4, .6, .8, 1]
-// var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+      // Add x scale
+      chart2.append("g")
+        .attr("transform", "translate(0,5)")
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr("transform", "translate(0,10)")
+        .attr("id", "axes")
+        .style("text-anchor", "start");
+};
 
 
-//   var legend = chart1.selectAll("g.legend")
-//   .attr("transform", "rotate(90)")
-//   .data(ext_color_domain)
-//   .enter().append("g")
-//   .attr("class", "legend");
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+ //Adding legend for our Choropleth
+/////////////////////////////////////////////
+/////////////////////////////////////////////
 
-//   var ls_w = 20, ls_h = 20;
-
-//   legend.append("rect")
-//   .attr("x", 20)
-//   .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
-//   .attr("width", ls_w)
-//   .attr("height", ls_h)
-//   .style("fill", function(d, i) { return color(d); })
-//   .style("opacity", 0.8);
-
-//   legend.append("text")
-//   .attr("x", 50)
-//   .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
-//   .text(function(d, i){ return legend_labels[i]; });
+var ext_color_domain = [.2, .4, .6, .8, 1]
+var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
 
 
+  var legend = chart1.selectAll("g.legend")
+  .attr("transform", "rotate(90)")
+  .data(ext_color_domain)
+  .enter().append("g")
+  .attr("class", "legend");
 
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-// // Add new data viz on click. 
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-// function bar_colors(numclicks){
-//   if (numclicks == 0) { return  "#137ed9"; } 
-//   else if (numclicks == 1) { return "#00b0ff"; }
-//   else if (numclicks == 2) { return "#0c9fc6"; }
-//   else if (numclicks == 3) { return "#0ab4c8"; }
-//   else if (numclicks == 4) { return "#00d7ff"; }
-// };
+  var ls_w = 20, ls_h = 20;
 
-// yScale = d3.scaleLinear()
-//     .domain([0, 1])
-//     // .domain([0, maxValue])
-//     .range([y_axisLength, 0]);
-//     barXvalues =  get_CLASS_bar_x_positions();
-//     xScale = getXscale(barXvalues);
+  legend.append("rect")
+  .attr("x", 20)
+  .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+  .attr("width", ls_w)
+  .attr("height", ls_h)
+  .style("fill", function(d, i) { return color(d); })
+  .style("opacity", 0.8);
+
+  legend.append("text")
+  .attr("x", 50)
+  .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+  .text(function(d, i){ return legend_labels[i]; });
+
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+// Add new data viz on click. 
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+function bar_colors(numclicks){
+  if (numclicks == 0) { return  "#137ed9"; } 
+  else if (numclicks == 1) { return "#00b0ff"; }
+  else if (numclicks == 2) { return "#0c9fc6"; }
+  else if (numclicks == 3) { return "#0ab4c8"; }
+  else if (numclicks == 4) { return "#00d7ff"; }
+};
+
+yScale = d3.scaleLinear()
+    .domain([0, 1])
+    // .domain([0, maxValue])
+    .range([y_axisLength, 0]);
+    barXvalues =  get_CLASS_bar_x_positions();
+    xScale = getXscale(barXvalues);
     
-//     drawAxes(yScale, xScale);
+    drawAxes(yScale, xScale);
 
-// var div = d3.select("body").append("div") 
-//     .attr("class", "tooltip")       
-//     .style("opacity", 0);
-
-
-// function get_current_county_id(d) {
-//   return d.id
-// };
-
-// function chartonClick(did, numclicks, initialYear, race) {
-
-//     var fileName = race+initialYear+"map.csv"
-
-//     var currentCounty = county.get(did);
-//     var currentState = state.get(did);
-//     console.log(did);
-//     d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
 
 
-//       if (error) throw error;
+function get_current_county_id(d) {
+  return d.id
+};
+
+function chartonClick(did, numclicks, initialYear, race) {
+
+    var fileName = race+initialYear+"map.csv"
+
+    var currentCounty = county.get(did);
+    var currentState = state.get(did);
+    console.log(did);
+    d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
 
 
-//       filtered_data = filterbyCounty(data, currentCounty, currentState);
+      if (error) throw error;
+
+
+      filtered_data = filterbyCounty(data, currentCounty, currentState);
       
-//       if (race == 'all'){
-//         console.log(filtered_data);
-//       	console.log("All chart on click")
-//         proportions = getDistributionAll(filtered_data);
-//         console.log('all proportions', proportions)
-//       	class_dist = low_Middle_High_class_all(proportions);
-//       }
-//       else {
-//         proportions = getDistribution(filtered_data);
-//       	class_dist = low_Middle_High_class_bw(proportions);
-//       }
+      if (race == 'all'){
+        console.log(filtered_data);
+      	console.log("All chart on click")
+        proportions = getDistributionAll(filtered_data);
+        console.log('all proportions', proportions)
+      	class_dist = low_Middle_High_class_all(proportions);
+      }
+      else {
+        proportions = getDistribution(filtered_data);
+      	class_dist = low_Middle_High_class_bw(proportions);
+      }
 
    
-//       d3.selectAll("#incomebars").remove(); // Remove old bar.
-//       d3.selectAll("#barlabel").remove();
+      d3.selectAll("#incomebars").remove(); // Remove old bar.
+      d3.selectAll("#barlabel").remove();
 
-//       // Append the rectangles (bars) for the bar chart
-//       var barz = chart2
-//         .append('g')
-//         .attr("transform", "translate(0,-"+height/2+")")
-//         .selectAll( "rect" )
-//         .data( class_dist );
+      // Append the rectangles (bars) for the bar chart
+      var barz = chart2
+        .append('g')
+        .attr("transform", "translate(0,-"+height/2+")")
+        .selectAll( "rect" )
+        .data( class_dist );
 
-//       var barChart = barz
-//         .enter()
-//         .append("rect")
-//         .attr("id", "incomebars")
-//         .attr( "x", function(d, i){
-//           // return function(d, i){ return (i*barSpacing)}; 
-//         // })
-//           numclicks = 1
-//           return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
-//           })
-//         .attr("y", function(d) {
-//         return yScale(-getYscale(class_dist)[1]);
-//         })
-//         .attr("height", 0)
-//         .attr( "y", function(d){
-//           return yScale(d); // Set y coordinate for each bar to height minus the data value
-//           })
-//         .attr( "width", barWidth )
-//         .attr( "height", function(d){
-//           return height/2 - yScale(d); // Set height of rectangle to data value
-//           })
-//         .attr("fill", "red");
-//         // .attr("fill", bar_colors(numclicks));
+      var barChart = barz
+        .enter()
+        .append("rect")
+        .attr("id", "incomebars")
+        .attr( "x", function(d, i){
+          // return function(d, i){ return (i*barSpacing)}; 
+        // })
+          numclicks = 1
+          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
+          })
+        .attr("y", function(d) {
+        return yScale(-getYscale(class_dist)[1]);
+        })
+        .attr("height", 0)
+        .attr( "y", function(d){
+          return yScale(d); // Set y coordinate for each bar to height minus the data value
+          })
+        .attr( "width", barWidth )
+        .attr( "height", function(d){
+          return height/2 - yScale(d); // Set height of rectangle to data value
+          })
+        .attr("fill", "red");
+        // .attr("fill", bar_colors(numclicks));
 
-//       barChart
-//         .on("mouseover", function(d, i) {	
-//         	d3.select(this)
-//             div.transition()		
-//                 .duration(200)		
-//                 .style("opacity", .9);
+      barChart
+        .on("mouseover", function(d, i) {	
+        	d3.select(this)
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);
 
-//             div	.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
-//              + " Households in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
-//                 .style("left", (d3.event.pageX) + "px")		
-//                 .style("top", (d3.event.pageY - 28) + "px");	
-//             })			
-//         .on("mouseout", function(d) {		
-//             div.transition()		
-//                 .duration(500)		
-//                 .style("opacity", 0);	
-//         });
+            div	.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
+             + " Households in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })			
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
 
-// });
-// };
+});
+};
 
 </script>
