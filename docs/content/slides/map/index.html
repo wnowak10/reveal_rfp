@@ -21,9 +21,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <style type="text/css">
   
   #dd {
-  position: absolute;
-  top: 275px;
-  left: 900px;
+  /*position: absolute;*/
+  /*top: 275px;*/
+  /*left: 900px;*/
   background: #f08080;
   padding-right: 26px;
   border-radius: 3px;
@@ -131,12 +131,18 @@ h1 {
     z-index: 10;
 }
 */
+#dropdown_control {
+  grid-column-start: 8;
+  grid-column-end: 9;
+  grid-row-start: 3;
+  grid-row-end: 4;
+}
 
 #map_controls {
   grid-column-start: 8;
   grid-column-end: 9;
-  grid-row-start: 3;
-  grid-row-end: 6;
+  grid-row-start: 5;
+  grid-row-end: 7;
 }
 
 </style>
@@ -233,6 +239,8 @@ title_div.append("h1")
 
 
 controls = grid.append("div").attr("id", "map_controls");
+
+dd_control = grid.append("div").attr("id", "dropdown_control")
 // controls.append("h1").text("hi");
 // controls.append("h1").text("hi");
 // controls.append("h1").text("hi");
@@ -605,7 +613,7 @@ var dropdown_options = [
   text: "White Households" }]
 
 
-var ddbutton = controls.append("select");
+var ddbutton = dd_control.append("select");
 
 
 ddbutton
