@@ -264,8 +264,8 @@ playButton
 //////////////////////////////////////////
 
 var dropdown_options = [ 
-// { value: "all",
-  // text: "All races" },
+{ value: "all",
+  text: "All Households" },
 { value: "black",
   text: "Black Households" },
 { value: "white",
@@ -477,6 +477,9 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
                 });;
       
+  g.on("mouseout", function(d) {
+                    d3.select("#tooltip").remove();
+                });
 
   g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -556,7 +559,24 @@ d3.queue()
 function done(d){
   // console.log("Read");
 }
+var all2010 = d3.map();
+var all2011 = d3.map();
+var all2012 = d3.map();
+var all2013 = d3.map();
+var all2014 = d3.map();
+var all2015 = d3.map();
+var all2016 = d3.map();
 
+
+d3.queue()
+    .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
+    .await(done);
 
 
 whitemaps = {
@@ -571,20 +591,20 @@ whitemaps = {
 
 
 
-// allmaps = {
-//   2010: all2010,
-//   2011: all2011,
-//   2012: all2012,
-//   2013: all2013,
-//   2014: all2014,
-//   2015: all2015,
-//   2016: all2016
-// };
+allmaps = {
+  2010: all2010,
+  2011: all2011,
+  2012: all2012,
+  2013: all2013,
+  2014: all2014,
+  2015: all2015,
+  2016: all2016
+};
 
 dict_of_dicts = {
   "white" : whitemaps,
-  "black" : blackmaps
-  // "all" : allmaps
+  "black" : blackmaps,
+  "all" : allmaps
 }
 
 d3.json("usa.json", function(d){
@@ -655,8 +675,11 @@ function getDistribution(data){
   }
   return proportions
 };
+function low_Middle_High_class_all(){
+	console.log("ALL?")
+};
 
-function low_Middle_High_class(proportions){
+function low_Middle_High_class_bw(proportions){
   newData = []
   below20 = 0
   for(var i=0; i<4;i++){
@@ -836,7 +859,13 @@ function chartonClick(did, numclicks, initialYear, race) {
 
       filtered_data = filterbyCounty(data, currentCounty, currentState);
       proportions = getDistribution(filtered_data);
-      class_dist = low_Middle_High_class(proportions);
+      if (race == 'all'){
+      	console.log("All chart on click")
+      	class_dist = low_Middle_High_class_all(proportions);
+      }
+      else {
+      	class_dist = low_Middle_High_class_bw(proportions);
+      }
       console.log(class_dist)
    
       d3.selectAll("#incomebars").remove(); // Remove old bar.

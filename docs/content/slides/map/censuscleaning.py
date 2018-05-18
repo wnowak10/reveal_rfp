@@ -37,9 +37,9 @@ def make_year(filepath_ending, year, race, export=True):
 years = ['10', '11', '12', '13', '14', '15', '16']
 
 # final = pd.DataFrame()
-for year in years:
-    # x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
-    x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
+# for year in years:
+# x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
+# x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
 
 #     final = pd.concat([final, x])
 
@@ -59,7 +59,7 @@ def clean_all_race(year, export):
     print(df.columns)
     df['percent_poor'] = (df['Households; Estimate; Less than $10,000']
                           + df['Households; Estimate; $10,000 to $14,999']
-                          + df['Households; Estimate; $15,000 to $24,999']) / df['Households; Estimate; Total']
+                          + df['Households; Estimate; $15,000 to $24,999']) / 100
 
     df['County'] = df['Geography'].str.split(",", expand=True)[0]
     df['State'] = df['Geography'].str.split(",", expand=True)[1]
@@ -82,6 +82,20 @@ def clean_all_race(year, export):
             "Households; Estimate; $100,000 to $149,999",
             "Households; Estimate; $150,000 to $199,999",
             "Households; Estimate; $200,000 or more"]
+
+    sub = ["Households; Estimate; Less than $10,000",
+           "Households; Estimate; $10,000 to $14,999",
+           "Households; Estimate; $15,000 to $24,999",
+           "Households; Estimate; $25,000 to $34,999",
+           "Households; Estimate; $35,000 to $49,999",
+           "Households; Estimate; $50,000 to $74,999",
+           "Households; Estimate; $75,000 to $99,999",
+           "Households; Estimate; $100,000 to $149,999",
+           "Households; Estimate; $150,000 to $199,999",
+           "Households; Estimate; $200,000 or more"]
+
+    subset = df[sub]
+    print(subset.sum(axis=1))
     keep = df[cols]
     keep['year'] = year
     if export:
