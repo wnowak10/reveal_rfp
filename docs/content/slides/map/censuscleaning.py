@@ -13,7 +13,8 @@ def make_year(filepath_ending, year, race, export=True):
     df = pd.read_csv(filename, encoding='latin-1', header=1)
     df['percent_poor'] = (df['Estimate; Total: - Less than $10,000']
                           + df['Estimate; Total: - $10,000 to $14,999']
-                          + df['Estimate; Total: - $15,000 to $19,999']) / df['Estimate; Total:']
+                          + df['Estimate; Total: - $15,000 to $19,999']
+                          + df["Estimate; Total: - $20,000 to $24,999"]) / df['Estimate; Total:']
 
     df['County'] = df['Geography'].str.split(",", expand=True)[0]
     df['State'] = df['Geography'].str.split(",", expand=True)[1]
@@ -30,7 +31,7 @@ def make_year(filepath_ending, year, race, export=True):
     keep = df[cols]
     keep['year'] = year
     if export:
-        keep.to_csv('MapData/{}/{}{}map.csv'.format(race, race, year))
+        keep.to_csv('MapData/{}/{}20{}map.csv'.format(race, race, year))
     return keep
 
 years = ['10', '11', '12', '13', '14', '15', '16']
@@ -38,7 +39,7 @@ years = ['10', '11', '12', '13', '14', '15', '16']
 # final = pd.DataFrame()
 # for year in years:
 # x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
-# x = make_year('_5YR_B19001B_with_ann.csv', year, 'black', export=False)
+# x = make_year('_5YR_B19001H_with_ann.csv', year, 'white', export=True)
 
 #     final = pd.concat([final, x])
 
@@ -58,7 +59,7 @@ def clean_all_race(year, export):
     print(df.columns)
     df['percent_poor'] = (df['Households; Estimate; Less than $10,000']
                           + df['Households; Estimate; $10,000 to $14,999']
-                          + df['Households; Estimate; $15,000 to $24,999']) / df['Households; Estimate; Total']
+                          + df['Households; Estimate; $15,000 to $24,999']) / 100
 
     df['County'] = df['Geography'].str.split(",", expand=True)[0]
     df['State'] = df['Geography'].str.split(",", expand=True)[1]
@@ -74,21 +75,36 @@ def clean_all_race(year, export):
             "Households; Estimate; Less than $10,000",
             "Households; Estimate; $10,000 to $14,999",
             "Households; Estimate; $15,000 to $24,999",
-            "Households; Estimate; $25,000 to $29,999",
-            "Households; Estimate; $30,000 to $34,999",
-            "Households; Estimate; $35,000 to $39,999",
-            "Households; Estimate; $40,000 to $44,999",
-            "Households; Estimate; $45,000 to $49,999",
-            "Households; Estimate; $50,000 to $59,999",
-            "Households; Estimate; $60,000 to $74,999",
+            "Households; Estimate; $25,000 to $34,999",
+            "Households; Estimate; $35,000 to $49,999",
+            "Households; Estimate; $50,000 to $74,999",
             "Households; Estimate; $75,000 to $99,999",
             "Households; Estimate; $100,000 to $149,999",
             "Households; Estimate; $150,000 to $199,999",
             "Households; Estimate; $200,000 or more"]
+
+    sub = ["Households; Estimate; Less than $10,000",  # 0
+           "Households; Estimate; $10,000 to $14,999",
+           "Households; Estimate; $15,000 to $24,999",
+
+           "Households; Estimate; $25,000 to $34,999",  # 4
+
+           "Households; Estimate; $35,000 to $49,999",  # 5
+
+           "Households; Estimate; $50,000 to $74,999",  # 6
+
+           "Households; Estimate; $75,000 to $99,999",  # 7
+
+           "Households; Estimate; $100,000 to $149,999",  # 8
+           "Households; Estimate; $150,000 to $199,999",
+           "Households; Estimate; $200,000 or more"]
+
+    subset = df[sub]
+    print(subset.sum(axis=1))
     keep = df[cols]
     keep['year'] = year
     if export:
-        keep.to_csv('MapData/all/{}map.csv'.format(year))
+        keep.to_csv('MapData/all/all20{}map.csv'.format(year))
     return keep
 
 for year in years:

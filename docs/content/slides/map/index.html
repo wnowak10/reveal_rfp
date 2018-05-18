@@ -21,9 +21,9 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <style type="text/css">
   
   #dd {
-  position: absolute;
-  top: 275px;
-  left: 900px;
+  /*position: absolute;*/
+  /*top: 275px;*/
+  /*left: 900px;*/
   background: #f08080;
   padding-right: 26px;
   border-radius: 3px;
@@ -31,7 +31,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   color: white;
   margin: 0;
   padding: 0 12px;
-  width: 60px;
+  width: auto;
   cursor: pointer;
   height: 30px;
 }
@@ -45,13 +45,12 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 #maphover.tooltip { 
     /* Position the tooltip */
     position: absolute;
-
     text-align: center;     
-    width: 80px;          
-    height: 100px;         
+    width: 80px;    
+    height: auto;         
     padding: 2px;       
     font: 12px sans-serif;    
-    background: white; 
+    background: lightblue; 
     border: 0px;    
     border-radius: 8px;     
     pointer-events: none;  
@@ -69,6 +68,59 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   left: 750px;
 }
 
+
+/* CSS */
+.grid {
+   display: grid;
+   grid-gap: 5px;
+   width: 100vw;
+   height: 100vh;
+	/*grid-template-rows: repeat(6, 1fr);*/
+	grid-template-rows: repeat(10, 10%);
+  grid-template-columns: repeat(10, 10%);
+  justify-items: center;
+}
+
+.title_div {
+	vertical-align: middle;
+	/*grid-row-start: 0;*/
+	/*grid-row-end:1;*/
+	grid-column-start: 1;
+	grid-column-end: -1;
+}
+
+#map_chart {
+	grid-row-start: 2;
+	grid-row-end: 8;
+	grid-column-start: 1;
+	grid-column-end: 8;
+}
+
+#chart2_div {
+	grid-row-start: 7;
+	grid-row-end: -1;
+	grid-column-start: 1;
+	grid-column-end: 8;
+}
+
+
+
+#title_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+
+  font-size: 42px;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+h1 {
+	color: darkblue;
+}
 /*#overlay {
     position: absolute;
     top: 0;
@@ -79,6 +131,20 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
     z-index: 10;
 }
 */
+#dropdown_control {
+  grid-column-start: 8;
+  grid-column-end: 9;
+  grid-row-start: 3;
+  grid-row-end: 4;
+}
+
+#map_controls {
+  grid-column-start: 9;
+  grid-column-end: 10;
+  grid-row-start: 5;
+  grid-row-end: 7;
+}
+
 </style>
 </head>
 
@@ -94,7 +160,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 
 <body onclick="off()" onresize="off()">
  <!-- Turn off the overlay on click -->
-  <div id="title"></div>
+ <!--  <div id="title"></div>
 
   <div id="selectors">
       <div id ="vis"></div>
@@ -102,7 +168,7 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
       <div id="dropdown"> </div>
   </div>
 
-  <div id="charts"> </div>
+  <div id="charts"> </div> -->
 
 
    <div class="modal" id="overlay"> 
@@ -132,16 +198,21 @@ function off() {
 
  //    });
 
+ var grid = d3.select("body")
+ 	.append("div")
+ 	.attr("id", "grid")
+ 	.attr("class", "grid")
+
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Set the dimensions of the canvas/graph.
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-var margin = {top: 40, right: 20, bottom: 30, left: 50};
-var titlewidth = 1100;
-var titleheight = 60;
-var textWidth = titlewidth / 2
+// var margin = {top: 40, right: 20, bottom: 30, left: 50};
+// var titlewidth = 1100;
+// var titleheight = 60;
+// var textWidth = titlewidth / 2
 
 
 //////////////////////////////////////////
@@ -157,222 +228,37 @@ var current_county_id;
 // Set the title.
 //////////////////////////////////////////
 //////////////////////////////////////////
-var titlesvg = d3.select("#title")
-    .append("svg")
-    .attr("width", titlewidth)
-    .attr("height", titleheight); 
+var title_div = grid
+    .append("div")
+    .attr("class", "title_div") ;
+
+title_div.append("h1")
+		.attr("id", "title_text")
+		// .attr("fill", "darkblue")
+        .text("Poverty in America")
 
 
-titlesvg.append("svg").append("text")
-        .attr("x", textWidth) // Center            
-        .attr("y", margin.top*.7) 
-        .attr("text-anchor", "middle")  
-        .style("font-size", "36px") 
-        .attr("class", "title")  
-        .text("POVERTY IN AMERICA")
+controls = grid.append("div").attr("id", "map_controls");
+
+dd_control = grid.append("div").attr("id", "dropdown_control")
+// controls.append("h1").text("hi");
+// controls.append("h1").text("hi");
+// controls.append("h1").text("hi");
 
 
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Build slider
-//////////////////////////////////////////
-//////////////////////////////////////////
+// // //////////////////////////////////////////
+// // //////////////////////////////////////////
+// // // Set the dimensions of the canvas/graph.
+// // // Begin to make the map.
 
-var startDate = 2010; //new Date("2010"),
-var endDate = 2016.5; //new Date("2017");
-
-var slidermargin = {top:0, right:50, bottom:0, left:50},
-    sliderwidth = 360 - slidermargin.left - slidermargin.right,
-    sliderheight = 100 - slidermargin.top - slidermargin.bottom;
-
-var svg = d3.select("#vis")
-    .append("svg")
-    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
-    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
-
-var moving = false;
-var currentValue = 0;
-var targetValue = sliderwidth;
-
-var playButton = d3.select("#play-button").append("button").attr("id", "pb").text("Play");
-    
-var x = d3.scaleLinear() //scaleTime()
-    .domain([startDate, endDate])
-    .range([0, targetValue])
-    .clamp(true);
-
-var slider = svg.append("g")
-    .attr("class", "slider")
-    .attr("transform", "translate(" + margin.left + ","+sliderheight/2+")");
-
-slider.append("line")
-    .attr("class", "track")
-    .attr("x1", x.range()[0])
-    .attr("x2", x.range()[1])
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .attr("class", "track-inset")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .attr("class", "track-overlay")
-    .call(d3.drag()
-        .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function() {
-          currentValue = d3.event.x;
-          update(x.invert(currentValue)); 
-        })
-    );
-
-slider.insert("g", ".track-overlay")
-    .attr("class", "ticks")
-    .attr("transform", "translate(0," + 18 + ")")
-  .selectAll("text")
-    .data(x.ticks(6))
-    .enter()
-    .append("text")
-    .attr("x", x)
-    .attr("y", 10)
-    .attr("text-anchor", "middle")
-    .text(function(d) { return (d); }); // Label
-
-var handle = slider.insert("circle", ".track-overlay")
-    .attr("class", "handle")
-    .attr("r", 9);
-
-var label = slider.append("text")  
-    .attr("class", "label")
-    .attr("text-anchor", "middle")
-    .text("2010")
-    .attr("transform", "translate(0,-25)")
-
-playButton
-    .on("click", function() {
-        var button = d3.select(this);
-        if (button.text() == "Pause") {
-            moving = false;
-            clearInterval(timer);
-            button.text("Play");
-        } 
-        else {
-            moving = true;
-            timer = setInterval(step, 100);
-            button.text("Pause");
-            }
-    });
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Build dropdown
-//////////////////////////////////////////
-//////////////////////////////////////////
-
-var dropdown_options = [ 
-// { value: "all",
-  // text: "All races" },
-{ value: "black",
-  text: "Black" },
-{ value: "white",
-  text: "White" }]
-
-
-var initial_value = "black";
-var ddbutton = d3.select("#dropdown").append("select");
-
-
-ddbutton
-    .attr("id", "dd")
-          .selectAll("option")
-          .data(dropdown_options)
-          .enter()
-          .append("option")
-          .attr("value", function(option) { 
-            selectedValue = option.value;
-            return selectedValue; 
-          })
-          .text(function(option) { return option.text; });
-
-ddbutton.on("change", change)
-var v;
-function change() {
-    v=  this.options[this.selectedIndex].value;
-    dict_to_use = dict_of_dicts[v]     
-    poverty_dict = dict_to_use[initialYear]
-    console.log('race change', v)
-    drawMapOutline(usa, poverty_dict, initialYear, v);
-    chartonClick(current_county_id, numclicks, initialYear, v);
-};
-
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Update plots
-//////////////////////////////////////////
-//////////////////////////////////////////
-
-var dataset;
-
-var plot = svg.append("g")
-    .attr("class", "plot")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-function prepare(d) {
-  d.id = d.id;
-  d.year = d.year; // Keep as string
-  return d;
-}
-  
-function step() {
-  update(x.invert(currentValue));
-  currentValue = currentValue + (targetValue/60);
-  if (currentValue > targetValue) {
-    moving = false;
-    currentValue = 0;
-    clearInterval(timer);
-    playButton.text("Play");
-  }
-}
-
-
-var initialYear = 2010;
-var race = initial_value;
-function update(h) {
-
-    handle.attr("cx", x(h));
-    label
-      .attr("x", x(h))
-      .text(Math.floor(h));
-
-    if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
-
-      initialYear = Math.round(h,0);
-      if (v == undefined){
-        race = initial_value;
-        dict_to_use = dict_of_dicts[race]
-      }
-      else {
-        race = v;
-         dict_to_use = dict_of_dicts[race]
-      }
-
-      poverty_dict = dict_to_use[initialYear]
-
-      drawMapOutline(usa, poverty_dict, initialYear, race);
-
-    };
-  
-};
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Set the dimensions of the canvas/graph.
-// Begin to make the map.
-
-//////////////////////////////////////////
-//////////////////////////////////////////
+// //////////////////////////////////////////
+// //////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 700;
 var height = 350;
 
 
-var chart1 = d3.select("#charts").append("svg")
+var chart1 = grid.append("div").attr("id", "map_chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
@@ -401,7 +287,7 @@ chart1
 function scale (scaleFactor,width,height) {
   return d3.geoTransform({
     point: function(x, y) {
-      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 70);
+      this.stream.point( (x - width/2) * scaleFactor+300 +100, (y - height/2) * scaleFactor- 80);
                           }
   });
 }
@@ -422,12 +308,14 @@ var path = d3.geoPath()
  
 function drawMapOutline(us, poverty_dict, initialYear, race) {
 
-  g.append("g")
+  var counties = g.append("g")
       .attr("class", "counties")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.counties).features)
       .enter()
-      .append("path")
+      .append("path");
+
+    counties
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
 
       .on("click", function(d){
@@ -463,7 +351,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html(county.get(d.id) + "," + state.get(d.id)+"; Poverty rate: "+Math.round(poverty_dict.get(d.id)*100) + "%") 
+            div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
                 .attr("id", "maphover")
                 .style("left", (d3.event.pageX + 28) + "px")   
                 .style("top", (d3.event.pageY) + "px");  
@@ -477,12 +365,31 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
                 });;
       
+  // counties.on("mouseout", function() {
+  //                   d3.select("#maphover").remove();
+  //               });
 
-  g.append("path")
+  var states = g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
+
+
+  var border = g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b; }))
+      .attr("class", "border")
+      .attr("fill", "none")
+      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      .attr("d", path);
+
+  border.on("mouseout", function(d){
+    console.log("out of states?");
+  });
+
+  // states.on("mouseout", function(d){
+  //   d3.select("#maphover").remove();
+  // });
 
   chart1.append("path")
       .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
@@ -556,7 +463,24 @@ d3.queue()
 function done(d){
   // console.log("Read");
 }
+var all2010 = d3.map();
+var all2011 = d3.map();
+var all2012 = d3.map();
+var all2013 = d3.map();
+var all2014 = d3.map();
+var all2015 = d3.map();
+var all2016 = d3.map();
 
+
+d3.queue()
+    .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
+    .await(done);
 
 
 whitemaps = {
@@ -571,44 +495,246 @@ whitemaps = {
 
 
 
-// allmaps = {
-//   2010: all2010,
-//   2011: all2011,
-//   2012: all2012,
-//   2013: all2013,
-//   2014: all2014,
-//   2015: all2015,
-//   2016: all2016
-// };
+allmaps = {
+  2010: all2010,
+  2011: all2011,
+  2012: all2012,
+  2013: all2013,
+  2014: all2014,
+  2015: all2015,
+  2016: all2016
+};
 
 dict_of_dicts = {
   "white" : whitemaps,
-  "black" : blackmaps
-  // "all" : allmaps
+  "black" : blackmaps,
+  "all" : allmaps
 }
 
 d3.json("usa.json", function(d){
-  drawMapOutline(d, blackmaps[2010], 2010, race);
+  drawMapOutline(d, allmaps[2010], 2010, "all");
 } );
 
 
 
-var poverty = d3.map();
-var state = d3.map();
-var county = d3.map();
+
+// grid.append("div").append("h1").text("hi");
+// grid.append("div").append("h1").text("hi");
+// grid.append("div").append("h1").text("hi");
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build slider
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var startDate = 2010; //new Date("2010"),
+var endDate = 2016.5; //new Date("2017");
+
+var slidermargin = {top:0, right:50, bottom:0, left:50},
+    sliderwidth = 360 - slidermargin.left - slidermargin.right,
+    sliderheight = 100 - slidermargin.top - slidermargin.bottom;
+
+var svg = controls
+    .append("svg")
+    .attr("id", "slider")
+    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
+    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
+
+var moving = false;
+var currentValue = 0;
+var targetValue = sliderwidth;
+    
+var x = d3.scaleLinear() //scaleTime()
+    .domain([startDate, endDate])
+    .range([0, targetValue])
+    .clamp(true);
+
+var slider = svg.append("g")
+    .attr("class", "slider")
+    .attr("transform", "translate(" + margin.left + ","+sliderheight/2+")");
+
+slider.append("line")
+    .attr("class", "track")
+    .attr("x1", x.range()[0])
+    .attr("x2", x.range()[1])
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-inset")
+  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+    .attr("class", "track-overlay")
+    .call(d3.drag()
+        .on("start.interrupt", function() { slider.interrupt(); })
+        .on("start drag", function() {
+          currentValue = d3.event.x;
+          update(x.invert(currentValue)); 
+        })
+    );
+
+slider.insert("g", ".track-overlay")
+    .attr("class", "ticks")
+    .attr("transform", "translate(0," + 18 + ")")
+  .selectAll("text")
+    .data(x.ticks(6))
+    .enter()
+    .append("text")
+    .attr("x", x)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .text(function(d) { return (d); }); // Label
+
+var handle = slider.insert("circle", ".track-overlay")
+    .attr("class", "handle")
+    .attr("r", 9);
+
+var label = slider.append("text")  
+    .attr("class", "label")
+    .attr("text-anchor", "middle")
+    .text("2010")
+    .attr("transform", "translate(0,-25)")
 
 
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Play button
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var playButton = controls.append("button").attr("id", "pb").text("Play");
+
+playButton
+    .on("click", function() {
+        var button = d3.select(this);
+        if (button.text() == "Pause") {
+            moving = false;
+            clearInterval(timer);
+            button.text("Play");
+        } 
+        else {
+            moving = true;
+            timer = setInterval(step, 100);
+            button.text("Pause");
+            }
+    });
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build dropdown
+//////////////////////////////////////////
+//////////////////////////////////////////
+
+var dropdown_options = [ 
+{ value: "all",
+  text: "All Households" },
+{ value: "black",
+  text: "Black Households" },
+{ value: "white",
+  text: "White Households" }]
 
 
+var ddbutton = dd_control.append("select");
 
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-// Prepare for second chart.
-/////////////////////////////////////////////
-/////////////////////////////////////////////
-/////////////////////////////////////////////
- var chart2 = d3.select("#charts").append("svg") // append to svg will put side by side if there is enough room.
+
+ddbutton
+    .attr("id", "dd")
+          .selectAll("option")
+          .data(dropdown_options)
+          .enter()
+          .append("option")
+          .attr("value", function(option) { 
+            selectedValue = option.value;
+            return selectedValue; 
+          })
+          .text(function(option) { return option.text; });
+
+ddbutton.on("change", change)
+var v;
+function change() {
+    v=  this.options[this.selectedIndex].value;
+    dict_to_use = dict_of_dicts[v]     
+    poverty_dict = dict_to_use[initialYear]
+    console.log('race change', v)
+    drawMapOutline(usa, poverty_dict, initialYear, v);
+    chartonClick(current_county_id, numclicks, initialYear, v);
+};
+
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Update plots
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+
+// var dataset;
+
+// var plot = svg.append("g")
+//     .attr("class", "plot")
+//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+function prepare(d) {
+  d.id = d.id;
+  d.year = d.year; // Keep as string
+  return d;
+}
+  
+function step() {
+  update(x.invert(currentValue));
+  currentValue = currentValue + (targetValue/60);
+  if (currentValue > targetValue) {
+    moving = false;
+    currentValue = 0;
+    clearInterval(timer);
+    playButton.text("Play");
+  }
+}
+
+
+var initialYear = 2010;
+
+var initialRace = "all";
+var race = initialRace;
+function update(h) {
+
+    handle.attr("cx", x(h));
+    label
+      .attr("x", x(h))
+      .text(Math.floor(h));
+
+    if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
+    	console.log("entered?")
+      initialYear = Math.round(h,0);
+      if (v == undefined){
+        race = initialRace;
+        dict_to_use = dict_of_dicts[race]
+      }
+      else {
+        race = v;
+         dict_to_use = dict_of_dicts[race]
+      }
+
+      poverty_dict = dict_to_use[initialYear]
+
+      drawMapOutline(usa, poverty_dict, initialYear, race);
+      chartonClick(current_county_id, numclicks, initialYear, race);
+
+    };
+  
+};
+
+
+// grid.append("div").attr("id", "map_chart").append("svg")
+
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+// // Prepare for second chart.
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+// /////////////////////////////////////////////
+//  // var chart2 = d3.select("#charts").append("svg")
+var chart2 = grid.append("div")
+	.attr("id", "chart2_div")
+	.append("svg")
+	  // append to svg will put side by side if there is enough room.
     .attr("width", width) 
     .attr("height", height)
     .attr('id', "chart2")
@@ -619,9 +745,9 @@ var distribution_breakdowns = [
                                 "Estimate; Total: - Less than $10,000" // 0
                                 ,"Estimate; Total: - $10,000 to $14,999"
                                 ,"Estimate; Total: - $15,000 to $19,999"
+                                ,"Estimate; Total: - $20,000 to $24,999" 
 
-                                ,"Estimate; Total: - $20,000 to $24,999" // 4
-                                ,"Estimate; Total: - $25,000 to $29,999"
+                                ,"Estimate; Total: - $25,000 to $29,999" // 5
                                 ,"Estimate; Total: - $30,000 to $34,999"
 
                                 ,"Estimate; Total: - $35,000 to $39,999" // 7
@@ -637,6 +763,24 @@ var distribution_breakdowns = [
                                 ,"Estimate; Total: - $125,000 to $149,999"
                                 ,"Estimate; Total: - $150,000 to $199,999"
                                 ,"Estimate; Total: - $200,000 or more"
+                              ]
+
+var distribution_breakdowns_all = [
+                                "Households; Estimate; Less than $10,000" // 0
+                                ,"Households; Estimate; $10,000 to $14,999"
+                                ,"Households; Estimate; $15,000 to $24,999"
+
+                                ,"Households; Estimate; $25,000 to $34,999" // 4
+
+                                ,"Households; Estimate; $35,000 to $49,999" // 5
+
+                                ,"Households; Estimate; $50,000 to $74,999" //6
+
+                                ,"Households; Estimate; $75,000 to $99,999" //7
+
+                                ,"Households; Estimate; $100,000 to $149,999" //8
+                                ,"Households; Estimate; $150,000 to $199,999"
+                                ,"Households; Estimate; $200,000 or more"
                               ]
 
 /////////////////////////////////////////////
@@ -656,19 +800,79 @@ function getDistribution(data){
   return proportions
 };
 
-function low_Middle_High_class(proportions){
-  newData = []
-  below20 = 0
-  for(var i=0; i<4;i++){
-    below20 += proportions[i]
+function getDistributionAll(data){
+  var proportions = []
+  console.log(data[0])
+  console.log("Households Estimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
+  // var countyPopulation = data[0]["Estimate; Total:"]
+  // Populate the income distribution list `proportions`
+  for(var i=0; i<distribution_breakdowns_all.length; i++){
+    console.log('dist breakdown?')
+    console.log(distribution_breakdowns_all[i])
+    console.log(data[0][distribution_breakdowns_all[i]])
+    proportions.push( data[0][distribution_breakdowns_all[i]] / 100);
   }
-  newData.push(below20)
+  return proportions
+};
 
-  twenty_to_thirtyfive = 0
-  for(var i=4; i<7;i++){
-    twenty_to_thirtyfive += proportions[i]
+
+function low_Middle_High_class_all(proportions){
+  console.log(proportions);
+	newData = []
+  below25 = 0
+  for(var i=0; i<4;i++){
+    below25 += proportions[i]
   }
-  newData.push(twenty_to_thirtyfive)
+  newData.push(below25)
+  console.log(below25);
+
+  twentyfive_to_thirtyfive = 0
+  for(var i=4; i<5;i++){
+    twentyfive_to_thirtyfive += proportions[i]
+  }
+  newData.push(twentyfive_to_thirtyfive)
+
+  thirtyfive_to_fifty = 0
+  for(var i=5; i<6;i++){
+    thirtyfive_to_fifty += proportions[i]
+  }
+  newData.push(thirtyfive_to_fifty)
+
+  fifty_to_seventyfive = 0
+  for(var i=6; i<7;i++){
+    fifty_to_seventyfive += proportions[i]
+  }
+  newData.push(fifty_to_seventyfive)
+
+  seventyfive_to_hundred = 0
+  for(var i=7; i<8;i++){
+    seventyfive_to_hundred += proportions[i]
+  }
+  newData.push(seventyfive_to_hundred)
+  
+  over_hundred = 0
+  for(var i=8; i<10;i++){
+    over_hundred += proportions[i]
+    console.log("OVER over_hundred???????", over_hundred)
+  }
+  newData.push(over_hundred)
+
+  return newData;
+};
+
+function low_Middle_High_class_bw(proportions){
+  newData = []
+  below25 = 0
+  for(var i=0; i<5;i++){
+    below25 += proportions[i]
+  }
+  newData.push(below25)
+
+  twentyfive_to_thirtyfive = 0
+  for(var i=5; i<7;i++){
+    twentyfive_to_thirtyfive += proportions[i]
+  }
+  newData.push(twentyfive_to_thirtyfive)
 
   thirtyfive_to_fifty = 0
   for(var i=7; i<10;i++){
@@ -710,7 +914,7 @@ function spread(i){
   return i*barSpacing+barWidth;
 };
 
-classes = ["<$20K", "$20-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
+classes = ["<$25K", "$25-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
 function get_CLASS_bar_x_positions(){
   var barXvalues = [];
   for(var i=0; i<classes.length; i++){
@@ -726,6 +930,9 @@ function getYscale(proportions){
   yScale = d3.scaleLinear()
     .domain([0, 1])
     .range([y_axisLength, 0]);
+
+  // var ticks = yScale.ticks(5),
+  // tickFormat = yScale.tickFormat(5, "+%");
   return [yScale, maxValue];
 }
 function getXscale(barXvalues){
@@ -739,7 +946,7 @@ function drawAxes(yScale, xScale){
         axez
         .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
         .attr("id", "axes")
-        .call(d3.axisLeft(yScale));
+        .call(d3.axisLeft(yScale).tickFormat(d3.format(".0%")));
 
       // Add x scale
       chart2.append("g")
@@ -825,14 +1032,26 @@ function chartonClick(did, numclicks, initialYear, race) {
 
     var currentCounty = county.get(did);
     var currentState = state.get(did);
-
+    console.log(did);
     d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
+
+
       if (error) throw error;
 
 
       filtered_data = filterbyCounty(data, currentCounty, currentState);
-      proportions = getDistribution(filtered_data);
-      class_dist = low_Middle_High_class(proportions);
+      
+      if (race == 'all'){
+        console.log(filtered_data);
+      	console.log("All chart on click")
+        proportions = getDistributionAll(filtered_data);
+        console.log('all proportions', proportions)
+      	class_dist = low_Middle_High_class_all(proportions);
+      }
+      else {
+        proportions = getDistribution(filtered_data);
+      	class_dist = low_Middle_High_class_bw(proportions);
+      }
 
    
       d3.selectAll("#incomebars").remove(); // Remove old bar.
@@ -876,7 +1095,8 @@ function chartonClick(did, numclicks, initialYear, race) {
                 .duration(200)		
                 .style("opacity", .9);
 
-            div	.html( Math.round((100*d),0)+ "% of "+race+"s in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
+            div	.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
+             + " Households in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px");	
             })			

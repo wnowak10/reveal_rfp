@@ -1,5 +1,4 @@
 
-
 /* just some content with arbitrary styles for explanation purposes */
 .modal {
   position: fixed;
@@ -30,12 +29,12 @@ text-align: center;
 
 
 
-
 div.tooltip { 
     position: absolute;     
     text-align: center;     
     width: 100px;          
-    height: 200px;         
+    min-height: 50px;         
+    max-height: 300px;         
     padding: 2px;       
     font: 12px sans-serif;    
     background: red; 
@@ -62,16 +61,7 @@ div.tooltip {
   stroke: white;
   stroke-linejoin: round;
 }
-.title {
-  fill: darkblue;
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: normal;
-  text-transform: uppercase;
-  text-shadow: none;
-  word-wrap: break-word;
-}
+
 .legend {
   font-size: 12px;
 }
@@ -79,9 +69,9 @@ div.tooltip {
 
 
 #pb {
-  position: absolute;
-  top: 325px;
-  left: 900px;
+  /*position: absolute;*/
+  /*top: 325px;*/
+  /*left: 900px;*/
   background: #f08080;
   padding-right: 26px;
   border-radius: 3px;
