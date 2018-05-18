@@ -139,8 +139,8 @@ h1 {
 }
 
 #map_controls {
-  grid-column-start: 8;
-  grid-column-end: 9;
+  grid-column-start: 9;
+  grid-column-end: 10;
   grid-row-start: 5;
   grid-row-end: 7;
 }
@@ -308,12 +308,14 @@ var path = d3.geoPath()
  
 function drawMapOutline(us, poverty_dict, initialYear, race) {
 
-  g.append("g")
+  var counties = g.append("g")
       .attr("class", "counties")
       .selectAll("path")
       .data(topojson.feature(us, us.objects.counties).features)
       .enter()
-      .append("path")
+      .append("path");
+
+    counties
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
 
       .on("click", function(d){
@@ -363,15 +365,31 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
                 });;
       
-  g.on("mouseout", function(d) {
-                    d3.select("#tooltip").remove();
-                });
+  // counties.on("mouseout", function() {
+  //                   d3.select("#maphover").remove();
+  //               });
 
-  g.append("path")
+  var states = g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
+
+
+  var border = g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b; }))
+      .attr("class", "border")
+      .attr("fill", "none")
+      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+      .attr("d", path);
+
+  border.on("mouseout", function(d){
+    console.log("out of states?");
+  });
+
+  // states.on("mouseout", function(d){
+  //   d3.select("#maphover").remove();
+  // });
 
   chart1.append("path")
       .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
@@ -752,15 +770,15 @@ var distribution_breakdowns_all = [
                                 ,"Households; Estimate; $10,000 to $14,999"
                                 ,"Households; Estimate; $15,000 to $24,999"
 
-                                ,"Households; Estimate; $25,000 to $34,999" // 5
+                                ,"Households; Estimate; $25,000 to $34,999" // 4
 
-                                ,"Households; Estimate; $35,000 to 49,999" // 7
+                                ,"Households; Estimate; $35,000 to $49,999" // 5
 
-                                ,"Households; Estimate; $50,000 to $74,999" //10
+                                ,"Households; Estimate; $50,000 to $74,999" //6
 
-                                ,"Households; Estimate; $75,000 to $99,999" //12
+                                ,"Households; Estimate; $75,000 to $99,999" //7
 
-                                ,"Households; Estimate; $100,000 to $149,999" //13
+                                ,"Households; Estimate; $100,000 to $149,999" //8
                                 ,"Households; Estimate; $150,000 to $199,999"
                                 ,"Households; Estimate; $200,000 or more"
                               ]
@@ -785,13 +803,13 @@ function getDistribution(data){
 function getDistributionAll(data){
   var proportions = []
   console.log(data[0])
-  console.log("HoueholdsEstimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
+  console.log("Households Estimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
   // var countyPopulation = data[0]["Estimate; Total:"]
   // Populate the income distribution list `proportions`
   for(var i=0; i<distribution_breakdowns_all.length; i++){
     console.log('dist breakdown?')
     console.log(distribution_breakdowns_all[i])
-
+    console.log(data[0][distribution_breakdowns_all[i]])
     proportions.push( data[0][distribution_breakdowns_all[i]] / 100);
   }
   return proportions
@@ -833,8 +851,9 @@ function low_Middle_High_class_all(proportions){
   newData.push(seventyfive_to_hundred)
   
   over_hundred = 0
-  for(var i=8; i<11;i++){
+  for(var i=8; i<10;i++){
     over_hundred += proportions[i]
+    console.log("OVER over_hundred???????", over_hundred)
   }
   newData.push(over_hundred)
 
