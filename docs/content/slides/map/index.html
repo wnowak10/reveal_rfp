@@ -272,7 +272,6 @@ var dropdown_options = [
   text: "White Households" }]
 
 
-var initial_value = "black";
 var ddbutton = d3.select("#dropdown").append("select");
 
 
@@ -331,7 +330,9 @@ function step() {
 
 
 var initialYear = 2010;
-var race = initial_value;
+
+var initialRace = "all";
+var race = initialRace;
 function update(h) {
 
     handle.attr("cx", x(h));
@@ -608,7 +609,7 @@ dict_of_dicts = {
 }
 
 d3.json("usa.json", function(d){
-  drawMapOutline(d, blackmaps[2010], 2010, race);
+  drawMapOutline(d, allmaps[2010], 2010, "all");
 } );
 
 
