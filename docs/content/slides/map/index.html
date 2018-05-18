@@ -640,9 +640,9 @@ var distribution_breakdowns = [
                                 "Estimate; Total: - Less than $10,000" // 0
                                 ,"Estimate; Total: - $10,000 to $14,999"
                                 ,"Estimate; Total: - $15,000 to $19,999"
+                                ,"Estimate; Total: - $20,000 to $24,999" 
 
-                                ,"Estimate; Total: - $20,000 to $24,999" // 4
-                                ,"Estimate; Total: - $25,000 to $29,999"
+                                ,"Estimate; Total: - $25,000 to $29,999" // 5
                                 ,"Estimate; Total: - $30,000 to $34,999"
 
                                 ,"Estimate; Total: - $35,000 to $39,999" // 7
@@ -658,6 +658,24 @@ var distribution_breakdowns = [
                                 ,"Estimate; Total: - $125,000 to $149,999"
                                 ,"Estimate; Total: - $150,000 to $199,999"
                                 ,"Estimate; Total: - $200,000 or more"
+                              ]
+
+var distribution_breakdowns_all = [
+                                "Households; Estimate; Less than $10,000" // 0
+                                ,"Households; Estimate; $10,000 to $14,999"
+                                ,"Households; Estimate; $15,000 to $24,999"
+
+                                ,"Households; Estimate; $25,000 to $34,999" // 5
+
+                                ,"Households; Estimate; $35,000 to 49,999" // 7
+
+                                ,"Households; Estimate; $50,000 to $74,999" //10
+
+                                ,"Households; Estimate; $75,000 to $99,999" //12
+
+                                ,"Households; Estimate; $100,000 to $149,999" //13
+                                ,"Households; Estimate; $150,000 to $199,999"
+                                ,"Households; Estimate; $200,000 or more"
                               ]
 
 /////////////////////////////////////////////
@@ -676,23 +694,79 @@ function getDistribution(data){
   }
   return proportions
 };
-function low_Middle_High_class_all(){
-	console.log("ALL?")
+
+function getDistributionAll(data){
+  var proportions = []
+  console.log(data[0])
+  console.log("HoueholdsEstimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
+  // var countyPopulation = data[0]["Estimate; Total:"]
+  // Populate the income distribution list `proportions`
+  for(var i=0; i<distribution_breakdowns_all.length; i++){
+    console.log('dist breakdown?')
+    console.log(distribution_breakdowns_all[i])
+
+    proportions.push( data[0][distribution_breakdowns_all[i]] / 100);
+  }
+  return proportions
+};
+
+
+function low_Middle_High_class_all(proportions){
+  console.log(proportions);
+	newData = []
+  below25 = 0
+  for(var i=0; i<4;i++){
+    below25 += proportions[i]
+  }
+  newData.push(below25)
+  console.log(below25);
+
+  twentyfive_to_thirtyfive = 0
+  for(var i=4; i<5;i++){
+    twentyfive_to_thirtyfive += proportions[i]
+  }
+  newData.push(twentyfive_to_thirtyfive)
+
+  thirtyfive_to_fifty = 0
+  for(var i=5; i<6;i++){
+    thirtyfive_to_fifty += proportions[i]
+  }
+  newData.push(thirtyfive_to_fifty)
+
+  fifty_to_seventyfive = 0
+  for(var i=6; i<7;i++){
+    fifty_to_seventyfive += proportions[i]
+  }
+  newData.push(fifty_to_seventyfive)
+
+  seventyfive_to_hundred = 0
+  for(var i=7; i<8;i++){
+    seventyfive_to_hundred += proportions[i]
+  }
+  newData.push(seventyfive_to_hundred)
+  
+  over_hundred = 0
+  for(var i=8; i<11;i++){
+    over_hundred += proportions[i]
+  }
+  newData.push(over_hundred)
+
+  return newData;
 };
 
 function low_Middle_High_class_bw(proportions){
   newData = []
-  below20 = 0
-  for(var i=0; i<4;i++){
-    below20 += proportions[i]
+  below25 = 0
+  for(var i=0; i<5;i++){
+    below25 += proportions[i]
   }
-  newData.push(below20)
+  newData.push(below25)
 
-  twenty_to_thirtyfive = 0
-  for(var i=4; i<7;i++){
-    twenty_to_thirtyfive += proportions[i]
+  twentyfive_to_thirtyfive = 0
+  for(var i=5; i<7;i++){
+    twentyfive_to_thirtyfive += proportions[i]
   }
-  newData.push(twenty_to_thirtyfive)
+  newData.push(twentyfive_to_thirtyfive)
 
   thirtyfive_to_fifty = 0
   for(var i=7; i<10;i++){
@@ -734,7 +808,7 @@ function spread(i){
   return i*barSpacing+barWidth;
 };
 
-classes = ["<$20K", "$20-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
+classes = ["<$25K", "$25-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
 function get_CLASS_bar_x_positions(){
   var barXvalues = [];
   for(var i=0; i<classes.length; i++){
@@ -855,19 +929,24 @@ function chartonClick(did, numclicks, initialYear, race) {
     console.log(did);
     d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
 
+
       if (error) throw error;
 
 
       filtered_data = filterbyCounty(data, currentCounty, currentState);
-      proportions = getDistribution(filtered_data);
+      
       if (race == 'all'){
+        console.log(filtered_data);
       	console.log("All chart on click")
+        proportions = getDistributionAll(filtered_data);
+        console.log('all proportions', proportions)
       	class_dist = low_Middle_High_class_all(proportions);
       }
       else {
+        proportions = getDistribution(filtered_data);
       	class_dist = low_Middle_High_class_bw(proportions);
       }
-      console.log(class_dist)
+
    
       d3.selectAll("#incomebars").remove(); // Remove old bar.
       d3.selectAll("#barlabel").remove();

@@ -83,14 +83,19 @@ def clean_all_race(year, export):
             "Households; Estimate; $150,000 to $199,999",
             "Households; Estimate; $200,000 or more"]
 
-    sub = ["Households; Estimate; Less than $10,000",
+    sub = ["Households; Estimate; Less than $10,000",  # 0
            "Households; Estimate; $10,000 to $14,999",
            "Households; Estimate; $15,000 to $24,999",
-           "Households; Estimate; $25,000 to $34,999",
-           "Households; Estimate; $35,000 to $49,999",
-           "Households; Estimate; $50,000 to $74,999",
-           "Households; Estimate; $75,000 to $99,999",
-           "Households; Estimate; $100,000 to $149,999",
+
+           "Households; Estimate; $25,000 to $34,999",  # 4
+
+           "Households; Estimate; $35,000 to $49,999",  # 5
+
+           "Households; Estimate; $50,000 to $74,999",  # 6
+
+           "Households; Estimate; $75,000 to $99,999",  # 7
+
+           "Households; Estimate; $100,000 to $149,999",  # 8
            "Households; Estimate; $150,000 to $199,999",
            "Households; Estimate; $200,000 or more"]
 
