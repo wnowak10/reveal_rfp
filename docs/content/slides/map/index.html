@@ -20,24 +20,21 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <link rel="stylesheet" type="text/css" href="map.css">
 <style type="text/css">
   
-  #dd {
-  /*position: absolute;*/
-  /*top: 275px;*/
-  /*left: 900px;*/
-  background: #f08080;
-  padding-right: 26px;
-  border-radius: 3px;
-  border: none;
-  color: white;
-  margin: 0;
-  padding: 0 12px;
-  width: auto;
-  cursor: pointer;
-  height: 30px;
+#dd {
+	background: #f08080;
+  	padding-right: 26px;
+	border-radius: 3px;
+    border: none;
+	color: white;
+	margin: 0;
+	padding: 0 12px;
+	width: auto;
+	cursor: pointer;
+	height: 30px;
 }
 
 .limit {
-    position: absolute;
+	position: absolute;
     top: 50%;
     left: 50%;
 }
@@ -55,36 +52,32 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
     border-radius: 8px;     
     pointer-events: none;  
     font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: normal;
+	font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: normal;
 }
 
 
-#vis{
-  float: left;
-  position: absolute;
-  top: 350px;
-  left: 750px;
+#vis {
+  	float: left;
+  	position: absolute;
+  	top: 350px;
+  	left: 750px;
 }
 
 
-/* CSS */
 .grid {
    display: grid;
    grid-gap: 5px;
    width: 100vw;
    height: 100vh;
-	/*grid-template-rows: repeat(6, 1fr);*/
-	grid-template-rows: repeat(10, 10%);
-  grid-template-columns: repeat(10, 10%);
-  justify-items: center;
+   grid-template-rows: repeat(10, 10%);
+   grid-template-columns: repeat(10, 10%);
+   justify-items: center;
 }
 
 .title_div {
 	vertical-align: middle;
-	/*grid-row-start: 0;*/
-	/*grid-row-end:1;*/
 	grid-column-start: 1;
 	grid-column-end: -1;
 }
@@ -108,7 +101,6 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 #title_text {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-weight: 600;
-
   font-size: 42px;
   line-height: 1.2;
   letter-spacing: normal;
@@ -117,20 +109,6 @@ click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
   word-wrap: break-word;
   text-align: center;
 }
-
-h1 {
-	color: darkblue;
-}
-/*#overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 10;
-}
-*/
 #dropdown_control {
   grid-column-start: 8;
   grid-column-end: 9;
@@ -143,6 +121,9 @@ h1 {
   grid-column-end: 10;
   grid-row-start: 5;
   grid-row-end: 7;
+}
+h1 {
+	color: darkblue;
 }
 
 </style>
@@ -186,34 +167,14 @@ h1 {
 // Javascript page dynamics.
 //////////////////////////////////////////
 //////////////////////////////////////////
-// var turnedoff = false;
 function off() {
     document.getElementById("overlay").style.display = "none";
 }
-
- // $(document).ready(function() {
-
- //      // Initialize the plugin
- //      $('#fade').popup();
-
- //    });
 
  var grid = d3.select("body")
  	.append("div")
  	.attr("id", "grid")
  	.attr("class", "grid")
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Set the dimensions of the canvas/graph.
-//////////////////////////////////////////
-//////////////////////////////////////////
-
-// var margin = {top: 40, right: 20, bottom: 30, left: 50};
-// var titlewidth = 1100;
-// var titleheight = 60;
-// var textWidth = titlewidth / 2
-
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -230,27 +191,26 @@ var current_county_id;
 //////////////////////////////////////////
 var title_div = grid
     .append("div")
-    .attr("class", "title_div") ;
+    .attr("class", "title_div");
 
 title_div.append("h1")
-		.attr("id", "title_text")
-		// .attr("fill", "darkblue")
-        .text("Poverty in America")
+	.attr("id", "title_text")
+    .text("Poverty in America");
 
 
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Position controls.
+//////////////////////////////////////////
+//////////////////////////////////////////
 controls = grid.append("div").attr("id", "map_controls");
-
 dd_control = grid.append("div").attr("id", "dropdown_control")
-// controls.append("h1").text("hi");
-// controls.append("h1").text("hi");
-// controls.append("h1").text("hi");
 
 
-// // //////////////////////////////////////////
-// // //////////////////////////////////////////
-// // // Set the dimensions of the canvas/graph.
-// // // Begin to make the map.
-
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Set the dimensions of the canvas/graph.
+// Begin to make the map.
 // //////////////////////////////////////////
 // //////////////////////////////////////////
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
@@ -278,6 +238,7 @@ function zoomed() {
 var zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on("zoom", zoomed);
+
 chart1
     .call(zoom);
 
@@ -319,7 +280,6 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
 
       .on("click", function(d){
-          
           // if (numclicks < 0){
 
               // $('#fade').popup({
@@ -365,10 +325,6 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
                 });;
       
-  // counties.on("mouseout", function() {
-  //                   d3.select("#maphover").remove();
-  //               });
-
   var states = g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
@@ -383,62 +339,67 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
 
-  border.on("mouseout", function(d){
-    console.log("out of states?");
-  });
-
-  // states.on("mouseout", function(d){
-  //   d3.select("#maphover").remove();
-  // });
-
   chart1.append("path")
       .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
       .attr("class", "counties")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
-}; // Close ready() function
+};
 
+function done(d){
+  console.log("Read files");
+}
 
 var county = d3.map();
 var state = d3.map();
 
-var poverty2010 = d3.map();
-var poverty2011 = d3.map();
-var poverty2012 = d3.map();
-var poverty2013 = d3.map();
-var poverty2014 = d3.map();
-var poverty2015 = d3.map();
-var poverty2016 = d3.map();
-
 var usa;
+
 d3.queue()
     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
     .defer(d3.json, "usa.json", function(us){
       usa = us;
     })
     .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { 
-      poverty2010.set(d.id, +d.percent_poor);
+      // black2010.set(d.id, +d.percent_poor);
       county.set(d.id, d.County); 
       state.set(d.id, d.State); 
     })
-    .defer(d3.csv, "mapData/black/black2011map.csv", function(d) { poverty2011.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black/black2012map.csv", function(d) { poverty2012.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black/black2013map.csv", function(d) { poverty2013.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black/black2014map.csv", function(d) { poverty2014.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black/black2015map.csv", function(d) { poverty2015.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/black/black2016map.csv", function(d) { poverty2016.set(d.id, +d.percent_poor); })
-
     .await(done);
 
 
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// Connect county ids with income data.
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+
+var black2010 = d3.map();
+var black2011 = d3.map();
+var black2012 = d3.map();
+var black2013 = d3.map();
+var black2014 = d3.map();
+var black2015 = d3.map();
+var black2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { black2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2011map.csv", function(d) { black2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2012map.csv", function(d) { black2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2013map.csv", function(d) { black2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2014map.csv", function(d) { black2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2015map.csv", function(d) { black2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/black/black2016map.csv", function(d) { black2016.set(d.id, +d.percent_poor); })
+    .await(done);
+
 blackmaps = {
-  2010: poverty2010,
-  2011: poverty2011,
-  2012: poverty2012,
-  2013: poverty2013,
-  2014: poverty2014,
-  2015: poverty2015,
-  2016: poverty2016
+  2010: black2010,
+  2011: black2011,
+  2012: black2012,
+  2013: black2013,
+  2014: black2014,
+  2015: black2015,
+  2016: black2016
 };
 
 var white2010 = d3.map();
@@ -448,7 +409,6 @@ var white2013 = d3.map();
 var white2014 = d3.map();
 var white2015 = d3.map();
 var white2016 = d3.map();
-
 
 d3.queue()
     .defer(d3.csv, "mapData/white/white2010map.csv", function(d) { white2010.set(d.id, +d.percent_poor); })
@@ -460,29 +420,6 @@ d3.queue()
     .defer(d3.csv, "mapData/white/white2016map.csv", function(d) { white2016.set(d.id, +d.percent_poor); })
     .await(done);
 
-function done(d){
-  // console.log("Read");
-}
-var all2010 = d3.map();
-var all2011 = d3.map();
-var all2012 = d3.map();
-var all2013 = d3.map();
-var all2014 = d3.map();
-var all2015 = d3.map();
-var all2016 = d3.map();
-
-
-d3.queue()
-    .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
-    .await(done);
-
-
 whitemaps = {
   2010: white2010,
   2011: white2011,
@@ -493,6 +430,23 @@ whitemaps = {
   2016: white2016
 };
 
+var all2010 = d3.map();
+var all2011 = d3.map();
+var all2012 = d3.map();
+var all2013 = d3.map();
+var all2014 = d3.map();
+var all2015 = d3.map();
+var all2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mapData/all/all2010map.csv", function(d) { all2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2011map.csv", function(d) { all2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2012map.csv", function(d) { all2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2013map.csv", function(d) { all2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2014map.csv", function(d) { all2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2015map.csv", function(d) { all2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mapData/all/all2016map.csv", function(d) { all2016.set(d.id, +d.percent_poor); })
+    .await(done);
 
 
 allmaps = {
@@ -516,12 +470,6 @@ d3.json("usa.json", function(d){
 } );
 
 
-
-
-// grid.append("div").append("h1").text("hi");
-// grid.append("div").append("h1").text("hi");
-// grid.append("div").append("h1").text("hi");
-
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Build slider
@@ -529,7 +477,7 @@ d3.json("usa.json", function(d){
 //////////////////////////////////////////
 
 var startDate = 2010; //new Date("2010"),
-var endDate = 2016.5; //new Date("2017");
+var endDate = 2016.5; // Extend just beyond 2016
 
 var slidermargin = {top:0, right:50, bottom:0, left:50},
     sliderwidth = 360 - slidermargin.left - slidermargin.right,
