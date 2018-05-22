@@ -493,7 +493,7 @@ var moving = false;
 var currentValue = 0;
 var targetValue = sliderwidth;
     
-var x = d3.scaleLinear() //scaleTime()
+var x = d3.scaleLinear()
     .domain([startDate, endDate])
     .range([0, targetValue])
     .clamp(true);
@@ -528,7 +528,7 @@ slider.insert("g", ".track-overlay")
     .attr("x", x)
     .attr("y", 10)
     .attr("text-anchor", "middle")
-    .text(function(d) { return (d); }); // Label
+    .text(function(d) { return (d); });
 
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
@@ -578,9 +578,7 @@ var dropdown_options = [
 { value: "white",
   text: "White Households" }]
 
-
 var ddbutton = dd_control.append("select");
-
 
 ddbutton
     .attr("id", "dd")
@@ -597,10 +595,10 @@ ddbutton
 ddbutton.on("change", change)
 var v;
 function change() {
-    v=  this.options[this.selectedIndex].value;
+    v = this.options[this.selectedIndex].value;
     dict_to_use = dict_of_dicts[v]     
     poverty_dict = dict_to_use[initialYear]
-    console.log('race change', v)
+
     drawMapOutline(usa, poverty_dict, initialYear, v);
     chartonClick(current_county_id, numclicks, initialYear, v);
 };
@@ -612,17 +610,11 @@ function change() {
 // //////////////////////////////////////////
 // //////////////////////////////////////////
 
-// var dataset;
-
-// var plot = svg.append("g")
-//     .attr("class", "plot")
-//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-function prepare(d) {
-  d.id = d.id;
-  d.year = d.year; // Keep as string
-  return d;
-}
+// function prepare(d) {
+//   d.id = d.id;
+//   d.year = d.year; // Keep as string
+//   return d;
+// }
   
 function step() {
   update(x.invert(currentValue));
@@ -634,7 +626,6 @@ function step() {
     playButton.text("Play");
   }
 }
-
 
 var initialYear = 2010;
 
@@ -669,21 +660,15 @@ function update(h) {
 };
 
 
-// grid.append("div").attr("id", "map_chart").append("svg")
-
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-// // Prepare for second chart.
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-//  // var chart2 = d3.select("#charts").append("svg")
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+// Prepare for second chart.
+/////////////////////////////////////////////
+/////////////////////////////////////////////
 var chart2 = grid.append("div")
 	.attr("id", "chart2_div")
 	.append("svg")
-	  // append to svg will put side by side if there is enough room.
-    .attr("width", width+200) 
+    .attr("width", width+200) // This 200 is not ideal.
     .attr("height", height)
     .attr('id', "chart2")
   	.append("g")
@@ -750,9 +735,7 @@ function getDistribution(data){
 
 function getDistributionAll(data){
   var proportions = []
-  console.log(data[0])
-  console.log("Households Estimate; Total: - Less than $10,000", data[0]["Households; Estimate; Less than $10,000"])
-  // var countyPopulation = data[0]["Estimate; Total:"]
+
   // Populate the income distribution list `proportions`
   for(var i=0; i<distribution_breakdowns_all.length; i++){
     console.log('dist breakdown?')
@@ -765,8 +748,9 @@ function getDistributionAll(data){
 
 
 function low_Middle_High_class_all(proportions){
-  console.log(proportions);
-	newData = []
+
+  newData = []
+  
   below25 = 0
   for(var i=0; i<4;i++){
     below25 += proportions[i]
@@ -801,7 +785,6 @@ function low_Middle_High_class_all(proportions){
   over_hundred = 0
   for(var i=8; i<10;i++){
     over_hundred += proportions[i]
-    console.log("OVER over_hundred???????", over_hundred)
   }
   newData.push(over_hundred)
 
@@ -810,6 +793,7 @@ function low_Middle_High_class_all(proportions){
 
 function low_Middle_High_class_bw(proportions){
   newData = []
+
   below25 = 0
   for(var i=0; i<5;i++){
     below25 += proportions[i]
@@ -863,6 +847,7 @@ function spread(i){
 };
 
 classes = ["<$25K", "$25-35K", "$35-50K", "$50-$75K", "$75-100K", ">$100K"]
+
 function get_CLASS_bar_x_positions(){
   var barXvalues = [];
   for(var i=0; i<classes.length; i++){
@@ -879,8 +864,6 @@ function getYscale(proportions){
     .domain([0, 1])
     .range([y_axisLength, 0]);
 
-  // var ticks = yScale.ticks(5),
-  // tickFormat = yScale.tickFormat(5, "+%");
   return [yScale, maxValue];
 }
 function getXscale(barXvalues){
@@ -890,22 +873,22 @@ function getXscale(barXvalues){
 }
 
 function drawAxes(yScale, xScale){
+
+	  // Add y axis.	
       var axez = chart2.append("g");
-        axez
+      
+      axez
         .attr("transform", "translate("+barWidth+",-"+(y_axisLength-5)+")") // How far to shift down so ?
         .attr("id", "axes")
         .call(d3.axisLeft(yScale).tickFormat(d3.format(".0%")));
 
+      axez.append("text")             
+	    .attr("transform","translate(-100,100)")
+	    .style("text-anchor", "middle")
+	    .text("% of county population")
+	    .attr("fill", "black");
 
-        axez.append("text")             
-      .attr("transform","translate(-100,100)")
-      .style("text-anchor", "middle")
-      .text("% of county population")
-      // .attr("transform", "rotate(90)")
-      .attr("fill", "black");
-
-
-      // Add x scale
+      // Add x axis.
       var xaxis = chart2.append("g");
 
       xaxis
@@ -919,13 +902,11 @@ function drawAxes(yScale, xScale){
         .attr("id", "axes")
         .style("text-anchor", "start");
 
-
-        xaxis.append("text")             
-      .attr("transform","translate("+(width-100)/2+",40)")
-      .style("text-anchor", "middle")
-      .text("Income bins")
-      // .attr("transform", "rotate(90)")
-      .attr("fill", "black");
+      xaxis.append("text")             
+        .attr("transform","translate("+(width-100)/2+",40)")
+        .style("text-anchor", "middle")
+        .text("Income bins")
+        .attr("fill", "black");
 
 };
 
@@ -940,55 +921,52 @@ var ext_color_domain = [.2, .4, .6, .8, 1]
 var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
 
 
-  var legend = chart1.selectAll("g.legend")
-  .attr("transform", "rotate(90)")
-  .data(ext_color_domain)
-  .enter().append("g")
-  .attr("class", "legend");
+var legend = chart1.selectAll("g.legend")
+	.attr("transform", "rotate(90)")
+    .data(ext_color_domain)
+    .enter()
+    .append("g")
+    .attr("class", "legend");
 
-  var ls_w = 20, ls_h = 20;
+var ls_w = 20, ls_h = 20;
 
-  legend.append("rect")
-  .attr("x", 20)
-  .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
-  .attr("width", ls_w)
-  .attr("height", ls_h)
-  .style("fill", function(d, i) { return color(d); })
-  .style("opacity", 0.8);
+ legend.append("rect")
+    .attr("x", 20)
+    .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+    .attr("width", ls_w)
+    .attr("height", ls_h)
+    .style("fill", function(d, i) { return color(d); })
+    .style("opacity", 0.8);
 
-  legend.append("text")
-  .attr("x", 50)
-  .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
-  .text(function(d, i){ return legend_labels[i]; });
-
-
+ legend.append("text")
+    .attr("x", 50)
+    .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+    .text(function(d, i){ return legend_labels[i]; });
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 // Add new data viz on click. 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
-function bar_colors(numclicks){
-  if (numclicks == 0) { return  "#137ed9"; } 
-  else if (numclicks == 1) { return "#00b0ff"; }
-  else if (numclicks == 2) { return "#0c9fc6"; }
-  else if (numclicks == 3) { return "#0ab4c8"; }
-  else if (numclicks == 4) { return "#00d7ff"; }
-};
+// function bar_colors(numclicks){
+//   if (numclicks == 0) { return  "#137ed9"; } 
+//   else if (numclicks == 1) { return "#00b0ff"; }
+//   else if (numclicks == 2) { return "#0c9fc6"; }
+//   else if (numclicks == 3) { return "#0ab4c8"; }
+//   else if (numclicks == 4) { return "#00d7ff"; }
+// };
 
 yScale = d3.scaleLinear()
     .domain([0, 1])
-    // .domain([0, maxValue])
     .range([y_axisLength, 0]);
     barXvalues =  get_CLASS_bar_x_positions();
     xScale = getXscale(barXvalues);
     
-    drawAxes(yScale, xScale);
+drawAxes(yScale, xScale);
 
 var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
     .style("opacity", 0);
-
 
 function get_current_county_id(d) {
   return d.id
@@ -1000,12 +978,10 @@ function chartonClick(did, numclicks, initialYear, race) {
 
     var currentCounty = county.get(did);
     var currentState = state.get(did);
-    console.log(did);
+
     d3.csv("mapData/"+race+"/"+fileName, function(error, data) {
 
-
       if (error) throw error;
-
 
       filtered_data = filterbyCounty(data, currentCounty, currentState);
       
@@ -1022,7 +998,7 @@ function chartonClick(did, numclicks, initialYear, race) {
       }
 
    
-      d3.selectAll("#incomebars").remove(); // Remove old bar.
+      d3.selectAll("#incomebars").remove(); // Remove old bars on click.
       d3.selectAll("#barlabel").remove();
 
       // Append the rectangles (bars) for the bar chart
@@ -1039,20 +1015,20 @@ function chartonClick(did, numclicks, initialYear, race) {
         .attr( "x", function(d, i){
           // return function(d, i){ return (i*barSpacing)}; 
         // })
-          numclicks = 1
-          return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
-          })
+          	numclicks = 1
+          	return bar_location(d, i, numclicks); // Set x coordinate of rectangle to index of data value (i)*25.
+         })
         .attr("y", function(d) {
-        return yScale(-getYscale(class_dist)[1]);
+        	return yScale(-getYscale(class_dist)[1]);
         })
         .attr("height", 0)
         .attr( "y", function(d){
-          return yScale(d); // Set y coordinate for each bar to height minus the data value
-          })
+         	return yScale(d); // Set y coordinate for each bar to height minus the data value
+         })
         .attr( "width", barWidth )
         .attr( "height", function(d){
-          return height/2 - yScale(d); // Set height of rectangle to data value
-          })
+         	return height/2 - yScale(d); // Set height of rectangle to data value
+         })
         .attr("fill", "red");
         // .attr("fill", bar_colors(numclicks));
 
@@ -1063,7 +1039,7 @@ function chartonClick(did, numclicks, initialYear, race) {
                 .duration(200)		
                 .style("opacity", .9);
 
-            div	.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
+            div.html( Math.round((100*d),0)+ "% of "+race.charAt(0).toUpperCase()+ race.substr(1)
              + " Households in " + classes[i] +" bracket in " + currentCounty + "," + currentState+" in "+initialYear)	
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px");	
