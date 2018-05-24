@@ -155,7 +155,7 @@ line-height: 100px;
 
 
 input[type="radio"]{
-  margin: 0 10px 0 10px;
+  margin: 0 25px 0 5px;
 }
 
 
@@ -432,6 +432,8 @@ function off() {
 //////////////////////////////////////////
 var current_county_id; 
 
+var v = 'all'; // Not the most informative var name. TO DO: change
+
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -563,6 +565,11 @@ var labels = form.selectAll("label")
     .insert("input")
     .attr("type", "radio")
     .attr("name", "race")
+    .attr("checked", function(d, i){
+      if(i == 0){
+        return "checked"
+      }
+    })
     .on("click",function(d,i) {
       v = race_dict[d]
       console.log(v)
@@ -991,7 +998,7 @@ function step() {
 var initialYear = 2010;
 
 var initialRace = "all";
-var race = initialRace;
+// var race = initialRace;
 function update(h) {
 
     handle.attr("cx", x(h));
@@ -1003,14 +1010,17 @@ function update(h) {
     	console.log("entered?")
       initialYear = Math.round(h,0);
       if (v == undefined){
+        var v = 
+        console.log('v undefined')
         race = initialRace;
         dict_to_use = dict_of_dicts[race]
       }
       else {
         race = v;
-         dict_to_use = dict_of_dicts[race]
+        dict_to_use = dict_of_dicts[race]
       }
 
+      // What poverty data to use.
       poverty_dict = dict_to_use[initialYear]
 
       drawMapOutline(usa, poverty_dict, initialYear, race);
