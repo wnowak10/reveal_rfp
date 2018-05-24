@@ -42,7 +42,7 @@ Overlays
 }
 
 /*
-Page layout
+Overall page layout
 */
 
 .grid {
@@ -54,6 +54,7 @@ Page layout
    grid-template-columns: repeat(100, 1fr);
 }
 
+/* Center row divs (eg for title, controls, map...)*/
 .row_divs {
   display: flex;
   justify-content: center;
@@ -62,9 +63,74 @@ Page layout
   grid-column-end: -1;
 }
 
+/* Size of divs for controls for map*/
+.control_div {
+  height: 100px;
+  width: 800px;
+}
 
+.control_label_div {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 100px; 
+  float: left;
+  height: 100px;
+  width: 100px;
+}
 
+/*
+Section by section formatting
+*/
 
+/*
+Title
+*/
+#title_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-shadow: none;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+/*
+Time slider
+*/
+
+  /* Slider itself*/
+  #slider_itself {
+  float: left;
+  }
+
+  /* Play button*/
+
+  /* Align button in center of a div*/
+  #playButton_div {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 100px; 
+  float: left;
+  height: 100px;
+  width: 100px;
+  }
+
+  /* Color button etc. */
+  #pb {
+  background: #f08080;
+  padding-right: 26px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  margin: 0;
+  padding: 0 12px;
+  width: 60px;
+  cursor: pointer;
+  height: 30px;
+  }
 
 
 
@@ -152,29 +218,12 @@ div.tooltip {
 }
 
 
-#slider_label_div {
-  float: left;
-  height: 109px;
-  width: 100px;
-}
 
-#slider{
-  float: left;
-}
 
-#pb {
-  float: left;
-  background: #f08080;
-  padding-right: 26px;
-  border-radius: 3px;
-  border: none;
-  color: white;
-  margin: 0;
-  padding: 0 12px;
-  width: 60px;
-  cursor: pointer;
-  height: 30px;
-}
+
+
+
+
 
 
 
@@ -283,10 +332,6 @@ body {
 
 
 
-#slider_control_div {
-    height: 100px;
-  width: 800px;
-}
 
 
 
@@ -300,17 +345,7 @@ body {
 
 
 
-#title_text {
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
-  font-size: 42px;
-  line-height: 1.2;
-  letter-spacing: normal;
-  text-transform: uppercase;
-  text-shadow: none;
-  word-wrap: break-word;
-  text-align: center;
-}
+
 
 
 
@@ -332,6 +367,7 @@ h1 {
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
+<script src="./playButton.js"></script>
 
 
 <body onclick="off()" onresize="off()">
@@ -399,9 +435,69 @@ title_div.append("h1")
 // Position controls.
 //////////////////////////////////////////
 //////////////////////////////////////////
+// Outer div goes in next row of CSS grid
 slider_control = grid.append("div").attr("class", "row_divs");
-slider_control_div = slider_control.append("div").attr("id","slider_control_div")
-slider_control_div.append("div").attr("id", "slider_label_div").text("Time:");
+
+// Slider control div holds all components of slider control...
+// the label, slider, play button.
+slider_control_div = slider_control.append("div").attr("class","control_div")
+
+// Add components g
+
+var slider_g = slider_control_div.append("g").attr("id", "slider_g");
+
+// Label
+slider_g.append("div").attr("class", "control_label_div").text("Time:");
+// slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
+
+// Slider
+var slidermargin = {top:0, right:50, bottom:0, left:50},
+    sliderwidth = 360 - slidermargin.left - slidermargin.right,
+    sliderheight = 100 - slidermargin.top - slidermargin.bottom;
+
+var svg = slider_g
+    .append("svg")
+    .attr("id", "slider_itself")
+    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
+    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom); 
+
+// var svg = slider_control_div
+//     .append("svg")
+//     .attr("id", "slider_itself")
+//     .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
+//     .attr("height", sliderheight + slidermargin.top + slidermargin.bottom); 
+
+
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+// // Play button
+// //////////////////////////////////////////
+// //////////////////////////////////////////
+
+var playButton_div = slider_g.append("div").attr("id", "playButton_div");
+// var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
+
+
+var playButton = playButton_div.append("button").attr("id", "pb").text("Play");
+
+playButton
+    .on("click", function() {
+        var button = d3.select(this);
+        if (button.text() == "Pause") {
+            moving = false;
+            clearInterval(timer);
+            button.text("Play");
+        } 
+        else {
+            moving = true;
+            timer = setInterval(step, 100);
+            button.text("Pause");
+            }
+    });
+
+
+
+
 
 // controls = grid.append("div").attr("id", "map_controls");
 dd_control = grid.append("div").attr("class", "row_divs")
@@ -682,16 +778,7 @@ d3.json("usa.json", function(d){
 
 var startDate = 2010; //new Date("2010"),
 var endDate = 2016.5; // Extend just beyond 2016
-
-var slidermargin = {top:0, right:50, bottom:0, left:50},
-    sliderwidth = 360 - slidermargin.left - slidermargin.right,
-    sliderheight = 100 - slidermargin.top - slidermargin.bottom;
-
-var svg = slider_control_div
-    .append("svg")
-    .attr("id", "slider")
-    .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
-    .attr("height", sliderheight + slidermargin.top + slidermargin.bottom);  
+ 
 
 var moving = false;
 var currentValue = 0;
@@ -744,29 +831,6 @@ var label = slider.append("text")
     .text("2010")
     .attr("transform", "translate(0,-25)")
 
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Play button
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-var playButton = slider_control_div.append("button").attr("id", "pb").text("Play");
-
-playButton
-    .on("click", function() {
-        var button = d3.select(this);
-        if (button.text() == "Pause") {
-            moving = false;
-            clearInterval(timer);
-            button.text("Play");
-        } 
-        else {
-            moving = true;
-            timer = setInterval(step, 100);
-            button.text("Pause");
-            }
-    });
 
 //////////////////////////////////////////
 //////////////////////////////////////////
