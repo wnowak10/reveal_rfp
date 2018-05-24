@@ -384,7 +384,7 @@ h1 {
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
-<script type="module" src="./playButton.js"></script>
+<!-- <script type="module" src="./playButton.js"></script> -->
 
 
 <body onclick="off()" onresize="off()">
@@ -527,13 +527,20 @@ dd_control_div = dd_control.append("div").attr("class", "control_div")
 //////////////////////////////////////////
 //////////////////////////////////////////
 
-var dropdown_options = [ 
-{ value: "all",
-  text: "All Households" },
-{ value: "black",
-  text: "Black Households" },
-{ value: "white",
-  text: "White Households" }]
+// var dropdown_options = [ 
+// { value: "all",
+//   text: "All Households" },
+// { value: "black",
+//   text: "Black Households" },
+// { value: "white",
+//   text: "White Households" }]
+
+
+var race_dict = {
+  "All Americans": "all",
+  "Black Americans": "black",
+  "White Americans": "white",
+};
 
 
 dd_control_div.append("div").attr("class", "control_label_div").text("Race:      ")
@@ -541,8 +548,8 @@ dd_control_div.append("div").attr("class", "control_label_div").text("Race:     
 
 
 
-var shapeData = ["All races", "Black Americans", "White Americans"];
-var    j = 3;  // Choose the rectangle as default
+var shapeData = ["All Americans", "Black Americans", "White Americans"];
+// var    j = 3;  // Choose the rectangle as default
 
 // Create the shape selectors
 var form = dd_control_div.append("form").attr("id", "radio-buttons");
@@ -554,7 +561,27 @@ var labels = form.selectAll("label")
     .attr("id", "button-label")
     .text(function(d) {return d;})
     .insert("input")
-    .attr("type", "radio");
+    .attr("type", "radio")
+    .attr("name", "race")
+    .on("click",function(d,i) {
+      v = race_dict[d]
+      console.log(v)
+      dict_to_use = dict_of_dicts[v]     
+      poverty_dict = dict_to_use[initialYear]
+
+      drawMapOutline(usa, poverty_dict, initialYear, v);
+      // chartonClick(current_county_id, numclicks, initialYear, v);
+        console.log(d);
+        console.log(i);
+    });
+
+// console.log(d3.select('input').property("value"));
+
+    // .attr("value", function(option) { 
+    //         selectedValue = option.value;
+    //         console.log(selectedValue)
+    //         return selectedValue; 
+    //       });
     // .onclick(function(d, i) {return i;});
     // .attr({
     //     type: "radio",
