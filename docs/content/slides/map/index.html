@@ -1,18 +1,14 @@
-<!-- used resources: -->
-<!-- 
+<!-- Used resources: -->
 
- -->
-<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html
-hover: http://bl.ocks.org/mattparrilla/5724610
-basic chloropleth https://bl.ocks.org/mbostock/4060606
-youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg
-click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
+<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html -->
+<!-- hover: http://bl.ocks.org/mattparrilla/5724610 -->
+<!-- basic chloropleth https://bl.ocks.org/mbostock/4060606 -->
+<!-- youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg -->
+<!-- click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <!-- scroll zoom https://bl.ocks.org/iamkevinv/0a24e9126cd2fa6b283c6f2d774b69a2 -->
 <!-- scale https://bl.ocks.org/andrew-reid/496078bd5e37fd22a9b43fd6be84b36b -->
 <!-- https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4 bar chart v4! -->
-<!-- 
 
- -->
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -46,6 +42,7 @@ Overall page layout
 */
 
 .grid {
+   /* Use CSS grid to maake layout into 100x100 grid. */
    display: grid;
    grid-gap: 0px;
    width: 100vw;
@@ -56,9 +53,16 @@ Overall page layout
 
 /* Center row divs (eg for title, controls, map...)*/
 .row_divs {
+  /* Create flexbox to git row_div content into CSS grid row as needed*/
   display: flex;
-  justify-content: center;
+  /* Content runs left to right*/
+  flex-direction: row;  
+  /* Conent centered left to right*/
+  justify-content: center; 
+  /* Content centered top to bottom*/
   align-items: center;
+
+  /* Run entire width of screen*/
   grid-column-start: 1;
   grid-column-end: -1;
 }
@@ -66,22 +70,24 @@ Overall page layout
 /* Size of divs for controls for map*/
 .control_div {
   height: 100px;
-  /*width: 800px;*/
-  text-align:center;
-  position:relative;
 }
 
 .control_label_div {
-
-  display: inline-block;
-  text-align: center;
-  vertical-align: middle;
-  line-height: 75px; 
+  /*display: flex;*/
+  /*justify-content: left; */
+  /*align-items: center;*/
+  /*display: inline-block;*/
+  /*text-align: center;*/
+  /*vertical-align: middle;*/
+  line-height: 100px; 
   float: left;
-  height: 75px;
-  width: 100px;
+  height: 100px;
+  /*width: 0 100px;*/
+
+  /* Top, right, bottom, left*/
+  margin: 0px 50px 0px 0px;
   
-  margin: 10px auto;
+  /*margin: 0px auto;*/
   display: inline-block;
 }
 
