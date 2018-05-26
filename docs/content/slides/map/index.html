@@ -439,7 +439,7 @@ function off() {
 //////////////////////////////////////////
 var current_county_id; 
 
-var v = 'all'; // Not the most informative var name. TO DO: change
+var race = 'all'; // Not the most informative var name. TO DO: change
 
 
 //////////////////////////////////////////
@@ -510,25 +510,16 @@ playButton
 
 
 
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build radio buttons for race
+//////////////////////////////////////////
+//////////////////////////////////////////
+
 // controls = grid.append("div").attr("id", "map_controls");
 dd_control = grid.append("div").attr("class", "row_divs")
 dd_control_div = dd_control.append("div").attr("class", "control_div")
-
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Build dropdown
-//////////////////////////////////////////
-//////////////////////////////////////////
-
-// var dropdown_options = [ 
-// { value: "all",
-//   text: "All Households" },
-// { value: "black",
-//   text: "Black Households" },
-// { value: "white",
-//   text: "White Households" }]
-
 
 var race_dict = {
   "All Americans": "all",
@@ -538,9 +529,6 @@ var race_dict = {
 
 
 dd_control_div.append("div").attr("class", "control_label_div").text("Race:")
-
-
-
 
 var shapeData = ["All Americans", "Black Americans", "White Americans"];
 // var    j = 3;  // Choose the rectangle as default
@@ -564,75 +552,70 @@ var labels = form.selectAll("label")
       }
     })
     .on("click",function(d,i) {
-      v = race_dict[d]
-      console.log(v)
-      dict_to_use = dict_of_dicts[v]     
+      race = race_dict[d]
+      console.log(race)
+      dict_to_use = dict_of_dicts[race]     
       poverty_dict = dict_to_use[initialYear]
 
-      drawMapOutline(usa, poverty_dict, initialYear, v);
+      drawMapOutline(usa, poverty_dict, initialYear, race);
       // chartonClick(current_county_id, numclicks, initialYear, v);
         console.log(d);
         console.log(i);
     });
 
-// console.log(d3.select('input').property("value"));
-
-    // .attr("value", function(option) { 
-    //         selectedValue = option.value;
-    //         console.log(selectedValue)
-    //         return selectedValue; 
-    //       });
-    // .onclick(function(d, i) {return i;});
-    // .attr({
-    //     type: "radio",
-    //     class: "shape",
-    //     name: "mode",
-    //     value: function(d, i) {return i;}
-    // })
-    // .property("checked", function(d, i) {return i===j;});
 
 
 
-// dd_control_div.append("input").attr("type", "radio").attr("name", "ccc");
-// <div>
-//     <input type="radio" id="contactChoice1"
-//      name="contact" value="email">
-//     <label for="contactChoice1">Email</label>
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build radio buttons for variable of interest
+//////////////////////////////////////////
+//////////////////////////////////////////
 
-//     <input type="radio" id="contactChoice2"
-//      name="contact" value="phone">
-//     <label for="contactChoice2">Phone</label>
+// controls = grid.append("div").attr("id", "map_controls");
+dd_control = grid.append("div").attr("class", "row_divs")
+dd_control_div = dd_control.append("div").attr("class", "control_div")
 
-//     <input type="radio" id="contactChoice3"
-//      name="contact" value="mail">
-//     <label for="contactChoice3">Mail</label>
-//   </div>
+var race_dict = {
+  "Income": "income",
+  "Poverty": "poverty",
+};
 
 
-// var ddbutton = dd_control_div.append("select");
+dd_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
 
-// ddbutton
-//     .attr("id", "dd")
-//           .selectAll("option")
-//           .data(dropdown_options)
-//           .enter()
-//           .append("option")
-//           .attr("value", function(option) { 
-//             selectedValue = option.value;
-//             return selectedValue; 
-//           })
-//           .text(function(option) { return option.text; });
+var shapeData = ["Income", "Poverty"];
+// var    j = 3;  // Choose the rectangle as default
 
-// ddbutton.on("change", change)
-// var v;
-// function change() {
-//     v = this.options[this.selectedIndex].value;
-//     dict_to_use = dict_of_dicts[v]     
-//     poverty_dict = dict_to_use[initialYear]
+// Create the shape selectors
+var form = dd_control_div.append("div").attr("id", "radio-buttons");
 
-//     drawMapOutline(usa, poverty_dict, initialYear, v);
-//     chartonClick(current_county_id, numclicks, initialYear, v);
-// };
+var labels = form.selectAll("label")
+    .data(shapeData)
+    .enter()
+    .append("label")
+    .attr("id", "button-label")
+    .text(function(d) {return d;})
+    .insert("input")
+    .attr("id", "button-input")
+    .attr("type", "radio")
+    .attr("name", "race")
+    .attr("checked", function(d, i){
+      if(i == 0){
+        return "checked"
+      }
+    })
+    .on("click",function(d,i) {
+      race = race_dict[d]
+      console.log(race)
+      dict_to_use = dict_of_dicts[race]     
+      poverty_dict = dict_to_use[initialYear]
+
+      drawMapOutline(usa, poverty_dict, initialYear, race);
+      // chartonClick(current_county_id, numclicks, initialYear, v);
+        console.log(d);
+        console.log(i);
+    });
 
 
 //////////////////////////////////////////
@@ -1002,14 +985,14 @@ function update(h) {
     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
     	console.log("entered?")
       initialYear = Math.round(h,0);
-      if (v == undefined){
+      if (race == undefined){
         // var v = 'all'
         console.log('v undefined')
         race = initialRace;
         dict_to_use = dict_of_dicts[race]
       }
       else {
-        race = v;
+        // race = v;
         dict_to_use = dict_of_dicts[race]
       }
 
