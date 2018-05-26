@@ -66,16 +66,24 @@ Overall page layout
 /* Size of divs for controls for map*/
 .control_div {
   height: 75px;
-  width: 800px;
+  /*width: 800px;*/
+
+	text-align:center;
+	position:relative;
 }
 
 .control_label_div {
+
+	
   text-align: center;
   vertical-align: middle;
   line-height: 100px; 
   float: left;
-  height: 100px;
+  height: 75px;
   width: 100px;
+  
+  margin: 10px auto;
+  display: inline-block;
 }
 
 /*
@@ -104,18 +112,33 @@ Time slider
   /* Slider itself*/
   #slider_itself {
   float: left;
+
+  margin:10px auto;
+  display:inline-block;
   }
 
   /* Play button*/
 
   /* Align button in center of a div*/
   #playButton_div {
+
+
+  		height: 75px;
+  display: flex;
+  /*align-items: center;*/
+  /*justify-content: center;*/
   text-align: center;
-  vertical-align: middle;
-  line-height: 100px; 
-  float: left;
-  height: 100px;
-  width: 100px;
+vertical-align: middle;
+line-height: 75px;
+
+
+  /*text-align: center;*/
+  /*vertical-align: middle;*/
+  /*line-height: 100px; */
+  /*float: left;*/
+  /*height: 100px;*/
+  /*margin:10px auto;*/
+  /*display:inline-block;*/
   }
 
   /* Color button etc. */
@@ -136,23 +159,48 @@ Time slider
 Radio buttons
 */
 
-#radio-buttons {
-  float: left;
-  height: 100px;
+/*#radio-buttons {*/
+  /*float: left;*/
+  /*height: 75px;*/
   /*width: 400px;*/
-  width:50%; 
-  margin:0 auto;
+  /*width:50%; */
+  /*margin:0 auto;*/
+/*}*/
+
+
+#radio-buttons {
+	/*vertical-align: middle;*/
+	border: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	break-before: always;
+	margin: 0 0 3em 0;
+
+	vertical-align: middle;
+	align-items: center;
+  /*justify-content: center;*/
 }
 
 #button-label {
-  /*display: flex;*/
+	height: 75px;
+  display: flex;
   /*align-items: center;*/
   /*justify-content: center;*/
   text-align: center;
 vertical-align: middle;
-line-height: 100px;
+line-height: 75px;
 }
 
+#button-input {
+	height: 75px;
+  display: flex;
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  text-align: center;
+vertical-align: middle;
+line-height: 75px;
+}
 
 input[type="radio"]{
   margin: 0 25px 0 5px;
@@ -463,10 +511,10 @@ slider_control_div = slider_control.append("div").attr("class","control_div")
 
 // Add components g
 
-var slider_g = slider_control_div.append("g").attr("id", "slider_g");
+// var slider_g = slider_control_div.append("g").attr("id", "slider_g");
 
 // Label
-slider_g.append("div").attr("class", "control_label_div").text("Time:");
+slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
 // slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
 
 // Slider
@@ -474,7 +522,7 @@ var slidermargin = {top:0, right:50, bottom:0, left:50},
     sliderwidth = 360 - slidermargin.left - slidermargin.right,
     sliderheight = 100 - slidermargin.top - slidermargin.bottom;
 
-var svg = slider_g
+var svg = slider_control_div
     .append("svg")
     .attr("id", "slider_itself")
     .attr("width", 400)
@@ -493,7 +541,7 @@ var svg = slider_g
 // //////////////////////////////////////////
 // //////////////////////////////////////////
 
-var playButton_div = slider_g.append("div").attr("id", "playButton_div");
+var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
 // var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
 
 
@@ -545,7 +593,7 @@ var race_dict = {
 };
 
 
-dd_control_div.append("div").attr("class", "control_label_div").text("Race:      ")
+dd_control_div.append("div").attr("class", "control_label_div").text("Race:")
 
 
 
@@ -554,7 +602,7 @@ var shapeData = ["All Americans", "Black Americans", "White Americans"];
 // var    j = 3;  // Choose the rectangle as default
 
 // Create the shape selectors
-var form = dd_control_div.append("form").attr("id", "radio-buttons");
+var form = dd_control_div.append("div").attr("id", "radio-buttons");
 
 var labels = form.selectAll("label")
     .data(shapeData)
@@ -563,6 +611,7 @@ var labels = form.selectAll("label")
     .attr("id", "button-label")
     .text(function(d) {return d;})
     .insert("input")
+    .attr("id", "button-input")
     .attr("type", "radio")
     .attr("name", "race")
     .attr("checked", function(d, i){
