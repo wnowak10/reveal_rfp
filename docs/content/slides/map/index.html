@@ -73,22 +73,12 @@ Overall page layout
 }
 
 .control_label_div {
-  /*display: flex;*/
-  /*justify-content: left; */
-  /*align-items: center;*/
-  /*display: inline-block;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
   line-height: 100px; 
   float: left;
   height: 100px;
-  /*width: 0 100px;*/
-
   /* Top, right, bottom, left*/
   margin: 0px 50px 0px 0px;
-  
-  /*margin: 0px auto;*/
-  display: inline-block;
+    display: inline-block;
 }
 
 /*
@@ -100,13 +90,9 @@ Title
 */
 #title_text {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
-  /*font-weight: 600;*/
   font-size: 42px;
-  /*line-height: 20;*/
-  /*letter-spacing: normal;*/
   text-transform: uppercase;
-  /*text-shadow: none;*/
-  /*word-wrap: break-word;*/
+  color: darkblue;
 }
 
 /*
@@ -116,49 +102,18 @@ Time slider
   /* Slider itself*/
   #slider_itself {
     display: inline-block;
-  float: left;
-  width: 350px;
-  height: 100px;
-  /*margin:10px auto;*/
-  /*margin: 0 50px 0 5px;*/
-  display:inline-block;
+    float: left;
+    width: 350px;
+    height: 100px;
+    display:inline-block;
   }
 
   /* Play button*/
 
   /* Align button in center of a div*/
   #playButton_div {
-/*display: flex;*/
-  /*text-align: center;*/
-  /*line-height: 100px; */
-  /*float: left;*/
-  /*height: 75px;*/
-  /*width: 100px;*/
-  
-  /*margin: 10px auto;*/
-  display: inline-block;
-
-
-
-
-
-
-  		/*height: 75px;*/
-  /*display: flex;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*text-align: center;*/
-/*vertical-align: middle;*/
-line-height: 100px;
-
-
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
-  /*line-height: 100px; */
-  /*float: left;*/
-  /*height: 100px;*/
-  /*margin:10px auto;*/
-  /*display:inline-block;*/
+    display: inline-block;
+    line-height: 100px;
   }
 
   /* Color button etc. */
@@ -175,42 +130,35 @@ line-height: 100px;
   height: 30px;
   }
 
+#pb:hover {
+  background-color: darkblue;
+}    
+
+
 /*
 Radio buttons
 */
 
-/*#radio-buttons {*/
-  /*float: left;*/
-  /*height: 75px;*/
-  /*width: 400px;*/
-  /*width:50%; */
-  /*margin:0 auto;*/
-/*}*/
-
-
 #radio-buttons {
-	/*vertical-align: middle;*/
-	border: none;
+	/*border: none;*/
 	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	break-before: always;
-	margin: 0 0 3em 0;
-
-	vertical-align: middle;
-	align-items: center;
-  /*justify-content: center;*/
+	/*flex-direction: row;*/
+	/*justify-content: flex-start;*/
+	/*break-before: always;*/
+	/*margin: 0 0 3em 0;*/
+	/*vertical-align: middle;*/
+	/*align-items: center;*/
 }
 
 #button-label {
-display: flex;
+  display: flex;
 	height: 100px;
   
   /*align-items: center;*/
   /*justify-content: center;*/
-  text-align: center;
-vertical-align: middle;
-line-height: 100px;
+  /*text-align: center;*/
+/*vertical-align: middle;*/
+  line-height: 100px;
 }
 
 #button-input {
@@ -219,46 +167,20 @@ line-height: 100px;
   /*display: flex;*/
   /*align-items: center;*/
   /*justify-content: center;*/
-  text-align: center;
-vertical-align: middle;
-line-height: 100px;
+  /*text-align: center;*/
+  /*vertical-align: middle;*/
+  line-height: 100px;
 }
 
 input[type="radio"]{
+  /* Top, right, bottom, left*/
   margin: 0 25px 0 5px;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+Interactvity
+*/
 
 
 
@@ -277,6 +199,35 @@ div.tooltip {
     border-radius: 8px;     
     pointer-events: none;     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Map */
+
 
 .container {
   float: left;
@@ -315,9 +266,6 @@ div.tooltip {
 
 
 
-#charts{
-  /*float: left;*/
-}
 
 
 body {
@@ -328,9 +276,7 @@ body {
 }
 
 
-#play-button:hover {
-  background-color: #696969;
-}    
+
 
 .ticks {
   font-size: 10px;
@@ -400,7 +346,7 @@ body {
     border-radius: 8px;     
     pointer-events: none;  
     font-family: "Source Sans Pro", Helvetica, sans-serif;
-	font-weight: 600;
+	  font-weight: 600;
     line-height: 1.2;
     letter-spacing: normal;
 }
@@ -423,12 +369,12 @@ body {
 
 
 
-#chart2_div {
-	grid-row-start: 7;
-	grid-row-end: -1;
-	grid-column-start: 1;
-	grid-column-end: 8;
-}
+/*#chart2_div {*/
+	/*grid-row-start: 7;*/
+	/*grid-row-end: -1;*/
+	/*grid-column-start: 1;*/
+	/*grid-column-end: 8;*/
+/*}*/
 
 
 
@@ -439,9 +385,9 @@ body {
 
 
 
-h1 {
-	color: darkblue;
-}
+/*h1 {*/
+	/*color: darkblue;*/
+/*}*/
 
 </style>
 </head>
@@ -458,16 +404,7 @@ h1 {
 
 
 <body onclick="off()" onresize="off()">
- <!-- Turn off the overlay on click -->
- <!--  <div id="title"></div>
 
-  <div id="selectors">
-      <div id ="vis"></div>
-      <div id="play-button"> </div>
-      <div id="dropdown"> </div>
-  </div>
-
-  <div id="charts"> </div> -->
 
 <!--
    <div class="modal" id="overlay"> 
@@ -531,13 +468,8 @@ slider_control = grid.append("div").attr("class", "row_divs");
 // the label, slider, play button.
 slider_control_div = slider_control.append("div").attr("class","control_div")
 
-// Add components g
-
-// var slider_g = slider_control_div.append("g").attr("id", "slider_g");
-
 // Label
 slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
-// slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
 
 // Slider
 var slidermargin = {top:0, right:50, bottom:0, left:50},
@@ -547,24 +479,14 @@ var slidermargin = {top:0, right:50, bottom:0, left:50},
 var svg = slider_control_div
     .append("svg")
     .attr("id", "slider_itself");
-    // .attr("width", 400)
-    // .attr("height", 100); 
 
-// var svg = slider_control_div
-//     .append("svg")
-//     .attr("id", "slider_itself")
-//     .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
-//     .attr("height", sliderheight + slidermargin.top + slidermargin.bottom); 
-
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Play button
-// //////////////////////////////////////////
-// //////////////////////////////////////////
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Play button
+//////////////////////////////////////////
+//////////////////////////////////////////
 
 var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
-// var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
 
 
 var playButton = playButton_div.append("button").attr("id", "pb").text("Play");
@@ -1069,7 +991,7 @@ function step() {
 var initialYear = 2010;
 
 var initialRace = "all";
-// var race = initialRace;
+
 function update(h) {
 
     handle.attr("cx", x(h));
@@ -1081,7 +1003,7 @@ function update(h) {
     	console.log("entered?")
       initialYear = Math.round(h,0);
       if (v == undefined){
-        var v = 
+        // var v = 'all'
         console.log('v undefined')
         race = initialRace;
         dict_to_use = dict_of_dicts[race]
