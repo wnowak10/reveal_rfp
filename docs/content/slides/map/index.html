@@ -67,9 +67,8 @@ Overall page layout
 .control_div {
   height: 75px;
   /*width: 800px;*/
-
-	text-align:center;
-	position:relative;
+  text-align:center;
+  position:relative;
 }
 
 .control_label_div {
@@ -77,7 +76,7 @@ Overall page layout
 
   text-align: center;
   vertical-align: middle;
-  line-height: 100px; 
+  line-height: 75px; 
   float: left;
   height: 75px;
   width: 100px;
@@ -111,8 +110,10 @@ Time slider
   /* Slider itself*/
   #slider_itself {
   float: left;
-
-  margin:10px auto;
+  width: 350px;
+  height: 100px;
+  /*margin:10px auto;*/
+  /*margin: 0 50px 0 5px;*/
   display:inline-block;
   }
 
@@ -120,10 +121,24 @@ Time slider
 
   /* Align button in center of a div*/
   #playButton_div {
+display: flex;
+  /*text-align: center;*/
+  /*vertical-align: middle;*/
+  /*line-height: 100px; */
+  /*float: left;*/
+  /*height: 75px;*/
+  /*width: 100px;*/
+  
+  /*margin: 10px auto;*/
+  display: inline-block;
+
+
+
+
 
 
   		height: 75px;
-  display: flex;
+  /*display: flex;*/
   /*align-items: center;*/
   /*justify-content: center;*/
   text-align: center;
@@ -523,9 +538,9 @@ var slidermargin = {top:0, right:50, bottom:0, left:50},
 
 var svg = slider_control_div
     .append("svg")
-    .attr("id", "slider_itself")
-    .attr("width", 400)
-    .attr("height", 100); 
+    .attr("id", "slider_itself");
+    // .attr("width", 400)
+    // .attr("height", 100); 
 
 // var svg = slider_control_div
 //     .append("svg")
