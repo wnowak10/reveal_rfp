@@ -766,6 +766,41 @@ d3.queue()
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
+// Connect county ids with median / mean data.
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+
+var all_income_2010 = d3.map();
+var all_income_2011 = d3.map();
+var all_income_2012 = d3.map();
+var all_income_2013 = d3.map();
+var all_income_2014 = d3.map();
+var all_income_2015 = d3.map();
+var all_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/all/all2010map.csv", function(d) { all_income_2010.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2011map.csv", function(d) { all_income_2011.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2012map.csv", function(d) { all_income_2012.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2013map.csv", function(d) { all_income_2013.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2014map.csv", function(d) { all_income_2014.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2015map.csv", function(d) { all_income_2015.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2016map.csv", function(d) { all_income_2016.set(d.id, +d.percent_poor); })
+    .await(done);
+
+all_income_maps = {
+  2010: all_income_2010,
+  2011: all_income_2011,
+  2012: all_income_2012,
+  2013: all_income_2013,
+  2014: all_income_2014,
+  2015: all_income_2015,
+  2016: all_income_2016
+};
+
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 // Connect county ids with income data.
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
