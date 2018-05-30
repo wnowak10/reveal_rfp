@@ -421,7 +421,7 @@ function off() {
 //////////////////////////////////////////
 var current_county_id; 
 
-var race = 'all'; // Not the most informative var name. TO DO: change
+var race = 'all';
 
 var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
@@ -537,6 +537,7 @@ var labels = form.selectAll("label")
       }
     })
     .on("click",function(d,i) {
+      console.log
       race = race_dict[d]
       console.log(race)
       dict_to_use = dict_of_dicts[race]     
@@ -558,25 +559,25 @@ var labels = form.selectAll("label")
 //////////////////////////////////////////
 
 // controls = grid.append("div").attr("id", "map_controls");
-dd_control = grid.append("div").attr("class", "row_divs")
-dd_control_div = dd_control.append("div").attr("class", "control_div")
+variable_control = grid.append("div").attr("class", "row_divs")
+variable_control_div = variable_control.append("div").attr("class", "control_div")
 
-var race_dict = {
+var variable_dict = {
   "Income": "income",
   "Poverty": "poverty",
 };
 
 
-dd_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
+variable_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
 
-var shapeData = ["Income", "Poverty"];
+var variables = ["Income", "Poverty"];
 // var    j = 3;  // Choose the rectangle as default
 
 // Create the shape selectors
-var form = dd_control_div.append("div").attr("id", "radio-buttons");
+var variable_form = variable_control_div.append("div").attr("id", "radio-buttons");
 
-var labels = form.selectAll("label")
-    .data(shapeData)
+var opts = variable_form.selectAll("label")
+    .data(variables)
     .enter()
     .append("label")
     .attr("id", "button-label")
@@ -584,20 +585,13 @@ var labels = form.selectAll("label")
     .insert("input")
     .attr("id", "button-input")
     .attr("type", "radio")
-    .attr("name", "race")
+    .attr("name", "variable") // To ensure only one checked at once.
     .attr("checked", function(d, i){
       if(i == 0){
         return "checked"
       }
     })
     .on("click",function(d,i) {
-      race = race_dict[d]
-      console.log(race)
-      dict_to_use = dict_of_dicts[race]     
-      poverty_dict = dict_to_use[initialYear]
-
-      drawMapOutline(usa, poverty_dict, initialYear, race);
-      // chartonClick(current_county_id, numclicks, initialYear, v);
         console.log(d);
         console.log(i);
     });
