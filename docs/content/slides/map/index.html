@@ -140,35 +140,18 @@ Radio buttons
 */
 
 #radio-buttons {
-	/*border: none;*/
-	display: flex;
-	/*flex-direction: row;*/
-	/*justify-content: flex-start;*/
-	/*break-before: always;*/
-	/*margin: 0 0 3em 0;*/
-	/*vertical-align: middle;*/
-	/*align-items: center;*/
+  display: flex;
 }
 
 #button-label {
   display: flex;
-	height: 100px;
-  
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*text-align: center;*/
-/*vertical-align: middle;*/
+  height: 100px;
   line-height: 100px;
 }
 
 #button-input {
-	display: flex;
-	height: 100px;
-  /*display: flex;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
+  display: flex;
+  height: 100px;
   line-height: 100px;
 }
 
@@ -193,7 +176,6 @@ div.tooltip {
     padding: 2px;       
     font: 12px sans-serif;    
     background: red; 
-    /*background: lightsteelblue; */
     color: black;
     border: 0px;    
     border-radius: 8px;     
@@ -441,7 +423,10 @@ var current_county_id;
 
 var race = 'all'; // Not the most informative var name. TO DO: change
 
-
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+    
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Set the title.
@@ -627,11 +612,12 @@ var labels = form.selectAll("label")
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 700;
 var height = 350;
+var mapHeight = 450;
 
 
 var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+    .attr("height", mapHeight);
 
 var g = chart1.append("g");
 var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
@@ -717,6 +703,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("mouseover", function(d, i, c) { 
+      	console.log("county mouseover", d)
           d3.select(this)
           .style("fill", "darkblue");
 
@@ -1313,9 +1300,7 @@ var ls_w = 20, ls_h = 20;
     
 // drawAxes(yScale, xScale);
 
-// var div = d3.select("body").append("div") 
-//     .attr("class", "tooltip")       
-//     .style("opacity", 0);
+
 
 // function get_current_county_id(d) {
 //   return d.id
