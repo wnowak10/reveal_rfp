@@ -342,35 +342,6 @@ body {
 }
 
 
-
-
-
-
-
-
-
-
-
-/*#chart2_div {*/
-	/*grid-row-start: 7;*/
-	/*grid-row-end: -1;*/
-	/*grid-column-start: 1;*/
-	/*grid-column-end: 8;*/
-/*}*/
-
-
-
-
-
-
-
-
-
-
-/*h1 {*/
-	/*color: darkblue;*/
-/*}*/
-
 </style>
 </head>
 
@@ -382,8 +353,6 @@ body {
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
-<!-- <script type="module" src="./playButton.js"></script> -->
-
 
 <body onclick="off()" onresize="off()">
 
@@ -422,6 +391,7 @@ function off() {
 var current_county_id; 
 
 var race = 'all';
+var variable = 'Poverty';
 
 var div = d3.select("body").append("div") 
     .attr("class", "tooltip")       
@@ -438,7 +408,7 @@ var title_div = grid
 
 title_div.append("h1")
 	.attr("id", "title_text")
-    .text("Poverty in America");
+    .text("Poverty and Income in America");
 
 
 //////////////////////////////////////////
@@ -537,16 +507,19 @@ var labels = form.selectAll("label")
       }
     })
     .on("click",function(d,i) {
-      console.log
+      console.log('variable', variable)
       race = race_dict[d]
       console.log(race)
-      dict_to_use = poverty_dicts[race]     
-      poverty_dict = dict_to_use[initialYear]
-
-      drawMapOutline(usa, poverty_dict, initialYear, race);
+      income_or_pov = pov_or_mean_income_dict[variable]
+      console.log(income_or_pov)
+      dict_to_use = income_or_pov[race]     
+      console.log(dict_to_use)
+      dict = dict_to_use[initialYear]
+      console.log(dict, "what dict are we using for chart?")
+      drawMapOutline(usa, dict, initialYear, race, variable);
       // chartonClick(current_county_id, numclicks, initialYear, v);
-        console.log(d);
-        console.log(i);
+        // console.log(d);
+        // console.log(i);
     });
 
 
@@ -592,9 +565,17 @@ var opts = variable_form.selectAll("label")
       }
     })
     .on("click",function(d,i) {
-        console.log(d);
-        console.log(pov_or_mean_income_dict[d])
-        console.log(i);
+      variable = d;
+      console.log(variable);
+      income_or_pov = pov_or_mean_income_dict[variable]
+      console.log(income_or_pov)
+      dict_to_use = income_or_pov[race]     
+      console.log(dict_to_use)
+      dict = dict_to_use[initialYear]
+      console.log(dict, "what dict are we using for chart?")
+      drawMapOutline(usa, dict, initialYear, race, variable);
+      // console.log(pov_or_mean_income_dict[d])
+      // console.log(i);
     });
 
 
@@ -615,7 +596,8 @@ var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
     .attr("height", mapHeight);
 
 var g = chart1.append("g");
-var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+// var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+// var mean_income_color = d3.scaleLinear().domain([0, 120000]).range(['#ffeaea', '#660404']);
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -663,8 +645,17 @@ var path = d3.geoPath()
 //   }
 //  }
  
-function drawMapOutline(us, dict, initialYear, race) {
+function drawMapOutline(us, dict, initialYear, race, variable) {
+  console.log('variable when drawing function is ', variable)
+  if (variable == 'Poverty'){
+    console.log('variable is pov??')
+    var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+  }
+  else {
+    console.log('other?')
+    var color = d3.scaleLinear().domain([0, 120000]).range(['#ffeaea', '#660404']);
 
+  }
   var counties = g.append("g")
       .attr("class", "counties")
       .selectAll("path")
@@ -673,7 +664,7 @@ function drawMapOutline(us, dict, initialYear, race) {
       .append("path");
 
     counties
-      .attr("fill", function(d) { return color(dict.get(d.id)); })
+      .attr("fill", function(d) { return color(dict.get(d.id)); }) // Need this to switch depending on which variable used
 
       .on("click", function(d){
           // if (numclicks < 0){
@@ -741,6 +732,9 @@ function drawMapOutline(us, dict, initialYear, race) {
       .attr("class", "counties")
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
+
+
+   drawLegend(variable);
 };
 
 function done(d){
@@ -799,9 +793,73 @@ all_income_maps = {
   2016: all_income_2016
 };
 
+/////////////////////////////////////////////////////
+// Black
+/////////////////////////////////////////////////////
+var black_income_2010 = d3.map();
+var black_income_2011 = d3.map();
+var black_income_2012 = d3.map();
+var black_income_2013 = d3.map();
+var black_income_2014 = d3.map();
+var black_income_2015 = d3.map();
+var black_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/black/black2010map.csv", function(d) { black_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2011map.csv", function(d) { black_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2012map.csv", function(d) { black_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2013map.csv", function(d) { black_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2014map.csv", function(d) { black_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2015map.csv", function(d) { black_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2016map.csv", function(d) { black_income_2016.set(d.id, +d.mean_income); })
+    .await(done);
+
+black_income_maps = {
+  2010: black_income_2010,
+  2011: black_income_2011,
+  2012: black_income_2012,
+  2013: black_income_2013,
+  2014: black_income_2014,
+  2015: black_income_2015,
+  2016: black_income_2016
+};
+
+/////////////////////////////////////////////////////
+// White
+/////////////////////////////////////////////////////
+
+var white_income_2010 = d3.map();
+var white_income_2011 = d3.map();
+var white_income_2012 = d3.map();
+var white_income_2013 = d3.map();
+var white_income_2014 = d3.map();
+var white_income_2015 = d3.map();
+var white_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/white/white2010map.csv", function(d) { white_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2011map.csv", function(d) { white_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2012map.csv", function(d) { white_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2013map.csv", function(d) { white_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2014map.csv", function(d) { white_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2015map.csv", function(d) { white_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2016map.csv", function(d) { white_income_2016.set(d.id, +d.mean_income); })
+    .await(done);
+
+white_income_maps = {
+  2010: white_income_2010,
+  2011: white_income_2011,
+  2012: white_income_2012,
+  2013: white_income_2013,
+  2014: white_income_2014,
+  2015: white_income_2015,
+  2016: white_income_2016
+};
 
 income_maps = {
-  "all" : all_income_maps
+  "all" : all_income_maps,
+  "black": black_income_maps,
+  "white": white_income_maps,
 }
 
 /////////////////////////////////////////////////////
@@ -909,7 +967,7 @@ pov_or_mean_income_dict = {
 
 
 d3.json("usa.json", function(d){
-  drawMapOutline(d, allmaps[2010], 2010, "all");
+  drawMapOutline(d, allmaps[2010], 2010, "all", variable);
 } );
 
 
@@ -1027,7 +1085,7 @@ function update(h) {
       // What poverty data to use.
       poverty_dict = dict_to_use[initialYear]
 
-      drawMapOutline(usa, poverty_dict, initialYear, race);
+      drawMapOutline(usa, poverty_dict, initialYear, race, variable);
       chartonClick(current_county_id, numclicks, initialYear, race);
 
     };
@@ -1292,33 +1350,48 @@ function update(h) {
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-var ext_color_domain = [.2, .4, .6, .8, 1]
-var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+  var legend = chart1.selectAll("g.legend")
+    .attr("transform", "rotate(90)")
+      .data(ext_color_domain)
+      .enter()
+      .append("g")
+      .attr("class", "legend");
+
+  var ls_w = 20, ls_h = 20;
+
+   legend.append("rect")
+      .attr("x", 650)
+      // .attr("x", 20)
+      .attr("y", function(d, i){ return height +20 - (i*ls_h) - 2*ls_h;})
+      .attr("width", ls_w)
+      .attr("height", ls_h)
+      .style("fill", function(d, i) { return color(d); })
+      .style("opacity", 0.8);
 
 
-var legend = chart1.selectAll("g.legend")
-	.attr("transform", "rotate(90)")
-    .data(ext_color_domain)
-    .enter()
-    .append("g")
-    .attr("class", "legend");
+function drawLegend(variable){
+  console.log("drawLegend called")
+  console.log(variable)
+  if (variable == 'Poverty'){
+    var ext_color_domain = [.2, .4, .6, .8, 1]
+    var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"] 
+  }
+  else {
+    var ext_color_domain = [0, 40000, 60000, 80000, 150000]
+    var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]
+  }              
 
-var ls_w = 20, ls_h = 20;
 
- legend.append("rect")
-    .attr("x", 650)
-    // .attr("x", 20)
-    .attr("y", function(d, i){ return height +20 - (i*ls_h) - 2*ls_h;})
-    .attr("width", ls_w)
-    .attr("height", ls_h)
-    .style("fill", function(d, i) { return color(d); })
-    .style("opacity", 0.8);
 
- legend.append("text")
-    .attr("x", 680)
-    // .attr("x", 50)
-    .attr("y", function(d, i){ return height+20 - (i*ls_h) - ls_h - 4;})
-    .text(function(d, i){ return legend_labels[i]; });
+
+
+   legend.append("text")
+      .attr("x", 680)
+      // .attr("x", 50)
+      .attr("y", function(d, i){ return height+20 - (i*ls_h) - ls_h - 4;})
+      .text(function(d, i){ return legend_labels[i]; });
+}
+
 
 // /////////////////////////////////////////////
 // /////////////////////////////////////////////
