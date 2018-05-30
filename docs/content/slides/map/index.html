@@ -540,7 +540,7 @@ var labels = form.selectAll("label")
       console.log
       race = race_dict[d]
       console.log(race)
-      dict_to_use = dict_of_dicts[race]     
+      dict_to_use = poverty_dicts[race]     
       poverty_dict = dict_to_use[initialYear]
 
       drawMapOutline(usa, poverty_dict, initialYear, race);
@@ -570,7 +570,7 @@ var variable_dict = {
 
 variable_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
 
-var variables = ["Income", "Poverty"];
+var variables = ["Poverty", "Income"];
 // var    j = 3;  // Choose the rectangle as default
 
 // Create the shape selectors
@@ -593,6 +593,7 @@ var opts = variable_form.selectAll("label")
     })
     .on("click",function(d,i) {
         console.log(d);
+        console.log(pov_or_mean_income_dict[d])
         console.log(i);
     });
 
@@ -662,7 +663,7 @@ var path = d3.geoPath()
 //   }
 //  }
  
-function drawMapOutline(us, poverty_dict, initialYear, race) {
+function drawMapOutline(us, dict, initialYear, race) {
 
   var counties = g.append("g")
       .attr("class", "counties")
@@ -672,7 +673,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .append("path");
 
     counties
-      .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
+      .attr("fill", function(d) { return color(dict.get(d.id)); })
 
       .on("click", function(d){
           // if (numclicks < 0){
@@ -707,7 +708,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
+            div.html("Poverty rate: " + Math.round(dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
                 .attr("id", "maphover")
                 .style("left", (d3.event.pageX + 28) + "px")   
                 .style("top", (d3.event.pageY) + "px");  
@@ -718,7 +719,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     d3.select(this)
                     .transition()
                     .duration(600)
-                    .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
+                    .style("fill", function(d) { return color(dict.get(d.id)); })
                 });;
       
   var states = g.append("path")
@@ -779,13 +780,13 @@ var all_income_2015 = d3.map();
 var all_income_2016 = d3.map();
 
 d3.queue()
-    .defer(d3.csv, "mean_income/all/all2010map.csv", function(d) { all_income_2010.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2011map.csv", function(d) { all_income_2011.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2012map.csv", function(d) { all_income_2012.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2013map.csv", function(d) { all_income_2013.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2014map.csv", function(d) { all_income_2014.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2015map.csv", function(d) { all_income_2015.set(d.id, +d.percent_poor); })
-    .defer(d3.csv, "mean_income/all/all2016map.csv", function(d) { all_income_2016.set(d.id, +d.percent_poor); })
+    .defer(d3.csv, "mean_income/all/all2010map.csv", function(d) { all_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2011map.csv", function(d) { all_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2012map.csv", function(d) { all_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2013map.csv", function(d) { all_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2014map.csv", function(d) { all_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2015map.csv", function(d) { all_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2016map.csv", function(d) { all_income_2016.set(d.id, +d.mean_income); })
     .await(done);
 
 all_income_maps = {
@@ -798,6 +799,10 @@ all_income_maps = {
   2016: all_income_2016
 };
 
+
+income_maps = {
+  "all" : all_income_maps
+}
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -890,11 +895,18 @@ allmaps = {
   2016: all2016
 };
 
-dict_of_dicts = {
+poverty_dicts = {
   "white" : whitemaps,
   "black" : blackmaps,
   "all" : allmaps
 }
+
+
+pov_or_mean_income_dict = {
+  "Poverty": poverty_dicts,
+  "Income" : income_maps 
+}
+
 
 d3.json("usa.json", function(d){
   drawMapOutline(d, allmaps[2010], 2010, "all");
@@ -1005,11 +1017,11 @@ function update(h) {
         // var v = 'all'
         console.log('v undefined')
         race = initialRace;
-        dict_to_use = dict_of_dicts[race]
+        dict_to_use = poverty_dicts[race]
       }
       else {
         // race = v;
-        dict_to_use = dict_of_dicts[race]
+        dict_to_use = poverty_dicts[race]
       }
 
       // What poverty data to use.
