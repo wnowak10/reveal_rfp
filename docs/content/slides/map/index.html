@@ -1,18 +1,14 @@
-<!-- used resources: -->
-<!-- 
+<!-- Used resources: -->
 
- -->
-<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html
-hover: http://bl.ocks.org/mattparrilla/5724610
-basic chloropleth https://bl.ocks.org/mbostock/4060606
-youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg
-click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
+<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html -->
+<!-- hover: http://bl.ocks.org/mattparrilla/5724610 -->
+<!-- basic chloropleth https://bl.ocks.org/mbostock/4060606 -->
+<!-- youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg -->
+<!-- click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
 <!-- scroll zoom https://bl.ocks.org/iamkevinv/0a24e9126cd2fa6b283c6f2d774b69a2 -->
 <!-- scale https://bl.ocks.org/andrew-reid/496078bd5e37fd22a9b43fd6be84b36b -->
 <!-- https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4 bar chart v4! -->
-<!-- 
 
- -->
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -46,6 +42,7 @@ Overall page layout
 */
 
 .grid {
+   /* Use CSS grid to maake layout into 100x100 grid. */
    display: grid;
    grid-gap: 0px;
    width: 100vw;
@@ -56,26 +53,32 @@ Overall page layout
 
 /* Center row divs (eg for title, controls, map...)*/
 .row_divs {
+  /* Create flexbox to git row_div content into CSS grid row as needed*/
   display: flex;
-  justify-content: center;
+  /* Content runs left to right*/
+  flex-direction: row;  
+  /* Conent centered left to right*/
+  justify-content: center; 
+  /* Content centered top to bottom*/
   align-items: center;
+
+  /* Run entire width of screen*/
   grid-column-start: 1;
   grid-column-end: -1;
 }
 
 /* Size of divs for controls for map*/
 .control_div {
-  height: 75px;
-  width: 800px;
+  height: 100px;
 }
 
 .control_label_div {
-  text-align: center;
-  vertical-align: middle;
   line-height: 100px; 
   float: left;
   height: 100px;
-  width: 100px;
+  /* Top, right, bottom, left*/
+  margin: 0px 50px 0px 0px;
+    display: inline-block;
 }
 
 /*
@@ -87,14 +90,9 @@ Title
 */
 #title_text {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
   font-size: 42px;
-  line-height: 1.2;
-  letter-spacing: normal;
   text-transform: uppercase;
-  text-shadow: none;
-  word-wrap: break-word;
-  text-align: center;
+  color: darkblue;
 }
 
 /*
@@ -103,19 +101,19 @@ Time slider
 
   /* Slider itself*/
   #slider_itself {
-  float: left;
+    display: inline-block;
+    float: left;
+    width: 350px;
+    height: 100px;
+    display:inline-block;
   }
 
   /* Play button*/
 
   /* Align button in center of a div*/
   #playButton_div {
-  text-align: center;
-  vertical-align: middle;
-  line-height: 100px; 
-  float: left;
-  height: 100px;
-  width: 100px;
+    display: inline-block;
+    line-height: 100px;
   }
 
   /* Color button etc. */
@@ -132,63 +130,40 @@ Time slider
   height: 30px;
   }
 
+#pb:hover {
+  background-color: darkblue;
+}    
+
+
 /*
 Radio buttons
 */
 
 #radio-buttons {
-  float: left;
-  height: 100px;
-  /*width: 400px;*/
-  width:50%; 
-  margin:0 auto;
+  display: flex;
 }
 
 #button-label {
-  /*display: flex;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  text-align: center;
-vertical-align: middle;
-line-height: 100px;
+  display: flex;
+  height: 100px;
+  line-height: 100px;
 }
 
+#button-input {
+  display: flex;
+  height: 100px;
+  line-height: 100px;
+}
 
 input[type="radio"]{
+  /* Top, right, bottom, left*/
   margin: 0 25px 0 5px;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+Interactvity
+*/
 
 
 
@@ -201,12 +176,40 @@ div.tooltip {
     padding: 2px;       
     font: 12px sans-serif;    
     background: red; 
-    /*background: lightsteelblue; */
     color: black;
     border: 0px;    
     border-radius: 8px;     
     pointer-events: none;     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Map */
+
 
 .container {
   float: left;
@@ -245,9 +248,6 @@ div.tooltip {
 
 
 
-#charts{
-  /*float: left;*/
-}
 
 
 body {
@@ -258,9 +258,7 @@ body {
 }
 
 
-#play-button:hover {
-  background-color: #696969;
-}    
+
 
 .ticks {
   font-size: 10px;
@@ -330,7 +328,7 @@ body {
     border-radius: 8px;     
     pointer-events: none;  
     font-family: "Source Sans Pro", Helvetica, sans-serif;
-	font-weight: 600;
+	  font-weight: 600;
     line-height: 1.2;
     letter-spacing: normal;
 }
@@ -344,35 +342,6 @@ body {
 }
 
 
-
-
-
-
-
-
-
-
-
-#chart2_div {
-	grid-row-start: 7;
-	grid-row-end: -1;
-	grid-column-start: 1;
-	grid-column-end: 8;
-}
-
-
-
-
-
-
-
-
-
-
-h1 {
-	color: darkblue;
-}
-
 </style>
 </head>
 
@@ -384,20 +353,9 @@ h1 {
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
-<!-- <script type="module" src="./playButton.js"></script> -->
-
 
 <body onclick="off()" onresize="off()">
- <!-- Turn off the overlay on click -->
- <!--  <div id="title"></div>
 
-  <div id="selectors">
-      <div id ="vis"></div>
-      <div id="play-button"> </div>
-      <div id="dropdown"> </div>
-  </div>
-
-  <div id="charts"> </div> -->
 
 <!--
    <div class="modal" id="overlay"> 
@@ -432,9 +390,13 @@ function off() {
 //////////////////////////////////////////
 var current_county_id; 
 
-var v = 'all'; // Not the most informative var name. TO DO: change
+var race = 'all';
+var variable = 'Poverty';
 
-
+var div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+    
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Set the title.
@@ -446,7 +408,7 @@ var title_div = grid
 
 title_div.append("h1")
 	.attr("id", "title_text")
-    .text("Poverty in America");
+    .text("Poverty and Income in America");
 
 
 //////////////////////////////////////////
@@ -461,40 +423,25 @@ slider_control = grid.append("div").attr("class", "row_divs");
 // the label, slider, play button.
 slider_control_div = slider_control.append("div").attr("class","control_div")
 
-// Add components g
-
-var slider_g = slider_control_div.append("g").attr("id", "slider_g");
-
 // Label
-slider_g.append("div").attr("class", "control_label_div").text("Time:");
-// slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
+slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
 
 // Slider
 var slidermargin = {top:0, right:50, bottom:0, left:50},
     sliderwidth = 360 - slidermargin.left - slidermargin.right,
     sliderheight = 100 - slidermargin.top - slidermargin.bottom;
 
-var svg = slider_g
+var svg = slider_control_div
     .append("svg")
-    .attr("id", "slider_itself")
-    .attr("width", 400)
-    .attr("height", 100); 
+    .attr("id", "slider_itself");
 
-// var svg = slider_control_div
-//     .append("svg")
-//     .attr("id", "slider_itself")
-//     .attr("width", sliderwidth + slidermargin.left + slidermargin.right)
-//     .attr("height", sliderheight + slidermargin.top + slidermargin.bottom); 
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Play button
+//////////////////////////////////////////
+//////////////////////////////////////////
 
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Play button
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-var playButton_div = slider_g.append("div").attr("id", "playButton_div");
-// var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
+var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
 
 
 var playButton = playButton_div.append("button").attr("id", "pb").text("Play");
@@ -518,25 +465,16 @@ playButton
 
 
 
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build radio buttons for race
+//////////////////////////////////////////
+//////////////////////////////////////////
+
 // controls = grid.append("div").attr("id", "map_controls");
 dd_control = grid.append("div").attr("class", "row_divs")
 dd_control_div = dd_control.append("div").attr("class", "control_div")
-
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-// Build dropdown
-//////////////////////////////////////////
-//////////////////////////////////////////
-
-// var dropdown_options = [ 
-// { value: "all",
-//   text: "All Households" },
-// { value: "black",
-//   text: "Black Households" },
-// { value: "white",
-//   text: "White Households" }]
-
 
 var race_dict = {
   "All Americans": "all",
@@ -545,16 +483,13 @@ var race_dict = {
 };
 
 
-dd_control_div.append("div").attr("class", "control_label_div").text("Race:      ")
-
-
-
+dd_control_div.append("div").attr("class", "control_label_div").text("Race:")
 
 var shapeData = ["All Americans", "Black Americans", "White Americans"];
 // var    j = 3;  // Choose the rectangle as default
 
 // Create the shape selectors
-var form = dd_control_div.append("form").attr("id", "radio-buttons");
+var form = dd_control_div.append("div").attr("id", "radio-buttons");
 
 var labels = form.selectAll("label")
     .data(shapeData)
@@ -563,6 +498,7 @@ var labels = form.selectAll("label")
     .attr("id", "button-label")
     .text(function(d) {return d;})
     .insert("input")
+    .attr("id", "button-input")
     .attr("type", "radio")
     .attr("name", "race")
     .attr("checked", function(d, i){
@@ -571,75 +507,74 @@ var labels = form.selectAll("label")
       }
     })
     .on("click",function(d,i) {
-      v = race_dict[d]
-      console.log(v)
-      dict_to_use = dict_of_dicts[v]     
-      poverty_dict = dict_to_use[initialYear]
-
-      drawMapOutline(usa, poverty_dict, initialYear, v);
+      console.log('variable', variable)
+      race = race_dict[d]
+      console.log(race)
+      income_or_pov = pov_or_mean_income_dict[variable]
+      console.log(income_or_pov)
+      dict_to_use = income_or_pov[race]     
+      console.log(dict_to_use)
+      dict = dict_to_use[initialYear]
+      console.log(dict, "what dict are we using for chart?")
+      drawMapOutline(usa, dict, initialYear, race, variable);
       // chartonClick(current_county_id, numclicks, initialYear, v);
-        console.log(d);
-        console.log(i);
+        // console.log(d);
+        // console.log(i);
     });
 
-// console.log(d3.select('input').property("value"));
-
-    // .attr("value", function(option) { 
-    //         selectedValue = option.value;
-    //         console.log(selectedValue)
-    //         return selectedValue; 
-    //       });
-    // .onclick(function(d, i) {return i;});
-    // .attr({
-    //     type: "radio",
-    //     class: "shape",
-    //     name: "mode",
-    //     value: function(d, i) {return i;}
-    // })
-    // .property("checked", function(d, i) {return i===j;});
 
 
 
-// dd_control_div.append("input").attr("type", "radio").attr("name", "ccc");
-// <div>
-//     <input type="radio" id="contactChoice1"
-//      name="contact" value="email">
-//     <label for="contactChoice1">Email</label>
+//////////////////////////////////////////
+//////////////////////////////////////////
+// Build radio buttons for variable of interest
+//////////////////////////////////////////
+//////////////////////////////////////////
 
-//     <input type="radio" id="contactChoice2"
-//      name="contact" value="phone">
-//     <label for="contactChoice2">Phone</label>
+// controls = grid.append("div").attr("id", "map_controls");
+variable_control = grid.append("div").attr("class", "row_divs")
+variable_control_div = variable_control.append("div").attr("class", "control_div")
 
-//     <input type="radio" id="contactChoice3"
-//      name="contact" value="mail">
-//     <label for="contactChoice3">Mail</label>
-//   </div>
+var variable_dict = {
+  "Income": "income",
+  "Poverty": "poverty",
+};
 
 
-// var ddbutton = dd_control_div.append("select");
+variable_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
 
-// ddbutton
-//     .attr("id", "dd")
-//           .selectAll("option")
-//           .data(dropdown_options)
-//           .enter()
-//           .append("option")
-//           .attr("value", function(option) { 
-//             selectedValue = option.value;
-//             return selectedValue; 
-//           })
-//           .text(function(option) { return option.text; });
+var variables = ["Poverty", "Income"];
+// var    j = 3;  // Choose the rectangle as default
 
-// ddbutton.on("change", change)
-// var v;
-// function change() {
-//     v = this.options[this.selectedIndex].value;
-//     dict_to_use = dict_of_dicts[v]     
-//     poverty_dict = dict_to_use[initialYear]
+// Create the shape selectors
+var variable_form = variable_control_div.append("div").attr("id", "radio-buttons");
 
-//     drawMapOutline(usa, poverty_dict, initialYear, v);
-//     chartonClick(current_county_id, numclicks, initialYear, v);
-// };
+var opts = variable_form.selectAll("label")
+    .data(variables)
+    .enter()
+    .append("label")
+    .attr("id", "button-label")
+    .text(function(d) {return d;})
+    .insert("input")
+    .attr("id", "button-input")
+    .attr("type", "radio")
+    .attr("name", "variable") // To ensure only one checked at once.
+    .attr("checked", function(d, i){
+      if(i == 0){
+        return "checked"
+      }
+    })
+    .on("click",function(d,i) {
+
+      variable = d;
+      income_or_pov = pov_or_mean_income_dict[variable]
+      dict_to_use = income_or_pov[race]     
+      dict = dict_to_use[initialYear]
+
+      drawMapOutline(usa, dict, initialYear, race, variable);
+      drawLegend(variable);
+      console.log("why no new legend?")
+    });
 
 
 //////////////////////////////////////////
@@ -651,14 +586,14 @@ var labels = form.selectAll("label")
 var margin = {top: 40, right: 20, bottom: 30, left: 50};
 var width = 700;
 var height = 350;
+var mapHeight = 550;
 
 
 var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+    .attr("height", mapHeight);
 
 var g = chart1.append("g");
-var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -705,8 +640,33 @@ var path = d3.geoPath()
 //     numclicks = (numclicks%5);
 //   }
 //  }
- 
-function drawMapOutline(us, poverty_dict, initialYear, race) {
+function divHover(dict, county, state, d, variable) {
+  if (variable == 'Poverty'){
+  div.html("Poverty rate: " + Math.round(dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px"); 
+                              }
+  else {
+    div.html("Median income: $" + Math.round(dict.get(d.id)) + " in " + county.get(d.id) + ", " + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px");
+  };
+
+};
+
+function drawMapOutline(us, dict, initialYear, race, variable) {
+  console.log('variable when drawing function is ', variable)
+
+  if (variable == 'Poverty'){
+    console.log('variable is pov??')
+    var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+  }
+  else {
+    console.log('other?')
+    var color = d3.scaleLinear().domain([0, 120000]).range(['#ffeaea', '#660404']);
+  }
 
   var counties = g.append("g")
       .attr("class", "counties")
@@ -716,7 +676,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .append("path");
 
     counties
-      .attr("fill", function(d) { return color(poverty_dict.get(d.id)); })
+      .attr("fill", function(d) { return color(dict.get(d.id)); }) // Need this to switch depending on which variable used
 
       .on("click", function(d){
           // if (numclicks < 0){
@@ -741,6 +701,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path)
       .on("mouseover", function(d, i, c) { 
+      	console.log("county mouseover", d)
           d3.select(this)
           .style("fill", "darkblue");
 
@@ -750,10 +711,8 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html("Poverty rate: " + Math.round(poverty_dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
-                .attr("id", "maphover")
-                .style("left", (d3.event.pageX + 28) + "px")   
-                .style("top", (d3.event.pageY) + "px");  
+            divHover(dict, county, state, d, variable); // Function to conditionally control hover label, depending on 
+            // poverty or income variable.
             })
       .on("mouseout", function(d) {
                     d3.select("#tooltip").remove();
@@ -761,7 +720,7 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
                     d3.select(this)
                     .transition()
                     .duration(600)
-                    .style("fill", function(d) { return color(poverty_dict.get(d.id)); })
+                    .style("fill", function(d) { return color(dict.get(d.id)); })
                 });;
       
   var states = g.append("path")
@@ -778,11 +737,12 @@ function drawMapOutline(us, poverty_dict, initialYear, race) {
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
 
-  chart1.append("path")
-      .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
-      .attr("class", "counties")
-      .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
-      .attr("d", path);
+  // chart1.append("path")
+  //     .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b; }))
+  //     .attr("class", "counties")
+  //     .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
+  //     .attr("d", path);
+
 };
 
 function done(d){
@@ -806,6 +766,109 @@ d3.queue()
     })
     .await(done);
 
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// Connect county ids with median / mean data.
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+
+var all_income_2010 = d3.map();
+var all_income_2011 = d3.map();
+var all_income_2012 = d3.map();
+var all_income_2013 = d3.map();
+var all_income_2014 = d3.map();
+var all_income_2015 = d3.map();
+var all_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/all/all2010map.csv", function(d) { all_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2011map.csv", function(d) { all_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2012map.csv", function(d) { all_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2013map.csv", function(d) { all_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2014map.csv", function(d) { all_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2015map.csv", function(d) { all_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/all/all2016map.csv", function(d) { all_income_2016.set(d.id, +d.mean_income); })
+    .await(done);
+
+all_income_maps = {
+  2010: all_income_2010,
+  2011: all_income_2011,
+  2012: all_income_2012,
+  2013: all_income_2013,
+  2014: all_income_2014,
+  2015: all_income_2015,
+  2016: all_income_2016
+};
+
+/////////////////////////////////////////////////////
+// Black
+/////////////////////////////////////////////////////
+var black_income_2010 = d3.map();
+var black_income_2011 = d3.map();
+var black_income_2012 = d3.map();
+var black_income_2013 = d3.map();
+var black_income_2014 = d3.map();
+var black_income_2015 = d3.map();
+var black_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/black/black2010map.csv", function(d) { black_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2011map.csv", function(d) { black_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2012map.csv", function(d) { black_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2013map.csv", function(d) { black_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2014map.csv", function(d) { black_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2015map.csv", function(d) { black_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/black/black2016map.csv", function(d) { black_income_2016.set(d.id, +d.mean_income); })
+    .await(done);
+
+black_income_maps = {
+  2010: black_income_2010,
+  2011: black_income_2011,
+  2012: black_income_2012,
+  2013: black_income_2013,
+  2014: black_income_2014,
+  2015: black_income_2015,
+  2016: black_income_2016
+};
+
+/////////////////////////////////////////////////////
+// White
+/////////////////////////////////////////////////////
+
+var white_income_2010 = d3.map();
+var white_income_2011 = d3.map();
+var white_income_2012 = d3.map();
+var white_income_2013 = d3.map();
+var white_income_2014 = d3.map();
+var white_income_2015 = d3.map();
+var white_income_2016 = d3.map();
+
+d3.queue()
+    .defer(d3.csv, "mean_income/white/white2010map.csv", function(d) { white_income_2010.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2011map.csv", function(d) { white_income_2011.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2012map.csv", function(d) { white_income_2012.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2013map.csv", function(d) { white_income_2013.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2014map.csv", function(d) { white_income_2014.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2015map.csv", function(d) { white_income_2015.set(d.id, +d.mean_income); })
+    .defer(d3.csv, "mean_income/white/white2016map.csv", function(d) { white_income_2016.set(d.id, +d.mean_income); })
+    .await(done);
+
+white_income_maps = {
+  2010: white_income_2010,
+  2011: white_income_2011,
+  2012: white_income_2012,
+  2013: white_income_2013,
+  2014: white_income_2014,
+  2015: white_income_2015,
+  2016: white_income_2016
+};
+
+income_maps = {
+  "all" : all_income_maps,
+  "black": black_income_maps,
+  "white": white_income_maps,
+}
 
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -898,14 +961,22 @@ allmaps = {
   2016: all2016
 };
 
-dict_of_dicts = {
+poverty_dicts = {
   "white" : whitemaps,
   "black" : blackmaps,
   "all" : allmaps
 }
 
+
+pov_or_mean_income_dict = {
+  "Poverty": poverty_dicts,
+  "Income" : income_maps 
+}
+
+
 d3.json("usa.json", function(d){
-  drawMapOutline(d, allmaps[2010], 2010, "all");
+  drawMapOutline(d, allmaps[2010], 2010, "all", variable);
+  drawLegend(variable);
 } );
 
 
@@ -998,7 +1069,7 @@ function step() {
 var initialYear = 2010;
 
 var initialRace = "all";
-// var race = initialRace;
+
 function update(h) {
 
     handle.attr("cx", x(h));
@@ -1009,21 +1080,21 @@ function update(h) {
     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
     	console.log("entered?")
       initialYear = Math.round(h,0);
-      if (v == undefined){
-        var v = 
+      if (race == undefined){
+        // var v = 'all'
         console.log('v undefined')
         race = initialRace;
-        dict_to_use = dict_of_dicts[race]
+        dict_to_use = poverty_dicts[race]
       }
       else {
-        race = v;
-        dict_to_use = dict_of_dicts[race]
+        // race = v;
+        dict_to_use = poverty_dicts[race]
       }
 
       // What poverty data to use.
       poverty_dict = dict_to_use[initialYear]
 
-      drawMapOutline(usa, poverty_dict, initialYear, race);
+      drawMapOutline(usa, poverty_dict, initialYear, race, variable);
       chartonClick(current_county_id, numclicks, initialYear, race);
 
     };
@@ -1282,37 +1353,99 @@ function update(h) {
 // };
 
 
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
-//  //Adding legend for our Choropleth
-// /////////////////////////////////////////////
-// /////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+ //Adding legend for our Choropleth
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+function drawLegend(variable) {
+  // https://stackoverflow.com/questions/19772124/how-can-i-update-my-graph-legend-in-d3-js
+  // d3.selectAll("#legend_rect").remove();
 
-// var ext_color_domain = [.2, .4, .6, .8, 1]
-// var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+  console.log("redraw legend?")
+  var ext_color_domain = [.2, .4, .6, .8, 1]
+  var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+  var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+
+  // if (variable == 'Poverty'){
+  //   var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
+  //   var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
+  // }
+  // else {
+  //   var legend_labels = ["$0-30k", "$30-60k", "$60-90k", "$90-120k", "$120k+"]  
+  //   var color = d3.scaleLinear().domain([0, 120000]).range(['#ffeaea', '#660404']);
+  // }
+
+  var legend = g.selectAll("g.legend")
+  // var legend = chart1.selectAll("g.legend")
+    // .attr("transform", "rotate(90)")
+      .data(ext_color_domain)
+      .enter()
+      .append("g")
+      .attr("class", "legend");
+
+  var ls_w = 20, ls_h = 20;
+
+   legend.append("rect")
+      .attr("x", 650)
+      .attr("id", "legend_rect")
+      .attr("y", function(d, i){ return height +20 - (i*ls_h) - 2*ls_h;})
+      .attr("width", ls_w)
+      .attr("height", ls_h)
+      .style("fill", function(d, i) { return color(d); })
+      .style("opacity", 0.8);
+
+   legend.append("text")
+      .attr("x", 680)
+      .attr("id", "legend_rect")
+      // .attr("x", 50)
+      .attr("y", function(d, i){ return height+20 - (i*ls_h) - ls_h - 4;})
+      .text(function(d, i){ return legend_labels[i]; });
+};
 
 
-// var legend = chart1.selectAll("g.legend")
-// 	.attr("transform", "rotate(90)")
-//     .data(ext_color_domain)
-//     .enter()
-//     .append("g")
-//     .attr("class", "legend");
+//   var legend = chart1.selectAll("g.legend")
+//     .attr("transform", "rotate(90)")
+//       .data(ext_color_domain)
+//       .enter()
+//       .append("g")
+//       .attr("class", "legend");
 
-// var ls_w = 20, ls_h = 20;
+//   var ls_w = 20, ls_h = 20;
 
-//  legend.append("rect")
-//     .attr("x", 20)
-//     .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
-//     .attr("width", ls_w)
-//     .attr("height", ls_h)
-//     .style("fill", function(d, i) { return color(d); })
-//     .style("opacity", 0.8);
+//    legend.append("rect")
+//       .attr("x", 650)
+//       // .attr("x", 20)
+//       .attr("y", function(d, i){ return height +20 - (i*ls_h) - 2*ls_h;})
+//       .attr("width", ls_w)
+//       .attr("height", ls_h)
+//       .style("fill", function(d, i) { return color(d); })
+//       .style("opacity", 0.8);
 
-//  legend.append("text")
-//     .attr("x", 50)
-//     .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
-//     .text(function(d, i){ return legend_labels[i]; });
+
+// function drawLegend(variable){
+//   console.log("drawLegend called")
+//   console.log(variable)
+//   if (variable == 'Poverty'){
+//     var ext_color_domain = [.2, .4, .6, .8, 1]
+//     var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"] 
+//   }
+//   else {
+//     var ext_color_domain = [0, 40000, 60000, 80000, 150000]
+//     var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]
+//   }              
+
+
+
+
+
+//    legend.append("text")
+//       .attr("x", 680)
+//       // .attr("x", 50)
+//       .attr("y", function(d, i){ return height+20 - (i*ls_h) - ls_h - 4;})
+//       .text(function(d, i){ return legend_labels[i]; });
+// }
+
 
 // /////////////////////////////////////////////
 // /////////////////////////////////////////////
@@ -1335,9 +1468,7 @@ function update(h) {
     
 // drawAxes(yScale, xScale);
 
-// var div = d3.select("body").append("div") 
-//     .attr("class", "tooltip")       
-//     .style("opacity", 0);
+
 
 // function get_current_county_id(d) {
 //   return d.id
