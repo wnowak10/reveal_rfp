@@ -80,7 +80,7 @@ Overall page layout
   height: 100px;
   /* Top, right, bottom, left*/
   margin: 0px 50px 0px 0px;
-    display: inline-block;
+  display: inline-block;
 }
 
 /*
@@ -97,8 +97,17 @@ Title
   color: darkblue;
 }
 
+#overlay_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 72px;
+  text-transform: uppercase;
+  color: darkblue;
+}
 
 #subtitle_text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-size: 42px;
   text-transform: uppercase;
@@ -603,6 +612,7 @@ sub_title_div.append("h2")
 
 function labell() {
   g.append("text").text("13%")
+      .attr("id", "overlay_text")
       .attr("transform","translate(300,200)").attr("font-size", '80px');
 };
 

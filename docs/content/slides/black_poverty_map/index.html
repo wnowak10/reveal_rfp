@@ -97,6 +97,13 @@ Title
   color: darkblue;
 }
 
+#overlay_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 72px;
+  text-transform: uppercase;
+  color: darkblue;
+}
+
 #subtitle_text {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-size: 42px;
@@ -442,6 +449,7 @@ var mapHeight = 550;
 
 function labell() {
   g.append("text").text("27%")
+    .attr("id", "overlay_text")
       .attr("transform","translate(300,200)").attr("font-size", '80px');
 };
 
