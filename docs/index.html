@@ -35,7 +35,18 @@
 			})
 			// There is a better way to do this...TO DO. 
 			$(function() {
+				$(".poverty_intro_map").load("content/slides/poverty_intro/poverty_intro_map.html")
+			})
+
+			$(function() {
+				$(".black_poverty_intro_map").load("content/slides/poverty_intro/black_poverty_intro_map.html")
+			})
+
+			$(function() {
 				$(".poverty_intro").load("content/slides/poverty_intro/poverty_intro.html")
+			})
+			$(function() {
+				$(".map_intro").load("content/slides/map_intro/map_intro.html")
 			})
 			// There is a better way to do this...TO DO. 
 			$(function() {
@@ -67,15 +78,42 @@
 				<!-- BELOW WE REFERENCE A HTML FILE WRITTEN AND SAVED IN SLIDES DIR-->
 				<!-- IF WE WANT TO INCLUDE D3 VISUALIZATION OR ANY CUSTOM FORMATTING... -->
 				<!-- HTML IS THE WAY TO GO -->
-				<section> 
-					<!-- Adding a section within a section gives you access to vertical scrolling. -->
-						<div class="poverty_intro"></div>
+
+				<section>
+						<!-- D3 HTML files should be called with the following
+						class and data-file attributes. -->
+						<div class="fig-container"
+			         		data-file="content/slides/poverty_map/index.html">
+				        </div> 	
 				</section>
 
 				<section> 
 					<!-- Adding a section within a section gives you access to vertical scrolling. -->
 						<div class="poverty_intro2"></div>
 				</section>
+
+				<section>
+						<!-- D3 HTML files should be called with the following
+						class and data-file attributes. -->
+						<div class="fig-container"
+			         		data-file="content/slides/black_poverty_map/index.html">
+				        </div> 	
+				</section>
+
+				<section>
+						<!-- D3 HTML files should be called with the following
+						class and data-file attributes. -->
+						<div class="fig-container"
+			         		data-file="content/slides/just_map/index.html">
+				        </div> 	
+				</section>
+
+				<section> 
+					<!-- Adding a section within a section gives you access to vertical scrolling. -->
+						<div class="poverty_intro"></div>
+				</section>
+
+				
 
 				<section>
 						<!-- D3 HTML files should be called with the following
