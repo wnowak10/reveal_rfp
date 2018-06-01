@@ -644,7 +644,22 @@ var path = d3.geoPath()
 //     numclicks = (numclicks%5);
 //   }
 //  }
- 
+function divHover(dict, county, state, d, variable) {
+  if (variable == 'Poverty'){
+  div.html("Poverty rate: " + Math.round(dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px"); 
+                              }
+  else {
+    div.html("Median income: $" + Math.round(dict.get(d.id)) + " in " + county.get(d.id) + ", " + state.get(d.id)) 
+                .attr("id", "maphover")
+                .style("left", (d3.event.pageX + 28) + "px")   
+                .style("top", (d3.event.pageY) + "px");
+  };
+
+};
+
 function drawMapOutline(us, dict, initialYear, race, variable) {
   console.log('variable when drawing function is ', variable)
   if (variable == 'Poverty'){
@@ -699,10 +714,8 @@ function drawMapOutline(us, dict, initialYear, race, variable) {
                 .attr("id", "maphover")
                 .style("opacity", .9);
 
-            div.html("Poverty rate: " + Math.round(dict.get(d.id)*100) + "% in " + county.get(d.id) + ", " + state.get(d.id)) 
-                .attr("id", "maphover")
-                .style("left", (d3.event.pageX + 28) + "px")   
-                .style("top", (d3.event.pageY) + "px");  
+            divHover(dict, county, state, d, variable); // Function to conditionally control hover label, depending on 
+            // poverty or income variable.
             })
       .on("mouseout", function(d) {
                     d3.select("#tooltip").remove();

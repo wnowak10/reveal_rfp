@@ -15,53 +15,61 @@ def _purge(dir, pattern):
             os.remove(os.path.join(dir, f))
 
 
-def clean_mean_income_zip_files():
+def clean_mean_income_zip_files(race):
                                                                 # Conditions when we need to run:
                                                                 # processedZips dir doesn't exist.
                                                                 # processedZips has not been cleaned and it contains too many files.
                                                                 # processedZips
                                                                 # is empty
-    if not os.path.exists("processedZips") or len(os.listdir('processedZips')) == 1 or len(os.listdir('processedZips')) > len(os.listdir('rawIncomeDatazips')):
+    if not os.path.exists("processedZips/" + race) or len(os.listdir('processedZips/' + race)) == 1 or len(os.listdir('processedZips/' + race)) > len(os.listdir('rawIncomeDatazips/' + race)):
         onlyfiles = [f for f in os.listdir(
-            'rawIncomeDatazips') if os.path.isfile(os.path.join('rawIncomeDatazips', f))]
-
+            'rawIncomeDatazips/' + race) if os.path.isfile(os.path.join('rawIncomeDatazips/' + race, f))]
+        print(onlyfiles)
+        # onlyfiles.remove('.DS_Store')
         for file in onlyfiles:
-            zip_ref = zipfile.ZipFile('rawIncomeDatazips/' + file, 'r')
-            if not os.path.exists("processedZips"):
-                os.makedirs("processedZips")
-            zip_ref.extractall("processedZips")
+            print(file)
+
+            zip_ref = zipfile.ZipFile(
+                'rawIncomeDatazips/' + race + "/" + file, 'r')
+            if not os.path.exists("processedZips/" + race):
+                os.makedirs("processedZips/" + race)
+            zip_ref.extractall("processedZips/" + race)
             zip_ref.close()
 
-        _purge("processedZips", "txt")
-        _purge("processedZips", "metadata")
-        _purge("processedZips", ".DS")  # Remove DS Store
-        print(os.listdir("processedZips"))
+        _purge("processedZips/" + race, "txt")
+        _purge("processedZips/" + race, "metadata")
+        _purge("processedZips/" + race, ".DS")  # Remove DS Store
+        print(os.listdir("processedZips/" + race))
     else:
         print("Zip cleaning already completed.")
 
-clean_mean_income_zip_files()
+clean_mean_income_zip_files('black')
 
 
-def clean_annual_mean_income_files(file, year, export=True):
+def clean_annual_mean_income_files(file, race, year, export=True):
     full_df = pd.read_csv(file, encoding='latin-1', header=1)
     print("-" * 10)
     full_df = full_df.dropna(axis=0, subset=['Id2'])
     full_df['Id2'] = full_df['Id2'].astype(int)
 
     full_df['id'] = full_df['Id2'].apply(str).str.zfill(5)
-    full_df['mean_income'] = full_df[
-        'Mean income (dollars); Estimate; All households']
-    cols = ['id', 'mean_income']
+    print(full_df.columns)
+    full_df['median_income'] = full_df[
+        'Estimate; Median household income in the past 12 months (in 2010 inflation-adjusted dollars)']
+    cols = ['id', 'median_income']
     keep = full_df[cols]
     keep['year'] = year
-    race = 'all'
+    if not os.path.exists("median_income/" + race):
+        os.makedirs("median_income/" + race)
     if export:
-        keep.to_csv('mean_income/{}/{}20{}map.csv'.format(race, race, year))
+        keep.to_csv('median_income/{}/{}20{}map.csv'.format(race, race, year))
     return keep
 
-for file in os.listdir('processedZips'):
+race = 'black'
+for file in os.listdir('processedZips/' + race):
     year = file[4:6]
-    clean_annual_mean_income_files('processedZips/' + file, year)
+    clean_annual_mean_income_files(
+        'processedZips/' + race + '/' + file, race, year)
 # filter to just files with data
 
 
