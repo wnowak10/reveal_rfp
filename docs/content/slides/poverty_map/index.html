@@ -97,6 +97,15 @@ Title
   color: darkblue;
 }
 
+
+#subtitle_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 42px;
+  text-transform: uppercase;
+  color: darkred;
+}
+
+
 /*
 Time slider
 */
@@ -343,6 +352,12 @@ body {
   	left: 750px;
 }
 
+h3 {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 42px;
+  text-transform: uppercase;
+  color: darkred;
+}
 
 </style>
 </head>
@@ -409,7 +424,16 @@ var title_div = grid
 
 title_div.append("h1")
 	.attr("id", "title_text")
+    .text("POVERTY");
+
+var sub_title_div = grid
+    .append("div")
+    .attr("class", "row_divs");
+
+sub_title_div.append("h2")
+	.attr("id", "subtitle_text")
     .text("WHILE POVERTY IN AMERICA DECLINED IN THE 1960S, LATELY IT HAS STAGNATED AROUND 13%.");
+
 
 
 // //////////////////////////////////////////
@@ -717,7 +741,7 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
   var border = g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b; }))
       .attr("class", "border")
-      .attr("fill", "none")
+      .attr("fill", function(d) { return color(poverty_rate); })
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
 

@@ -97,6 +97,12 @@ Title
   color: darkblue;
 }
 
+#subtitle_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 42px;
+  text-transform: uppercase;
+  color: darkred;
+}
 /*
 Time slider
 */
@@ -408,8 +414,18 @@ var title_div = grid
     .attr("class", "row_divs");
 
 title_div.append("h1")
-	.attr("id", "title_text")
+  .attr("id", "title_text")
+    .text("POVERTY");
+
+var sub_title_div = grid
+    .append("div")
+    .attr("class", "row_divs");
+
+sub_title_div.append("h2")
+  .attr("id", "subtitle_text")
     .text("27% OF BLACK AMERICANS LIVE IN POVERTY.");
+
+
 
 
 // //////////////////////////////////////////
@@ -717,7 +733,7 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
   var border = g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b; }))
       .attr("class", "border")
-      .attr("fill", "none")
+      .attr("fill", function(d) { return color(poverty_rate); }) // Need this to switch depending on which variable used
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
 

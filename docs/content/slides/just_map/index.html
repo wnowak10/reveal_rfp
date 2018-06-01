@@ -97,6 +97,13 @@ Title
   color: darkblue;
 }
 
+#subtitle_text {
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-size: 42px;
+  text-transform: uppercase;
+  color: darkred;
+}
+
 /*
 Time slider
 */
@@ -403,13 +410,23 @@ var div = d3.select("body").append("div")
 // Set the title.
 //////////////////////////////////////////
 //////////////////////////////////////////
+
 var title_div = grid
     .append("div")
     .attr("class", "row_divs");
 
 title_div.append("h1")
-	.attr("id", "title_text")
+  .attr("id", "title_text")
+    .text("POVERTY");
+
+var sub_title_div = grid
+    .append("div")
+    .attr("class", "row_divs");
+
+sub_title_div.append("h2")
+  .attr("id", "subtitle_text")
     .text("THE POVERTY RATE VARIES DRAMATICALLY ACROSS DIFFERENT REGIONS OF THE COUNTRY, AS WELL.");
+
 
 
 // //////////////////////////////////////////
