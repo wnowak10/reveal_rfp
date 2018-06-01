@@ -366,9 +366,9 @@ body {
 
 
 
-   <div class="modal" id="overlay"> 
+ <!--   <div class="modal" id="overlay"> 
     27%
-    </div>
+    </div> -->
   
 
 </body>
@@ -428,172 +428,6 @@ sub_title_div.append("h2")
 
 
 
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Position controls.
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Outer div goes in next row of CSS grid
-// slider_control = grid.append("div").attr("class", "row_divs");
-
-// // Slider control div holds all components of slider control...
-// // the label, slider, play button.
-// slider_control_div = slider_control.append("div").attr("class","control_div")
-
-// // Label
-// slider_control_div.append("div").attr("class", "control_label_div").text("Time:");
-
-// // Slider
-// var slidermargin = {top:0, right:50, bottom:0, left:50},
-//     sliderwidth = 360 - slidermargin.left - slidermargin.right,
-//     sliderheight = 100 - slidermargin.top - slidermargin.bottom;
-
-// var svg = slider_control_div
-//     .append("svg")
-//     .attr("id", "slider_itself");
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Play button
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-// var playButton_div = slider_control_div.append("div").attr("id", "playButton_div");
-
-
-// var playButton = playButton_div.append("button").attr("id", "pb").text("Play");
-
-// playButton
-//     .on("click", function() {
-//         var button = d3.select(this);
-//         if (button.text() == "Pause") {
-//             moving = false;
-//             clearInterval(timer);
-//             button.text("Play");
-//         } 
-//         else {
-//             moving = true;
-//             timer = setInterval(step, 100);
-//             button.text("Pause");
-//             }
-//     });
-
-
-
-
-
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Build radio buttons for race
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-// // controls = grid.append("div").attr("id", "map_controls");
-// dd_control = grid.append("div").attr("class", "row_divs")
-// dd_control_div = dd_control.append("div").attr("class", "control_div")
-
-// var race_dict = {
-//   "All Americans": "all",
-//   "Black Americans": "black",
-//   "White Americans": "white",
-// };
-
-
-// dd_control_div.append("div").attr("class", "control_label_div").text("Race:")
-
-// var shapeData = ["All Americans", "Black Americans", "White Americans"];
-// // var    j = 3;  // Choose the rectangle as default
-
-// // Create the shape selectors
-// var form = dd_control_div.append("div").attr("id", "radio-buttons");
-
-// var labels = form.selectAll("label")
-//     .data(shapeData)
-//     .enter()
-//     .append("label")
-//     .attr("id", "button-label")
-//     .text(function(d) {return d;})
-//     .insert("input")
-//     .attr("id", "button-input")
-//     .attr("type", "radio")
-//     .attr("name", "race")
-//     .attr("checked", function(d, i){
-//       if(i == 0){
-//         return "checked"
-//       }
-//     })
-//     .on("click",function(d,i) {
-//       console.log('variable', variable)
-//       race = race_dict[d]
-//       console.log(race)
-//       income_or_pov = pov_or_mean_income_dict[variable]
-//       console.log(income_or_pov)
-//       dict_to_use = income_or_pov[race]     
-//       console.log(dict_to_use)
-//       dict = dict_to_use[initialYear]
-//       console.log(dict, "what dict are we using for chart?")
-//       drawMapOutline(usa, dict, initialYear, race, variable);
-//       // chartonClick(current_county_id, numclicks, initialYear, v);
-//         // console.log(d);
-//         // console.log(i);
-//     });
-
-
-
-
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-// // Build radio buttons for variable of interest
-// //////////////////////////////////////////
-// //////////////////////////////////////////
-
-// // controls = grid.append("div").attr("id", "map_controls");
-// variable_control = grid.append("div").attr("class", "row_divs")
-// variable_control_div = variable_control.append("div").attr("class", "control_div")
-
-// var variable_dict = {
-//   "Income": "income",
-//   "Poverty": "poverty",
-// };
-
-
-// variable_control_div.append("div").attr("class", "control_label_div").text("Variable of interest:")
-
-// var variables = ["Poverty", "Income"];
-// // var    j = 3;  // Choose the rectangle as default
-
-// // Create the shape selectors
-// var variable_form = variable_control_div.append("div").attr("id", "radio-buttons");
-
-// var opts = variable_form.selectAll("label")
-//     .data(variables)
-//     .enter()
-//     .append("label")
-//     .attr("id", "button-label")
-//     .text(function(d) {return d;})
-//     .insert("input")
-//     .attr("id", "button-input")
-//     .attr("type", "radio")
-//     .attr("name", "variable") // To ensure only one checked at once.
-//     .attr("checked", function(d, i){
-//       if(i == 0){
-//         return "checked"
-//       }
-//     })
-//     .on("click",function(d,i) {
-
-//       variable = d;
-//       income_or_pov = pov_or_mean_income_dict[variable]
-//       dict_to_use = income_or_pov[race]     
-//       dict = dict_to_use[initialYear]
-
-//       drawMapOutline(usa, dict, initialYear, race, variable);
-//       drawLegend(variable);
-//       console.log("why no new legend?")
-//     });
-
-
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Set the dimensions of the canvas/graph.
@@ -606,14 +440,23 @@ var height = 350;
 var mapHeight = 550;
 
 
+function labell() {
+  g.append("text").text("27%")
+      .attr("transform","translate(300,200)").attr("font-size", '80px');
+};
+
+
+
 var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", mapHeight);
 
 var g = chart1.append("g");
 
-g.text("text????")
 
+  // .attr("width",( width + margin.left + margin.right) / 2)
+  //   .attr("height", mapHeight/2);
+// chart1.text("hello");
 //////////////////////////////////////////
 //////////////////////////////////////////
 // Zoom functionality.
@@ -653,7 +496,7 @@ var path = d3.geoPath()
 
 var poverty_rate = .27
 
-g.append("svg").text("test");
+// g.append("svg").text("test");
 
 function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
   console.log('variable when drawing function is ', variable)
@@ -765,6 +608,7 @@ d3.queue()
       state.set(d.id, d.State); 
     })
     .await(done);
+
 
 
 /////////////////////////////////////////////////////
@@ -976,8 +820,9 @@ pov_or_mean_income_dict = {
 
 d3.json("usa.json", function(d){
   drawMapOutline(d, allmaps[2010], 2010, "all", variable, poverty_rate);
-  // drawLegend(variable);
+  labell();
 } );
+
 
 
 //////////////////////////////////////////
@@ -1049,57 +894,57 @@ var label = slider.append("text")
 // //////////////////////////////////////////
 // //////////////////////////////////////////
 
-function prepare(d) {
-  d.id = d.id;
-  d.year = d.year; // Keep as string
-  return d;
-}
+// function prepare(d) {
+//   d.id = d.id;
+//   d.year = d.year; // Keep as string
+//   return d;
+// }
   
-function step() {
-  update(x.invert(currentValue));
-  currentValue = currentValue + (targetValue/60);
-  if (currentValue > targetValue) {
-    moving = false;
-    currentValue = 0;
-    clearInterval(timer);
-    playButton.text("Play");
-  }
-}
+// function step() {
+//   update(x.invert(currentValue));
+//   currentValue = currentValue + (targetValue/60);
+//   if (currentValue > targetValue) {
+//     moving = false;
+//     currentValue = 0;
+//     clearInterval(timer);
+//     playButton.text("Play");
+//   }
+// }
 
-var initialYear = 2010;
+// var initialYear = 2010;
 
-var initialRace = "all";
+// var initialRace = "all";
 
-function update(h) {
+// function update(h) {
 
-    handle.attr("cx", x(h));
-    label
-      .attr("x", x(h))
-      .text(Math.floor(h));
+//     handle.attr("cx", x(h));
+//     label
+//       .attr("x", x(h))
+//       .text(Math.floor(h));
 
-    if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
-    	console.log("entered?")
-      initialYear = Math.round(h,0);
-      if (race == undefined){
-        // var v = 'all'
-        console.log('v undefined')
-        race = initialRace;
-        dict_to_use = poverty_dicts[race]
-      }
-      else {
-        // race = v;
-        dict_to_use = poverty_dicts[race]
-      }
+//     if ( (Math.floor(h+.2) > initialYear) | (Math.floor(h+.2) < initialYear) ){
+//     	console.log("entered?")
+//       initialYear = Math.round(h,0);
+//       if (race == undefined){
+//         // var v = 'all'
+//         console.log('v undefined')
+//         race = initialRace;
+//         dict_to_use = poverty_dicts[race]
+//       }
+//       else {
+//         // race = v;
+//         dict_to_use = poverty_dicts[race]
+//       }
 
-      // What poverty data to use.
-      poverty_dict = dict_to_use[initialYear]
+//       // What poverty data to use.
+//       poverty_dict = dict_to_use[initialYear]
 
-      drawMapOutline(usa, poverty_dict, initialYear, race, variable);
-      chartonClick(current_county_id, numclicks, initialYear, race);
+//       drawMapOutline(usa, poverty_dict, initialYear, race, variable);
+//       chartonClick(current_county_id, numclicks, initialYear, race);
 
-    };
+//     };
   
-};
+// };
 
 
 // /////////////////////////////////////////////

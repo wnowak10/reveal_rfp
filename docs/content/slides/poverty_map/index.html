@@ -375,9 +375,9 @@ h3 {
 
 
 
-   <div class="modal" id="overlay"> 
-    13%
-    </div>
+   <!-- <div class="modal" id="overlay"> 
+    13% -->
+    <!-- </div> -->
   
 
 </body>
@@ -600,6 +600,11 @@ sub_title_div.append("h2")
 //       drawLegend(variable);
 //       console.log("why no new legend?")
 //     });
+
+function labell() {
+  g.append("text").text("13%")
+      .attr("transform","translate(300,200)").attr("font-size", '80px');
+};
 
 
 //////////////////////////////////////////
@@ -984,7 +989,7 @@ pov_or_mean_income_dict = {
 
 d3.json("usa.json", function(d){
   drawMapOutline(d, allmaps[2010], 2010, "all", variable, poverty_rate);
-  // drawLegend(variable);
+  labell()
 } );
 
 
