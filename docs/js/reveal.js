@@ -5,6 +5,10 @@
  *
  * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
+ function myFunction() {
+    	console.log("You pressed a key inside the input field");
+	};
+	
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {
 		// AMD. Register as an anonymous module.
@@ -76,10 +80,10 @@
 			history: false,
 
 			// Enable keyboard shortcuts for navigation
-			keyboard: true,
+			keyboard: true, //was true
 
 			// Optional function that blocks keyboard events when retuning false
-			keyboardCondition: null,
+			keyboardCondition: keyboardConditionFunction, //was null
 
 			// Enable the slide overview mode
 			overview: true,
@@ -4398,10 +4402,28 @@
 	 *
 	 * @param {object} event
 	 */
+	function keyboardConditionFunction() {
+		// Turn off keyboard shortcuts 
+		// to allow for dynamics within the slide.
+
+		// if we hit a slide, 
+		return true;
+
+		// until we finish with that behavior,
+		// return true;
+	};
+
+	// function myFunction() {
+ //    	console.log("You pressed a key inside the input field");
+	// };
+
 	function onDocumentKeyDown( event ) {
 
 		// If there's a condition specified and it returns false,
 		// ignore this event
+		console.log("??????????????????????????")
+		console.log(typeof config.keyboardCondition);
+
 		if( typeof config.keyboardCondition === 'function' && config.keyboardCondition() === false ) {
 			return true;
 		}
