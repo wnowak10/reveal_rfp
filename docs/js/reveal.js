@@ -5,6 +5,79 @@
  *
  * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
+ // console.log('slidenumber', dom.slideNumber)
+
+
+// Set state with 'data-state'
+// attribiute.
+// console.log('LOG WHEN REVEAL.JS CALLED')
+var slideState;
+// var g;
+// console.log("initial g",g)
+count = 0;
+storyLength = 1;
+
+function labell(count) {
+	
+	// Zoom to a poor county.
+	if (count == 1){
+
+		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
+		// Zoom
+		window.frames[0]['g'].transition()
+	      .duration(1000)
+	      .attr("transform", "translate(0,100)scale(5)");
+	    // Label
+	  	window.frames[0]['g']
+	  	.append("text")
+	      .attr("transform", "translate(0,50)scale(5)")
+	    // .attr("transform","translate(100,100)")
+	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '1px');
+	}
+
+};
+
+
+
+
+function story() {
+	if (window.event.keyCode == 39){
+			count++;
+			// if (count == 1){
+			labell(count);
+			// }
+		}
+	if (count > storyLength){
+		// Once we finish story 
+		// (number of times clicked through)
+		// exceeds story length,
+		// return to old behavior.
+		return true;
+	}
+	return false;
+}
+function slideListener() {
+	// This function listens on all key strokes and 
+	// is out input to 
+	// Optional function that blocks keyboard events when returning false
+    // keyboardCondition: slideListener,
+
+	if (slideState == 'income_variation'){
+		// If we hit the income_variation slide
+		// begin story.
+		return story();
+	}
+		// Default behavior is true.
+		// That is, user keys usually forward slides
+		// and otherwise work as expected. 
+		return true;
+};
+
+
+// Reveal.js
+
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {
 		// AMD. Register as an anonymous module.
@@ -76,10 +149,11 @@
 			history: false,
 
 			// Enable keyboard shortcuts for navigation
-			keyboard: true,
+			keyboard: true, //was true
 
 			// Optional function that blocks keyboard events when retuning false
-			keyboardCondition: null,
+			keyboardCondition: slideListener,
+			// keyboardCondition: keyboardConditionFunction, //was null
 
 			// Enable the slide overview mode
 			overview: true,
@@ -2421,7 +2495,7 @@
 				'currentSlide': currentSlide,
 				'origin': o
 			} );
-			console.log('slidechange?');
+
 			layout();
 		}
 		else {
@@ -2690,7 +2764,7 @@
 
 			// If this slide has a state associated with it, add it
 			// onto the current state of the deck
-			var slideState = slides[index].getAttribute( 'data-state' );
+			slideState = slides[index].getAttribute( 'data-state' );
 			if( slideState ) {
 				state = state.concat( slideState.split( ' ' ) );
 			}
@@ -2863,7 +2937,7 @@
 	 *  "h/v":	horizontal / vertical slide number
 	 *    "c":	flattened slide number
 	 *  "c/t":	flattened slide number / total slides
-	 */
+	 */	 
 	function updateSlideNumber() {
 
 		// Update slide number if enabled
@@ -4398,10 +4472,26 @@
 	 *
 	 * @param {object} event
 	 */
+	// function keyboardConditionFunction() {
+	// 	// Turn off keyboard shortcuts 
+	// 	// to allow for dynamics within the slide.
+
+	// 	// if we hit a particular slide, 
+	// 	return true;
+
+	// 	// until we finish with that behavior,
+	// 	// return true;
+	// };
+
+	// function myFunction() {
+ //    	console.log("You pressed a key inside the input field");
+	// };
+
 	function onDocumentKeyDown( event ) {
 
 		// If there's a condition specified and it returns false,
 		// ignore this event
+		
 		if( typeof config.keyboardCondition === 'function' && config.keyboardCondition() === false ) {
 			return true;
 		}
