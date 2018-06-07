@@ -6,63 +6,62 @@
  * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
  // console.log('slidenumber', dom.slideNumber)
-// var numPresses = 0;
-var currentSlide;
-var slideState;
 
+
+// Set state with 'data-state'
+// attribiute.
+console.log('LOG WHEN REVEAL.JS CALLED')
+var slideState;
+var g;
+count = 0;
+storyLength = 10;
+
+function labell(g) {
+  g.append("text").text("27%")
+    .attr("id", "overlay_text")
+      .attr("transform","translate(300,200)").attr("font-size", '80px');
+};
+
+
+function story() {
+	// if (window.event.keyCode == 219){
+	// 		console.log('bracket')
+	// 	}
+	if (window.event.keyCode == 39){
+			count++;
+			if (count == 4){
+				labell(g);
+			}
+			console.log('right arrow')
+			console.log('number left', storyLength - count)
+		}
+	if (count > storyLength){
+		return true;
+	}
+	return false;
+}
+counterVar = 0;
 function slideListener() {
-	counterVar = 0;
+	// This functoin listens on all key strokes and 
+	// is out input to 
+	// Optional function that blocks keyboard events when returning false
+    // keyboardCondition: slideListener,
+
+    // We keep track of how many times user has pressed key
+    //. Once they are in a threshold, more presses don't move forward.
+    // Until eventually they do.
+	// counterVar++;
+
+	if (window.event.keyCode == 39){
+			console.log('right arrow')
+		}
+
+
 	if (slideState == 'stats'){
-		return false;
+		return story();
 	}
 		return true;
-		console.log(slideState)
 };
-// // var flag = 0;
-// // function flag(){
-//  	// console.log('entered special slide');
-//  	// return true;
-//  // };
-
-//  function b(){
-//  	if (typeof flag === 'function') {
-//  		return true;
-//  	} else {
-//  		return false;
-//  	}
-//  }
- // flag = flag();
- // console.log(numPresses);
- // function counter() {
- // 	// console.log('flag', flag)
- // 	numPresses++;
- // 	console.log('numPresses', numPresses)
- // 	if (numPresses < 10){
- // 		return false;
- // 	}
- // 	else {
- // 		return true;
- // 	}
- // 		// console.log(numPresses)
- //  	// return numPresses;
-	// };	
- //  console.log(counter())
-  // console.log(numPresses)			
-  // console.log(numPresses)
-
- // function myFunction() {
- //    	console.log("You pressed a key inside the input field");
-	// };
-// function stats(input = false) {
-// 			if (input){
-// 				console.log('OTHER STATS CALLED')
-// 				return true;
-// 			}
-// 			else {
-// 				console.log('stats called')
-// 				return false;	
-// 			}
-// 			};
 
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {

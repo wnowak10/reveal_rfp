@@ -124,7 +124,8 @@ var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", mapHeight);
 
-var g = chart1.append("g");
+// This is a global var declared in reveal js
+g = chart1.append("g");
 
 
 //////////////////////////////////////////
