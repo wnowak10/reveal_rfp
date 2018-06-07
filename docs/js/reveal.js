@@ -17,10 +17,18 @@ console.log("initial g",g)
 count = 0;
 storyLength = 10;
 
+
 // console.log('frames:', window.frames[0]['g'])
 function labell(g) {
 	console.log('g in label function', g);
 	
+
+	window.frames[0]['g'].transition()
+      .duration(1000)
+      .attr("transform", "translate(100,100)");
+      // .style("stroke-width", 1.5 / k + "px");
+
+
   	window.frames[0]['g'].append("text").text("27%")
     .attr("id", "overlay_text")
     .attr("transform","translate(300,200)")
