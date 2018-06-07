@@ -67,7 +67,7 @@
 	</head>
 
 
-	<body> <!--  onkeydown="myFunction()" -->
+	<body>
 		<div class="reveal">
 			<div class="slides">
 
@@ -109,7 +109,7 @@
 
 				<!-- 5 -->
 				<!-- Color variation map -->
-				<section>
+				<section data-state="stats">
 						<!-- D3 HTML files should be called with the following
 						class and data-file attributes. -->
 						<div class="fig-container"
@@ -143,12 +143,59 @@
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
-
 		<script>
+
+			// var currentSlide;
+			// var currentSlideNumber = 0;
+
+			// function keyfunction () {
+			//     	// if we are n page 5?
+			// 		// if(window.event.keyCode == 219 || window.event.keyCode == 221)
+					
+			// 			// console.log("keyboardCondition");
+			// 			// console.log(currentSlide)
+			// 			// console.log(currentSlideNumber)
+			// 			// // x++;
+			// 			return true;
+			// 			// x++;
+			// 		// }
+			// 		// if(currentSlideNumber == 219 || window.event.keyCode == 221)
+						
+			// 		if(window.event.shiftKey){
+			// 			// console.log('here?')
+			// 			return true;
+			// 		}
+			// 		return false;
+			// 	};
+
+			
+
+			// function slideListener() {
+				// console.log(slideState)
+				// if(window.event.keyCode == 219 || window.event.keyCode == 221)
+				// 	return true;
+				// if(window.event.shiftKey){
+				// 	return true;
+				// }
+				// return false;
+				// if(window.event.keyCode == 219 || window.event.keyCode == 221){
+				// 	return true;
+				// };
+				// return false;
+				// console.log("stats class hit?")
+			 // 	currentSlide = evt.currentSlide;
+			 // 	console.log('test?')
+			 // 	currentSlideNumber = evt.indexh;
+			 // 	console.log('currentSlideNumber ==', currentSlideNumber)
+			    // console.log('slide4')
+			    // console.log(currentSlide)
+			    // console.log(evt.indexh)
+			// };
 			Reveal.initialize({
 				transition: 'none', // none/fade/slide/convex/concave/zoom
 				width: '100%',
 			    height: '100%',
+			    // keyboardCondition: slideListener, // This function controls key down
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
@@ -159,6 +206,21 @@
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
 				]
 			});
+
+			
+			// Reveal.addEventListener('slidechanged', slideListener);
+			// function slideListener(evt) {
+			//  	currentSlide = evt.currentSlide;
+			//     console.log('slide4')
+			//     console.log(currentSlide)
+			//     console.log(evt.indexh)
+			// };
+			// Reveal.addEventListener( 'ready', function( event ) {
+				// console.log(event.currentSlide, event.indexh, event.indexv);
+				// } );
+			// console.log(currentSlide);
+			Reveal.addEventListener( 'stats', slideListener, false); // This function alerts when we are on desired page.
+
 		</script>
 	</body>
 </html>

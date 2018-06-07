@@ -5,10 +5,65 @@
  *
  * Copyright (C) 2017 Hakim El Hattab, http://hakim.se
  */
- function myFunction() {
-    	console.log("You pressed a key inside the input field");
-	};
-	
+ // console.log('slidenumber', dom.slideNumber)
+// var numPresses = 0;
+var currentSlide;
+var slideState;
+
+function slideListener() {
+	counterVar = 0;
+	if (slideState == 'stats'){
+		return false;
+	}
+		return true;
+		console.log(slideState)
+};
+// // var flag = 0;
+// // function flag(){
+//  	// console.log('entered special slide');
+//  	// return true;
+//  // };
+
+//  function b(){
+//  	if (typeof flag === 'function') {
+//  		return true;
+//  	} else {
+//  		return false;
+//  	}
+//  }
+ // flag = flag();
+ // console.log(numPresses);
+ // function counter() {
+ // 	// console.log('flag', flag)
+ // 	numPresses++;
+ // 	console.log('numPresses', numPresses)
+ // 	if (numPresses < 10){
+ // 		return false;
+ // 	}
+ // 	else {
+ // 		return true;
+ // 	}
+ // 		// console.log(numPresses)
+ //  	// return numPresses;
+	// };	
+ //  console.log(counter())
+  // console.log(numPresses)			
+  // console.log(numPresses)
+
+ // function myFunction() {
+ //    	console.log("You pressed a key inside the input field");
+	// };
+// function stats(input = false) {
+// 			if (input){
+// 				console.log('OTHER STATS CALLED')
+// 				return true;
+// 			}
+// 			else {
+// 				console.log('stats called')
+// 				return false;	
+// 			}
+// 			};
+
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {
 		// AMD. Register as an anonymous module.
@@ -71,7 +126,7 @@
 			progress: true,
 
 			// Display the page number of the current slide
-			slideNumber: false,
+			slideNumber: true,
 
 			// Determine which displays to show the slide number on
 			showSlideNumber: 'all',
@@ -83,7 +138,8 @@
 			keyboard: true, //was true
 
 			// Optional function that blocks keyboard events when retuning false
-			keyboardCondition: keyboardConditionFunction, //was null
+			keyboardCondition: slideListener,
+			// keyboardCondition: keyboardConditionFunction, //was null
 
 			// Enable the slide overview mode
 			overview: true,
@@ -2425,7 +2481,7 @@
 				'currentSlide': currentSlide,
 				'origin': o
 			} );
-			console.log('slidechange?');
+
 			layout();
 		}
 		else {
@@ -2694,7 +2750,7 @@
 
 			// If this slide has a state associated with it, add it
 			// onto the current state of the deck
-			var slideState = slides[index].getAttribute( 'data-state' );
+			slideState = slides[index].getAttribute( 'data-state' );
 			if( slideState ) {
 				state = state.concat( slideState.split( ' ' ) );
 			}
@@ -2867,7 +2923,7 @@
 	 *  "h/v":	horizontal / vertical slide number
 	 *    "c":	flattened slide number
 	 *  "c/t":	flattened slide number / total slides
-	 */
+	 */	 
 	function updateSlideNumber() {
 
 		// Update slide number if enabled
@@ -4402,16 +4458,16 @@
 	 *
 	 * @param {object} event
 	 */
-	function keyboardConditionFunction() {
-		// Turn off keyboard shortcuts 
-		// to allow for dynamics within the slide.
+	// function keyboardConditionFunction() {
+	// 	// Turn off keyboard shortcuts 
+	// 	// to allow for dynamics within the slide.
 
-		// if we hit a slide, 
-		return true;
+	// 	// if we hit a particular slide, 
+	// 	return true;
 
-		// until we finish with that behavior,
-		// return true;
-	};
+	// 	// until we finish with that behavior,
+	// 	// return true;
+	// };
 
 	// function myFunction() {
  //    	console.log("You pressed a key inside the input field");
@@ -4421,9 +4477,7 @@
 
 		// If there's a condition specified and it returns false,
 		// ignore this event
-		console.log("??????????????????????????")
-		console.log(typeof config.keyboardCondition);
-
+		
 		if( typeof config.keyboardCondition === 'function' && config.keyboardCondition() === false ) {
 			return true;
 		}

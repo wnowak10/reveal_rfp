@@ -515,14 +515,14 @@ var poverty_rate = .27
 // g.append("svg").text("test");
 
 function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
-  console.log('variable when drawing function is ', variable)
+  // console.log('variable when drawing function is ', variable)
 
   if (variable == 'Poverty'){
-    console.log('variable is pov??')
+    // console.log('variable is pov??')
     var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
   }
   else {
-    console.log('other?')
+    // console.log('other?')
     var color = d3.scaleLinear().domain([0, 120000]).range(['#ffeaea', '#660404']);
   }
 
@@ -605,7 +605,7 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
 };
 
 function done(d){
-  console.log("Read files");
+  // console.log("Read files");
 }
 
 var county = d3.map();
@@ -1223,7 +1223,7 @@ function drawLegend(variable) {
   // https://stackoverflow.com/questions/19772124/how-can-i-update-my-graph-legend-in-d3-js
   // d3.selectAll("#legend_rect").remove();
 
-  console.log("redraw legend?")
+  // console.log("redraw legend?")
   var ext_color_domain = [.2, .4, .6, .8, 1]
   var legend_labels = ["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]              
   var color = d3.scaleLinear().domain([0, .5]).range(['#ffeaea', '#660404']);
