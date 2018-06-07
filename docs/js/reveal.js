@@ -21,6 +21,8 @@ function labell(count) {
 	
 	// Zoom to a poor county.
 	if (count == 1){
+
+		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
 		// Zoom
 		window.frames[0]['g'].transition()
 	      .duration(1000)
@@ -30,9 +32,9 @@ function labell(count) {
 	  	.append("text")
 	      .attr("transform", "translate(0,50)scale(5)")
 	    // .attr("transform","translate(100,100)")
-	  	.text("For example, 50% of residents in __ County earn below $20K a year.")
+	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
 	    .attr("id", "overlay_text")
-	    .attr("font-size", '2px');
+	    .attr("font-size", '1px');
 	}
 
 };
