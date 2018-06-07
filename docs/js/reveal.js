@@ -10,78 +10,71 @@
 
 // Set state with 'data-state'
 // attribiute.
-console.log('LOG WHEN REVEAL.JS CALLED')
+// console.log('LOG WHEN REVEAL.JS CALLED')
 var slideState;
-var g;
-console.log("initial g",g)
+// var g;
+// console.log("initial g",g)
 count = 0;
-storyLength = 10;
+storyLength = 1;
 
-
-// console.log('frames:', window.frames[0]['g'])
-function labell(g) {
-	console.log('g in label function', g);
+function labell(count) {
 	
+	// Zoom to a poor county.
+	if (count == 1){
+		// Zoom
+		window.frames[0]['g'].transition()
+	      .duration(1000)
+	      .attr("transform", "translate(0,100)scale(5)");
+	    // Label
+	  	window.frames[0]['g']
+	  	.append("text")
+	      .attr("transform", "translate(0,50)scale(5)")
+	    // .attr("transform","translate(100,100)")
+	  	.text("For example, 50% of residents in __ County earn below $20K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+	}
 
-	window.frames[0]['g'].transition()
-      .duration(1000)
-      .attr("transform", "translate(100,100)");
-      // .style("stroke-width", 1.5 / k + "px");
-
-
-  	window.frames[0]['g'].append("text").text("27%")
-    .attr("id", "overlay_text")
-    .attr("transform","translate(300,200)")
-    .attr("font-size", '80px');
 };
 
-function getWindowFrame(){
-	 console.log('frame',window.frames[0]['g'])
-	 g = window.frames[0]['g'];
-	 
-};
 
-// window.frames[0]['g'].append("text").text("27%")
-//     .attr("id", "overlay_text")
-//       .attr("transform","translate(300,200)").attr("font-size", '80px');
+
 
 function story() {
-	// if (window.event.keyCode == 219){
-	// 		console.log('bracket')
-	// 	}
 	if (window.event.keyCode == 39){
 			count++;
-			if (count == 4){
-				labell(g);
-			}
-			console.log('right arrow')
-			console.log('number left', storyLength - count)
+			// if (count == 1){
+			labell(count);
+			// }
 		}
 	if (count > storyLength){
+		// Once we finish story 
+		// (number of times clicked through)
+		// exceeds story length,
+		// return to old behavior.
 		return true;
 	}
 	return false;
 }
-counterVar = 0;
 function slideListener() {
-	// This functoin listens on all key strokes and 
+	// This function listens on all key strokes and 
 	// is out input to 
 	// Optional function that blocks keyboard events when returning false
     // keyboardCondition: slideListener,
 
-    // We keep track of how many times user has pressed key
-    //. Once they are in a threshold, more presses don't move forward.
-    // Until eventually they do.
-	// counterVar++;
-
-	if (window.event.keyCode == 39){
-			console.log('right arrow')
-		}
-	if (slideState == 'stats'){
+	if (slideState == 'income_variation'){
+		// If we hit the income_variation slide
+		// begin story.
 		return story();
 	}
+		// Default behavior is true.
+		// That is, user keys usually forward slides
+		// and otherwise work as expected. 
 		return true;
 };
+
+
+// Reveal.js
 
 (function( root, factory ) {
 	if( typeof define === 'function' && define.amd ) {
