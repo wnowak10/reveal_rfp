@@ -219,7 +219,10 @@
 				// console.log(event.currentSlide, event.indexh, event.indexv);
 				// } );
 			// console.log(currentSlide);
-			Reveal.addEventListener( 'stats', slideListener, false); // This function alerts when we are on desired page.
+			Reveal.addEventListener( 'stats', function(){
+				slideListener();
+				getWindowFrame();
+			}); // This function alerts when we are on desired page.
 
 		</script>
 	</body>

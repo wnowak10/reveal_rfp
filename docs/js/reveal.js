@@ -17,12 +17,25 @@ console.log("initial g",g)
 count = 0;
 storyLength = 10;
 
-function labell() {
-  d3.select("div").append("text").text("27%")
+// console.log('frames:', window.frames[0]['g'])
+function labell(g) {
+	console.log('g in label function', g);
+	
+  	window.frames[0]['g'].append("text").text("27%")
     .attr("id", "overlay_text")
-      .attr("transform","translate(300,200)").attr("font-size", '80px');
+    .attr("transform","translate(300,200)")
+    .attr("font-size", '80px');
 };
 
+function getWindowFrame(){
+	 console.log('frame',window.frames[0]['g'])
+	 g = window.frames[0]['g'];
+	 
+};
+
+// window.frames[0]['g'].append("text").text("27%")
+//     .attr("id", "overlay_text")
+//       .attr("transform","translate(300,200)").attr("font-size", '80px');
 
 function story() {
 	// if (window.event.keyCode == 219){
@@ -56,8 +69,6 @@ function slideListener() {
 	if (window.event.keyCode == 39){
 			console.log('right arrow')
 		}
-
-
 	if (slideState == 'stats'){
 		return story();
 	}
