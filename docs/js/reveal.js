@@ -13,11 +13,12 @@
 console.log('LOG WHEN REVEAL.JS CALLED')
 var slideState;
 var g;
+console.log("initial g",g)
 count = 0;
 storyLength = 10;
 
-function labell(g) {
-  g.append("text").text("27%")
+function labell() {
+  d3.select("div").append("text").text("27%")
     .attr("id", "overlay_text")
       .attr("transform","translate(300,200)").attr("font-size", '80px');
 };
