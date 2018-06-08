@@ -92,6 +92,13 @@ function labell(count) {
 	    .attr("font-size", '20px');
 
 
+		 window.frames[0]['g']
+	  	.append("text")
+	  	.attr("transform","translate(250,40)")
+	  	.text("(Click arrow in lower right to move to next slide.)")
+	  	.attr("id", "overlay_text")
+	    .attr("font-size", '18px');
+
 	}
 
 };
