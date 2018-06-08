@@ -168,8 +168,9 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
       .attr("fill", function(d) { 
           if (d.id == 13309 )
           {
-            wheeler = d;
-            console.log(d)
+            // wheeler = d;
+            MyApp.wheeler = d;
+            console.log(MyApp)
           }
           return color(dict.get(d.id)); 
        }) // Need this to switch 

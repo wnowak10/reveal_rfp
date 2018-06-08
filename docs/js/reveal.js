@@ -13,6 +13,8 @@
 // console.log('LOG WHEN REVEAL.JS CALLED')
 var slideState;
 var wheeler;
+var MyApp = {}; // Globally scoped object
+MyApp.test = 'hi';
 // var g;
 // console.log("initial g",g)
 count = 0;
@@ -22,8 +24,6 @@ function labell(count) {
 	
 	// Zoom to a poor county.
 	if (count == 1){
-		console.log("wheeler?",wheeler)
-		
 		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
 		// Zoom
 		window.frames[0]['g'].transition()
@@ -64,6 +64,8 @@ function story() {
 	return false;
 }
 function slideListener() {
+	console.log("wheeler?",Object.keys(MyApp))
+
 	// This function listens on all key strokes and 
 	// is out input to 
 	// Optional function that blocks keyboard events when returning false
