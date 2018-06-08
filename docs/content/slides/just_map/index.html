@@ -170,10 +170,32 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
           {
             // wheeler = d;
             MyApp.wheeler = d;
-            // console.log(MyApp)
+            console.log('MyApp in fill', MyApp)
+            return 'yellow'
+          }
+          if (d.id == '06041' )
+          {
+            // wheeler = d;
+            MyApp.wheeler = d;
+            console.log('MyApp in fill', MyApp)
+            return 'yellow'
           }
           return color(dict.get(d.id)); 
        }) // Need this to switch 
+      // .attr("stroke", function(d) { 
+      //     if (d.id == 13309 )
+      //     {
+      //       return 'green'
+      //     }
+      //     return color(dict.get(d.id)); 
+      //  }) // Need this to switch 
+      // .attr("stroke-width", function(d) { 
+      //     if (d.id == 13309 )
+      //     {
+      //       return '2'
+      //     }
+      //     return color(dict.get(d.id)); 
+      //  }) // Need this to switch 
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
       

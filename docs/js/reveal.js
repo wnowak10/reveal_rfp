@@ -18,7 +18,7 @@ MyApp.test = 'hi';
 // var g;
 // console.log("initial g",g)
 count = 0;
-storyLength = 1;
+storyLength = 3;
 
 function labell(count) {
 	
@@ -27,17 +27,71 @@ function labell(count) {
 		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
 		// Zoom
 		window.frames[0]['g'].transition()
-	      .duration(1000)
-  	      .attr("transform", "scale(10)translate(-550,-260)");
+	      .duration(1500)
+  	      .attr("transform", "scale(12)translate(-530,-280)");
 
 	    // Label
 	  	window.frames[0]['g']
 	  	.append("text")
-		// .attr("transform", "scale(1)") //translate(-500,-200)")
-	    .attr("transform","translate(10,250)")
-	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
+	    .attr("transform","translate(545,292)")
+	  	.text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	// .text("a median annual income of less than $10K a year.")
 	    .attr("id", "overlay_text")
-	    .attr("font-size", '100px');
+	    .attr("font-size", '2px');
+
+	    window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(545,295)")
+	  	// .text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	.text("a median annual income of less than $30K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+	}
+	if (count ==2){
+		
+
+        window.frames[0]['g'].transition()
+	      .duration(1500)
+  	      .attr("transform", "scale(12)translate(-60,-150)");
+
+
+  	      // Label
+	  	window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(60,160)")
+	  	.text("Marin County, CA, in contrast")
+	    // .attr("transform","translate(0,2)")
+	  	// .text("a median annual income of less than $10K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+
+	    window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(60,163)")
+	  	// .text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	.text("has a annual median income of >$90K.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+	}
+
+	if (count ==3){
+		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
+		// Zoom
+		window.frames[0]['g'].transition()
+	      .duration(1500)
+  	      .attr("transform", "scale(1)translate(0,0)");
+
+  	    window.frames[0]['g']
+	  	.append("text")
+	  	.attr("transform","translate(150,20)")
+	  	.text("Drag and zoom to interact with the map for further exploration.")
+	  	.attr("id", "overlay_text")
+	    .attr("font-size", '20px');
+
+
 	}
 
 };
