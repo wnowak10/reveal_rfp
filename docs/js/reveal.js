@@ -12,6 +12,7 @@
 // attribiute.
 // console.log('LOG WHEN REVEAL.JS CALLED')
 var slideState;
+var wheeler;
 // var g;
 // console.log("initial g",g)
 count = 0;
@@ -21,16 +22,20 @@ function labell(count) {
 	
 	// Zoom to a poor county.
 	if (count == 1){
-
+		console.log("wheeler?",wheeler)
+		
 		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
 		// Zoom
 		window.frames[0]['g'].transition()
 	      .duration(1000)
-	      .attr("transform", "translate(0,100)scale(5)");
+  	      .attr("transform", "scale(10)translate(-500,-200)");
+	      // .attr("transform", "translate(100,100)");
+
+	      // .attr("transform", "translate(-100,-100)scale(3)");
 	    // Label
 	  	window.frames[0]['g']
 	  	.append("text")
-	      .attr("transform", "translate(0,50)scale(5)")
+	      .attr("transform", "translate(667,50)scale(5)")
 	    // .attr("transform","translate(100,100)")
 	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
 	    .attr("id", "overlay_text")
