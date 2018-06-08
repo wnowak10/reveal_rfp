@@ -28,16 +28,16 @@ function labell(count) {
 		// Zoom
 		window.frames[0]['g'].transition()
 	      .duration(1000)
-  	      .attr("transform", "scale(10)translate(-500,-200)");
+  	      .attr("transform", "scale(10)translate(-550,-260)");
 
 	    // Label
-	 //  	window.frames[0]['g']
-	 //  	.append("text")
-		// // .attr("transform", "scale(1)") //translate(-500,-200)")
-	 //    .attr("transform","translate(10,10)")
-	 //  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
-	 //    .attr("id", "overlay_text")
-	 //    .attr("font-size", '20px');
+	  	window.frames[0]['g']
+	  	.append("text")
+		// .attr("transform", "scale(1)") //translate(-500,-200)")
+	    .attr("transform","translate(10,250)")
+	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '100px');
 	}
 
 };
@@ -64,12 +64,13 @@ function story() {
 		// (number of times clicked through)
 		// exceeds story length,
 		// return to old behavior.
-		back = 0;
+		// back = 0;
 		return true;
 	}
 	// if they hit back, revert to normal key behavior
 	if (window.event.keyCode == 37){	
 		console.log("back", back)
+		count = 0;
 		reverseStep();
   	    if (back > 1){
 			return true;
