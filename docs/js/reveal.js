@@ -12,53 +12,137 @@
 // attribiute.
 // console.log('LOG WHEN REVEAL.JS CALLED')
 var slideState;
+var wheeler;
+var MyApp = {}; // Globally scoped object
+MyApp.test = 'hi';
 // var g;
 // console.log("initial g",g)
 count = 0;
-storyLength = 1;
+storyLength = 3;
 
 function labell(count) {
 	
 	// Zoom to a poor county.
 	if (count == 1){
-
 		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
 		// Zoom
 		window.frames[0]['g'].transition()
-	      .duration(1000)
-	      .attr("transform", "translate(0,100)scale(5)");
+	      .duration(1500)
+  	      .attr("transform", "scale(12)translate(-530,-280)");
+
 	    // Label
 	  	window.frames[0]['g']
 	  	.append("text")
-	      .attr("transform", "translate(0,50)scale(5)")
-	    // .attr("transform","translate(100,100)")
-	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
+	    .attr("transform","translate(545,292)")
+	  	.text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	// .text("a median annual income of less than $10K a year.")
 	    .attr("id", "overlay_text")
-	    .attr("font-size", '1px');
+	    .attr("font-size", '2px');
+
+	    window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(545,295)")
+	  	// .text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	.text("a median annual income of less than $30K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+	}
+	if (count ==2){
+		
+
+        window.frames[0]['g'].transition()
+	      .duration(1500)
+  	      .attr("transform", "scale(12)translate(-60,-150)");
+
+
+  	      // Label
+	  	window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(60,160)")
+	  	.text("Marin County, CA, in contrast")
+	    // .attr("transform","translate(0,2)")
+	  	// .text("a median annual income of less than $10K a year.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+
+	    window.frames[0]['g']
+	  	.append("text")
+	    .attr("transform","translate(60,163)")
+	  	// .text("For example, Wheeler County, GA has")
+	    // .attr("transform","translate(0,2)")
+	  	.text("has a annual median income of >$90K.")
+	    .attr("id", "overlay_text")
+	    .attr("font-size", '2px');
+	}
+
+	if (count ==3){
+		path = window.frames[0]['chart1']['_groups'][0][0].childNodes[0].childNodes[1].childNodes[0].getAttribute('d')
+		// Zoom
+		window.frames[0]['g'].transition()
+	      .duration(1500)
+  	      .attr("transform", "scale(1)translate(0,0)");
+
+  	    window.frames[0]['g']
+	  	.append("text")
+	  	.attr("transform","translate(150,20)")
+	  	.text("Drag and zoom to interact with the map for further exploration.")
+	  	.attr("id", "overlay_text")
+	    .attr("font-size", '20px');
+
+
+		 window.frames[0]['g']
+	  	.append("text")
+	  	.attr("transform","translate(250,40)")
+	  	.text("(Click arrow in lower right to move to next slide.)")
+	  	.attr("id", "overlay_text")
+	    .attr("font-size", '18px');
+
 	}
 
 };
 
 
 
+var back = 0;
+
+function reverseStep() {
+	window.frames[0]['g'].transition()
+	      .duration(1000)
+  	      .attr("transform", "scale(1)");
+  	    back++;
+}
 
 function story() {
 	if (window.event.keyCode == 39){
 			count++;
-			// if (count == 1){
 			labell(count);
-			// }
-		}
+			back = 0;
+	}
 	if (count > storyLength){
 		// Once we finish story 
 		// (number of times clicked through)
 		// exceeds story length,
 		// return to old behavior.
+		// back = 0;
 		return true;
+	}
+	// if they hit back, revert to normal key behavior
+	if (window.event.keyCode == 37){	
+		console.log("back", back)
+		count = 0;
+		reverseStep();
+  	    if (back > 1){
+			return true;
+			back = 0;
+  	    }
 	}
 	return false;
 }
 function slideListener() {
+	// console.log("wheeler?",Object.keys(MyApp))
+
 	// This function listens on all key strokes and 
 	// is out input to 
 	// Optional function that blocks keyboard events when returning false
@@ -68,6 +152,12 @@ function slideListener() {
 		// If we hit the income_variation slide
 		// begin story.
 		return story();
+	}
+	else {
+		// Reset count variable when they leave
+		// this slide so when they return to it
+		// we see zoom behavior again.
+		count = 0;
 	}
 		// Default behavior is true.
 		// That is, user keys usually forward slides

@@ -47,24 +47,6 @@ function off() {
     document.getElementById("overlay").style.display = "none";
 }
 
-// function flag(){
-//   console.log("hi")
-// };
-// var i = 0;
-// function counter() {
-//   i++;
-//   console.log(i)
-//   return i;
-// }
-
-
-// count = counter();
-// console.log('count is', count);
-// function myFunction() {
-//     console.log("You pressed a key inside the input field");
-// }
-
-
  var grid = d3.select("body")
  	.append("div")
  	.attr("id", "grid")
@@ -127,7 +109,7 @@ var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
 
 // This is a global var declared in reveal js
 g = chart1.append("g");
-console.log("g now", g)
+// console.log("g now", g)
 
 //////////////////////////////////////////
 // Scale map down
@@ -183,8 +165,37 @@ function drawMapOutline(us, dict, initialYear, race, variable, poverty_rate) {
       .append("path");
 
     counties
-      .attr("fill", function(d) { return color(dict.get(d.id)); }) // Need this to switch 
-
+      .attr("fill", function(d) { 
+          if (d.id == 13309 )
+          {
+            // wheeler = d;
+            MyApp.wheeler = d;
+            console.log('MyApp in fill', MyApp)
+            return 'yellow'
+          }
+          if (d.id == '06041' )
+          {
+            // wheeler = d;
+            MyApp.wheeler = d;
+            console.log('MyApp in fill', MyApp)
+            return 'yellow'
+          }
+          return color(dict.get(d.id)); 
+       }) // Need this to switch 
+      // .attr("stroke", function(d) { 
+      //     if (d.id == 13309 )
+      //     {
+      //       return 'green'
+      //     }
+      //     return color(dict.get(d.id)); 
+      //  }) // Need this to switch 
+      // .attr("stroke-width", function(d) { 
+      //     if (d.id == 13309 )
+      //     {
+      //       return '2'
+      //     }
+      //     return color(dict.get(d.id)); 
+      //  }) // Need this to switch 
       .attr("transform", "translate("+-2*margin.left+","+5*margin.top+")")
       .attr("d", path);
       
