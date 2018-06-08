@@ -29,42 +29,57 @@ function labell(count) {
 		window.frames[0]['g'].transition()
 	      .duration(1000)
   	      .attr("transform", "scale(10)translate(-500,-200)");
-	      // .attr("transform", "translate(100,100)");
 
-	      // .attr("transform", "translate(-100,-100)scale(3)");
 	    // Label
-	  	window.frames[0]['g']
-	  	.append("text")
-	      .attr("transform", "translate(667,50)scale(5)")
-	    // .attr("transform","translate(100,100)")
-	  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
-	    .attr("id", "overlay_text")
-	    .attr("font-size", '1px');
+	 //  	window.frames[0]['g']
+	 //  	.append("text")
+		// // .attr("transform", "scale(1)") //translate(-500,-200)")
+	 //    .attr("transform","translate(10,10)")
+	 //  	.text("For example, Wheeler County, GA has a median annual income of less than $10K a year.")
+	 //    .attr("id", "overlay_text")
+	 //    .attr("font-size", '20px');
 	}
 
 };
 
 
 
+var back = 0;
+
+function reverseStep() {
+	window.frames[0]['g'].transition()
+	      .duration(1000)
+  	      .attr("transform", "scale(1)");
+  	    back++;
+}
 
 function story() {
 	if (window.event.keyCode == 39){
 			count++;
-			// if (count == 1){
 			labell(count);
-			// }
-		}
+			back = 0;
+	}
 	if (count > storyLength){
 		// Once we finish story 
 		// (number of times clicked through)
 		// exceeds story length,
 		// return to old behavior.
+		back = 0;
 		return true;
+	}
+	// if they hit back, revert to normal key behavior
+	if (window.event.keyCode == 37){	
+		console.log("back", back)
+		reverseStep();
+  	    if (back > 1){
+			return true;
+			back = 0;
+  	    }
 	}
 	return false;
 }
 function slideListener() {
-	console.log("wheeler?",Object.keys(MyApp))
+	// console.log("wheeler?",Object.keys(MyApp))
 
 	// This function listens on all key strokes and 
 	// is out input to 
@@ -75,6 +90,12 @@ function slideListener() {
 		// If we hit the income_variation slide
 		// begin story.
 		return story();
+	}
+	else {
+		// Reset count variable when they leave
+		// this slide so when they return to it
+		// we see zoom behavior again.
+		count = 0;
 	}
 		// Default behavior is true.
 		// That is, user keys usually forward slides
