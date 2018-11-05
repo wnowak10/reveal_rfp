@@ -1,0 +1,72 @@
+<!-- Used resources: -->
+
+<!-- http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html -->
+<!-- hover: http://bl.ocks.org/mattparrilla/5724610 -->
+<!-- basic chloropleth https://bl.ocks.org/mbostock/4060606 -->
+<!-- youtube map https://www.youtube.com/watch?v=G-VggTK-Wlg -->
+<!-- click zoom http://bl.ocks.org/phil-pedruco/7557092 -->
+<!-- scroll zoom https://bl.ocks.org/iamkevinv/0a24e9126cd2fa6b283c6f2d774b69a2 -->
+<!-- scale https://bl.ocks.org/andrew-reid/496078bd5e37fd22a9b43fd6be84b36b -->
+<!-- https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4 bar chart v4! -->
+
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<link rel="stylesheet" type="text/css" href="map.css">
+</head>
+
+
+<script src="https://d3js.org/d3.v4.min.js"></script> 
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src="https://d3js.org/d3-axis.v1.min.js"></script>
+<script src="https://d3js.org/d3-drag.v1.min.js"></script>
+<script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script> 
+<body onclick="off()" onresize="off()">
+
+
+
+   <!-- <div class="modal" id="overlay"> 
+    13% -->
+    <!-- </div> -->
+<div id='x'> </div>
+
+</body>
+
+
+<script>
+// import {Spinner} from 'spin.js';
+
+var opts = {
+  lines: 13, // The number of lines to draw
+  length: 38, // The length of each line
+  width: 17, // The line thickness
+  radius: 45, // The radius of the inner circle
+  scale: 1, // Scales overall size of the spinner
+  corners: 1, // Corner roundness (0..1)
+  color: '#ffffff', // CSS color or array of colors
+  fadeColor: 'transparent', // CSS color or array of colors
+  speed: 1, // Rounds per second
+  rotate: 0, // The rotation offset
+  animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  className: 'spinner', // The CSS class to assign to the spinner
+  top: '50%', // Top position relative to parent
+  left: '50%', // Left position relative to parent
+  shadow: '0 0 1px transparent', // Box-shadow for the lines
+  position: 'absolute' // Element positioning
+};
+
+var target = document.getElementById('x');
+var spinner = new Spinner(opts).spin(target);
+setTimeout(function(){
+    console.log("THIS IS");
+    spinner.stop();
+}, 2000);
+
+
+</script>

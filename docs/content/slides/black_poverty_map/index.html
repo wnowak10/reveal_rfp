@@ -24,6 +24,7 @@
 <script src="https://d3js.org/d3-axis.v1.min.js"></script>
 <script src="https://d3js.org/d3-drag.v1.min.js"></script>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script> 
 
 <body onclick="off()" onresize="off()">
 
@@ -111,7 +112,7 @@ function labell() {
 
 
 
-var chart1 = grid.append("div").attr("class", "row_divs").append("svg")
+var chart1 = grid.append("div").attr("class", "row_divs").attr('id','chart1').append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", mapHeight);
 
@@ -261,10 +262,27 @@ var state = d3.map();
 
 var usa;
 
+// loader settings
+var opts = {
+  lines: 9, // The number of lines to draw
+  length: 9, // The length of each line
+  width: 5, // The line thickness
+  radius: 14, // The radius of the inner circle
+  color: '#EE3124', // #rgb or #rrggbb or array of colors
+  speed: 1.9, // Rounds per second
+  trail: 40, // Afterglow percentage
+  className: 'spinner', // The CSS class to assign to the spinner
+};
+
+var target = document.getElementById('chart1');
+var spinner = new Spinner(opts).spin(target);
+
+
 d3.queue()
     // .defer(d3.json, "https://d3js.org/us-10m.v1.json") // USA County Map
     .defer(d3.json, "usa.json", function(us){
       usa = us;
+      spinner.stop();
     })
     .defer(d3.csv, "mapData/black/black2010map.csv", function(d) { 
       // black2010.set(d.id, +d.percent_poor);
